@@ -7,7 +7,7 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="76dp">
+        android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="wrap_content"
@@ -17,10 +17,9 @@
             android:id="@+id/textView" />
 
         <EditText
-            android:layout_width="227dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/postTitleEditText"
-            android:text="Post Title..."
             android:layout_gravity="right" />
 
     </LinearLayout>
@@ -53,21 +52,19 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:layout_width="103dp"
-            android:layout_height="100dp"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
             android:id="@+id/addPostImageView1"
-            android:src="#eb6161"
-            android:paddingEnd="10dp"
-            android:paddingStart="10dp"
+            android:src="#f07373"
             android:paddingBottom="10dp"
-            android:layout_weight="0.25" />
+            android:layout_gravity="center" />
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
             android:text="Select Image"
             android:id="@+id/buttonSelectImage1"
-            android:layout_weight="0.25" />
+            android:layout_gravity="right" />
     </LinearLayout>
 
 
@@ -99,14 +96,15 @@
         android:layout_gravity="center_horizontal">
 
         <ImageView
-            android:layout_width="99dp"
-            android:layout_height="99dp"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
             android:id="@+id/addPostImageView2"
-            android:src="#f07373" />
+            android:src="#f07373"
+            android:layout_gravity="center" />
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
             android:text="Select Image"
             android:id="@+id/buttonSelectImage2"
             android:layout_gravity="center_horizontal" />
@@ -127,13 +125,11 @@
             android:layout_gravity="left" />
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="76dp"
             android:text="Post!"
             android:id="@+id/postButton"
-            android:layout_gravity="right"
-            android:paddingLeft="20dp"
-            android:layout_weight="0.15" />
+            android:paddingLeft="20dp" />
     </LinearLayout>
 
 </LinearLayout>

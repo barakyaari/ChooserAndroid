@@ -1,5 +1,7 @@
 package net.cloudapp.chooser.chooser;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,8 +38,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView Description2TextView;
     ImageView Image1;
     ImageView Image2;
+    Bitmap image1Bitmap, image2Bitmap;
+
     private List<Post> posts;
     private int currentPost = 0;
+    private static final int PICK_IMAGE_ID = 234; // the number doesn't matter
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,16 +54,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button RefreshButton = (Button) findViewById(R.id.addPostButton);
         Image1 = (ImageView) findViewById(R.id.image1ImageView);
         Image2 = (ImageView) findViewById(R.id.image2ImageView);
-        Button loadButton = (Button) findViewById(R.id.buttonLoad);
         Button buttonRight = (Button) findViewById(R.id.buttonRight);
         Button buttonLeft = (Button) findViewById(R.id.buttonLeft);
         Button addPostButton = (Button) findViewById(R.id.addPostButton);
 
         posts = new ArrayList<Post>();
         RefreshButton.setOnClickListener(this);
-        loadButton.setOnClickListener(this);
         buttonRight.setOnClickListener(this);
         buttonLeft.setOnClickListener(this);
+        Image1.setOnClickListener(this);
+        Image2.setOnClickListener(this);
         refresh();
     }
 
@@ -94,8 +100,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Bitmap image1Bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                     decodedString = Base64.decode(image2, Base64.DEFAULT);
                     Bitmap image2Bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-
-
                     Post newPost = new Post(title, image1Bitmap, description1, image2Bitmap, description2, id);
                     PostsList.add(newPost);
 
@@ -109,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         private List<Post> getPosts(){
-            String url = "http://192.168.14.93:8080/getAllPosts";
+            String url = "http://chooser.cloudapp.net:8080/getAllPosts";
             String charset = "UTF-8";
             String param1 = "value1";
             String param2 = "value2";
@@ -174,15 +178,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getPosts.execute();
     }
 
+    private void previewImage(int imageNumber){
+        final Dialog nagDialog = new Dialog(this, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
+        nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        nagDialog.setCancelable(false);
+        nagDialog.setContentView(R.layout.preview_image);
+        Button btnClose = (Button)nagDialog.findViewById(R.id.btnIvClose);
+        ImageView ivPreview = (ImageView)nagDialog.findViewById(R.id.iv_preview_image);
+        switch (imageNumber){
+            case 1:
+                ivPreview.setImageBitmap(image1Bitmap);
+                break;
+            case 2:
+                ivPreview.setImageBitmap(image2Bitmap);
+                break;
+        }
+        btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                nagDialog.dismiss();
+            }
+        });
+        nagDialog.show();
+    }
+
     @Override
     public void onClick(View v) {
         Log.i("ChooserApp", "MainActivity OnclickListener: " + v.getId());
         switch(v.getId()){
             case R.id.addPostButton:{
-                Intent i = new Intent("com.example.barak.bostontutorials.AddPost");
+                Intent i = new Intent("net.cloudapp.chooser.chooser.AddPost");
                 startActivity(i);
             }
             break;
+
             case R.id.buttonLoad:{
                 loadPosts(currentPost);
             }
@@ -203,9 +232,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
             break;
+
+            case R.id.image1ImageView:{
+                previewImage(1);
             }
+            break;
+
+            case R.id.image2ImageView:{
+                previewImage(2);
+            }
+            break;
+            }
+
+
         }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch(requestCode) {
+            case PICK_IMAGE_ID:
+                Bitmap bitmap = ImagePicker.getImageFromResult(this, resultCode, data);
+                // TODO use bitmap
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+                break;
+        }
+    }
     private void loadPosts(int postNumber) {
         if(posts.isEmpty()){
             Log.i("ChooserApp", "Empty posts...");
@@ -216,9 +269,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         TitleTextView.setText(post.title);
         Description1TextView.setText(post.description1);
         Description2TextView.setText(post.description2);
+        image1Bitmap = post.image1;
+        image2Bitmap = post.image2;
         Image1.setImageBitmap(post.image1);
         Image2.setImageBitmap(post.image2);
-
     }
 
     @Override
@@ -239,7 +293,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

@@ -3,6 +3,8 @@ package net.cloudapp.chooser.chooser;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -38,10 +40,13 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.provider.MediaStore.Images.Media.getBitmap;
+
 public class AddPost extends Activity implements View.OnClickListener {
     private static final int RESULT_LOAD_IMAGE1 = 1;
     private static final int RESULT_LOAD_IMAGE2 = 2;
-
+    private static final int SELECT_PHOTO = 100;
+    private int selectedImage = 0;
     Button buttonAddPost;
     Button buttonCancel;
     Button buttonSelect1;
@@ -90,13 +95,22 @@ public class AddPost extends Activity implements View.OnClickListener {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && data != null) {
-            Uri selectedImageUri = data.getData();
-            if (requestCode == RESULT_LOAD_IMAGE1)
-                image1.setImageURI(selectedImageUri);
-            else if (requestCode == RESULT_LOAD_IMAGE2)
-                image2.setImageURI(selectedImageUri);
-
+        switch(requestCode) {
+            case SELECT_PHOTO:
+                Bitmap bitmap = ImagePicker.getImageFromResult(this, resultCode, data);
+                switch (selectedImage){
+                    case 1:
+                        image1.setImageBitmap(bitmap);
+                        image1BitMap = bitmap;
+                        break;
+                    case 2:
+                        image2.setImageBitmap(bitmap);
+                        image2BitMap = bitmap;
+                        break;
+                }
+                break;
+            default:
+                break;
         }
     }
 
@@ -105,11 +119,11 @@ public class AddPost extends Activity implements View.OnClickListener {
         image1 = "";
         image2 = "";
         try {
-        //Convert images to base64 string:
+            //Convert images to base64 string:
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            Bitmap smallBitmap1 = Bitmap.createScaledBitmap(image1BitMap, 100, 100, true);
+            Bitmap smallBitmap1 = Bitmap.createScaledBitmap(image1BitMap, image1BitMap.getWidth()/8, image1BitMap.getHeight()/8, true);
 
-            smallBitmap1.compress(Bitmap.CompressFormat.PNG, 10, byteArrayOutputStream);
+            smallBitmap1.compress(Bitmap.CompressFormat.PNG, 50, byteArrayOutputStream);
             smallBitmap1.recycle();
             byte[] byteArray1 = byteArrayOutputStream.toByteArray();
             byteArrayOutputStream.close();
@@ -120,8 +134,8 @@ public class AddPost extends Activity implements View.OnClickListener {
         }
         try {
             ByteArrayOutputStream byteArrayOutputStream2 = new ByteArrayOutputStream();
-            Bitmap smallBitmap1 = Bitmap.createScaledBitmap(image2BitMap, 100, 100, true);
-            smallBitmap1.compress(Bitmap.CompressFormat.PNG, 10, byteArrayOutputStream2);
+            Bitmap smallBitmap1 = Bitmap.createScaledBitmap(image2BitMap, image2BitMap.getWidth()/8, image2BitMap.getHeight()/8, true);
+            smallBitmap1.compress(Bitmap.CompressFormat.PNG, 80, byteArrayOutputStream2);
             byte[] byteArray2 = byteArrayOutputStream2.toByteArray();
             image2 = Base64.encodeToString(byteArray2, Base64.DEFAULT);
         }
@@ -156,15 +170,16 @@ public class AddPost extends Activity implements View.OnClickListener {
             break;
 
             case R.id.buttonSelectImage1:
-                Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE1);
+                selectedImage = 1;
+                Intent chooseImageIntent = ImagePicker.getPickImageIntent(this);
+                startActivityForResult(chooseImageIntent, SELECT_PHOTO);
                 break;
 
             case R.id.buttonSelectImage2:
-                Intent galleryIntent2 = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(galleryIntent2, RESULT_LOAD_IMAGE2);
+                selectedImage = 2;
+                Intent chooseImageIntent2 = ImagePicker.getPickImageIntent(this);
+                startActivityForResult(chooseImageIntent2, SELECT_PHOTO);
                 break;
-
         }
     }
 

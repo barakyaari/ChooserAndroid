@@ -34,7 +34,7 @@ public class PostUploader extends AsyncTask<Void, Void, Void> {
     }
 
     private void sendPost() {
-        String urlString = "http://192.168.14.93:8080/addPostWithBlob";
+        String urlString = "http://chooser.cloudapp.net:8080/addPostWithBlob";
         String charset = "UTF-8";
         try {
 
@@ -48,7 +48,8 @@ public class PostUploader extends AsyncTask<Void, Void, Void> {
             urlConnection.setRequestProperty("Cache-Control", "no-cache");
             urlConnection.setReadTimeout(35000);
             urlConnection.setConnectTimeout(35000);
-
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setRequestProperty("Accept-Charset", charset);
             OutputStream os = urlConnection.getOutputStream();
 
             //Create JSON:
@@ -64,8 +65,6 @@ public class PostUploader extends AsyncTask<Void, Void, Void> {
             os.flush();
             os.close();
 
-            urlConnection.setRequestMethod("POST");
-            urlConnection.setRequestProperty("Accept-Charset", charset);
             System.out.println("Response Code: " + urlConnection.getResponseCode());
 
             //Send:
