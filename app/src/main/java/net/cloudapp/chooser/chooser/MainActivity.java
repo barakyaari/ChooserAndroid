@@ -18,6 +18,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import org.json.JSONArray;
@@ -32,6 +33,8 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.datatype.Duration;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     TextView TitleTextView;
@@ -55,119 +58,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         TitleTextView = (TextView) findViewById(R.id.titleTextView);
         Description1TextView = (TextView) findViewById(R.id.description1TextView);
         Description2TextView = (TextView) findViewById(R.id.description2TextView);
-        Button RefreshButton = (Button) findViewById(R.id.addPostButton);
+        Button addPostButton = (Button) findViewById(R.id.addPostButton);
         Image1 = (ImageView) findViewById(R.id.image1ImageView);
         Image2 = (ImageView) findViewById(R.id.image2ImageView);
         Button buttonRight = (Button) findViewById(R.id.buttonRight);
         Button buttonLeft = (Button) findViewById(R.id.buttonLeft);
-        Button addPostButton = (Button) findViewById(R.id.addPostButton);
+        Button refreshPostsButton = (Button) findViewById(R.id.buttonRefreshPosts);
+        Button deleteCurrentPostButton = (Button) findViewById(R.id.buttonDeleteCurrentPost);
 
         posts = new ArrayList<Post>();
-        RefreshButton.setOnClickListener(this);
+        addPostButton.setOnClickListener(this);
+        refreshPostsButton.setOnClickListener(this);
         buttonRight.setOnClickListener(this);
         buttonLeft.setOnClickListener(this);
+        deleteCurrentPostButton.setOnClickListener(this);
         Image1.setOnClickListener(this);
         Image2.setOnClickListener(this);
         refresh();
 
     }
-/*
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            try {
-                JSONArray jArray = new JSONArray(result);
-                Log.i("ChooserApp", "Number of Posts found: " + jArray.length());
-                for (int i = 0; i < jArray.length(); i++) {
-                    Log.i("ChooserApp", "Creating post - Iteration: " + i);
-                    JSONObject jObject = jArray.getJSONObject(i);
-                    String title = jObject.getString("title");
-                    String image1 = jObject.getString("image1");
-                    String description1 = jObject.getString("description1");
-                    String image2 = jObject.getString("image2");
-                    String description2 = jObject.getString("description2");
-                    int id = jObject.getInt("id");
-                    Log.i("chooserHTTP", title);
-
-                    //Convert Images:
-                    byte[] decodedString = Base64.decode(image1, Base64.DEFAULT);
-                    Bitmap image1Bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                    decodedString = Base64.decode(image2, Base64.DEFAULT);
-                    Bitmap image2Bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                    Post newPost = new Post(title, image1Bitmap, description1, image2Bitmap, description2, id);
-                    PostsList.add(newPost);
-
-                }
-                loadPosts(currentPost);
-            }
-
-            catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-
-        private List<Post> getPosts(){
-
-
-
-            String url = "http://chooser.cloudapp.net:8080/getAllPosts";
-            String charset = "UTF-8";
-            String param1 = "value1";
-            String param2 = "value2";
-
-            String query = null;
-            try {
-                query = String.format("param1=%s&param2=%s",
-                        URLEncoder.encode(param1, charset),
-                        URLEncoder.encode(param2, charset));
-                Log.i("ChooserApp", "Sendig Http Request to: " + url + " query is: " + query);
-                URLConnection urlConnection = new URL(url + "?" + query).openConnection();
-                urlConnection.setRequestProperty("Accept-Charset", charset);
-                InputStream response = urlConnection.getInputStream();
-                String responseText = response.toString();
-                Log.i("ChooserApp", responseText);
-
-                BufferedReader bReader = new BufferedReader(new InputStreamReader(response, "utf-8"), 8);
-                StringBuilder sBuilder = new StringBuilder();
-
-                String line = null;
-                while ((line = bReader.readLine()) != null) {
-                    sBuilder.append(line + "\n");
-                }
-                response.close();
-                result = sBuilder.toString();
-                JSONArray jArray = new JSONArray(result);
-                Log.i("ChooserApp", "Number of Posts found: " + jArray.length());
-                for (int i = 0; i < jArray.length(); i++) {
-                    Log.i("ChooserApp", "Creating post - Iteration: " + i);
-                    JSONObject jObject = jArray.getJSONObject(i);
-                    String title = jObject.getString("title");
-                    String image1 = jObject.getString("image1");
-                    String description1 = jObject.getString("description1");
-                    String image2 = jObject.getString("image2");
-                    String description2 = jObject.getString("description2");
-                    int id = jObject.getInt("id");
-                    Log.i("chooserHTTP", title);
-
-                    //Convert Images:
-                    byte[] decodedString = Base64.decode(image1, Base64.DEFAULT);
-                    Bitmap image1Bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                    decodedString = Base64.decode(image2, Base64.DEFAULT);
-                    Bitmap image2Bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-
-
-                    Post newPost = new Post(title, image1Bitmap, description1, image2Bitmap, description2, id);
-                    PostsList.add(newPost);
-
-                }
-                loadPosts(currentPost);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-
-        }
-    }
-    */
 
     private void refresh(){
         Runnable doAtFinish = new Runnable() {
@@ -207,8 +116,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if(posts.size()>0)
+                if(posts.size()>0) {
                     loadPosts(0);
+                    currentPost = 0;
+                }
             }
         };
         ConnectionManager connectionManager = new ConnectionManager(sessionDetails);
@@ -239,18 +150,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         nagDialog.show();
     }
 
+    private class doAtDelete implements Runnable{
+        @Override
+        public void run() {
+            Toast.makeText(getApplicationContext(), "Post Deleted!", Toast.LENGTH_LONG).show();
+            refresh();
+        }
+    }
+
+    private void deleteCurrentImage(){
+        ConnectionManager connectionManager = new ConnectionManager(sessionDetails);
+        connectionManager.deletePost(posts.get(currentPost).id, new doAtDelete());
+    }
+
+
     @Override
     public void onClick(View v) {
         Log.i("ChooserApp", "MainActivity OnclickListener: " + v.getId());
         switch(v.getId()){
             case R.id.addPostButton:{
                 Intent i = new Intent("net.cloudapp.chooser.chooser.AddPost");
+                i.putExtra("SessionDetails", sessionDetails);
                 startActivity(i);
             }
             break;
 
-            case R.id.buttonLoad:{
-                loadPosts(currentPost);
+            case R.id.buttonRefreshPosts:{
+                refresh();
             }
             break;
 
@@ -277,6 +203,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.image2ImageView:{
                 previewImage(2);
+            }
+            break;
+
+            case R.id.buttonDeleteCurrentPost:{
+                deleteCurrentImage();
             }
             break;
             }

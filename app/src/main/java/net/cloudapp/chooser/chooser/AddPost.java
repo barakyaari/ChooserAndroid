@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -48,6 +49,7 @@ public class AddPost extends Activity implements View.OnClickListener {
     private static final int RESULT_LOAD_IMAGE2 = 2;
     private static final int SELECT_PHOTO = 100;
     private int selectedImage = 0;
+    private SessionDetails sessionDetails;
     Button buttonAddPost;
     Button buttonCancel;
     Button buttonSelect1;
@@ -85,6 +87,7 @@ public class AddPost extends Activity implements View.OnClickListener {
 
         buttonSelect1.setOnClickListener(this);
         buttonSelect2.setOnClickListener(this);
+        sessionDetails = (SessionDetails) getIntent().getSerializableExtra("SessionDetails");
     }
 
     private void takeImage(int imageNumber) {
@@ -123,16 +126,15 @@ public class AddPost extends Activity implements View.OnClickListener {
             //Convert images to base64 string:
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             Bitmap smallBitmap1 = Bitmap.createScaledBitmap(image1BitMap, image1BitMap.getWidth()/8, image1BitMap.getHeight()/8, true);
-
             smallBitmap1.compress(Bitmap.CompressFormat.PNG, 50, byteArrayOutputStream);
             smallBitmap1.recycle();
             byte[] byteArray1 = byteArrayOutputStream.toByteArray();
             byteArrayOutputStream.close();
-            byteArrayOutputStream = null;
             image1 = Base64.encodeToString(byteArray1, Base64.DEFAULT);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         try {
             ByteArrayOutputStream byteArrayOutputStream2 = new ByteArrayOutputStream();
             Bitmap smallBitmap1 = Bitmap.createScaledBitmap(image2BitMap, image2BitMap.getWidth()/8, image2BitMap.getHeight()/8, true);
@@ -147,16 +149,18 @@ public class AddPost extends Activity implements View.OnClickListener {
         title = editTextTitle.getText().toString();
         description1 = editTextDescription1.getText().toString();
         description2 = editTextDescription2.getText().toString();
-        List<Pair<String, String>> postData = new ArrayList<>();
-        BaseConnectionData connectionData = new BaseConnectionData("POST", "AddPostWithBlob", "SErveraddres");
-        connectionData.addParameter("title", title);
-        connectionData.addParameter("image1", image1);
-        connectionData.addParameter("description1", description1);
-        connectionData.addParameter("image2", image2);
-        connectionData.addParameter("description2", description2);
-        ConnectionTask uploader = new ConnectionTask(null, null);
+        ConnectionManager connectionManager = new ConnectionManager(sessionDetails);
+        connectionManager.AddPostWithBlob(title, image1, description1, image2, description2, new doAtFinish());
+        ;
     }
 
+    private class doAtFinish implements Runnable
+    {
+        @Override
+        public void run() {
+            finish();
+        }
+    }
 
     @Override
     public void onClick(View v) {
@@ -164,10 +168,8 @@ public class AddPost extends Activity implements View.OnClickListener {
             case R.id.postButton: {
                 Bitmap bitmap1 = ((BitmapDrawable) image1.getDrawable()).getBitmap();
                 image1BitMap = bitmap1;
-
                 Bitmap bitmap2 = ((BitmapDrawable) image2.getDrawable()).getBitmap();
                 image2BitMap = bitmap2;
-
                 uploadPost();
             }
             break;

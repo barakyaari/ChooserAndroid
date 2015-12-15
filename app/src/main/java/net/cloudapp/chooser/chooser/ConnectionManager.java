@@ -58,14 +58,15 @@ public class ConnectionManager {
         this.sessionDetails.responseString = responseText;
     }
 
-    public void AddPostWithBlob(String title, String image1, String description1, String image2, String description2){
+    public void AddPostWithBlob(String title, String image1, String description1, String image2, String description2, Runnable doAtFinish){
         BaseConnectionData data = new BaseConnectionData("POST", "AddPostWithBlob", chooserServerAddress);
         data.addParameter("title", title);
         data.addParameter("image1", image1);
         data.addParameter("description1", description1);
         data.addParameter("image2", image2);
         data.addParameter("description2", description2);
-        ConnectionTask task = new ConnectionTask(null, this);
+        data.addParameter("user_id", String.valueOf(sessionDetails.userId));
+        ConnectionTask task = new ConnectionTask(doAtFinish, this);
         task.execute(data);
     }
 
@@ -73,4 +74,10 @@ public class ConnectionManager {
         return this.sessionDetails;
     }
 
+    public void deletePost(int id, Runnable doAtFinish) {
+        BaseConnectionData data = new BaseConnectionData("POST", "deletePost", chooserServerAddress);
+        data.addParameter("id", String.valueOf(id));
+        ConnectionTask task = new ConnectionTask(doAtFinish, this);
+        task.execute(data);
+    }
 }
