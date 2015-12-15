@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -146,8 +147,14 @@ public class AddPost extends Activity implements View.OnClickListener {
         title = editTextTitle.getText().toString();
         description1 = editTextDescription1.getText().toString();
         description2 = editTextDescription2.getText().toString();
-        PostUploader uploader = new PostUploader(title, image1, description1, image2, description2);
-        uploader.execute();
+        List<Pair<String, String>> postData = new ArrayList<>();
+        BaseConnectionData connectionData = new BaseConnectionData("POST", "AddPostWithBlob", "SErveraddres");
+        connectionData.addParameter("title", title);
+        connectionData.addParameter("image1", image1);
+        connectionData.addParameter("description1", description1);
+        connectionData.addParameter("image2", image2);
+        connectionData.addParameter("description2", description2);
+        ConnectionTask uploader = new ConnectionTask(null, null);
     }
 
 

@@ -34,7 +34,7 @@ public class PostUploader extends AsyncTask<Void, Void, Void> {
     }
 
     private void sendPost() {
-        String urlString = "http://chooser.cloudapp.net:8080/addPostWithBlob";
+        String urlString = "http://localhost:8080/login";
         String charset = "UTF-8";
         try {
 

@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ImageView Image1;
     ImageView Image2;
     Bitmap image1Bitmap, image2Bitmap;
+    private SessionDetails sessionDetails;
 
     private List<Post> posts;
     private int currentPost = 0;
@@ -48,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.posts_view);
+        sessionDetails = (SessionDetails) getIntent().getSerializableExtra("SessionDetails");
+
         TitleTextView = (TextView) findViewById(R.id.titleTextView);
         Description1TextView = (TextView) findViewById(R.id.description1TextView);
         Description2TextView = (TextView) findViewById(R.id.description2TextView);
@@ -65,20 +69,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Image1.setOnClickListener(this);
         Image2.setOnClickListener(this);
         refresh();
+
     }
-
-    private class GetPosts extends AsyncTask<Void, Void, Void>{
-        List<Post> PostsList;
-        public GetPosts(List<Post> postsList){
-            this.PostsList = postsList;
-        }
-        String result = "";
-        @Override
-        protected Void doInBackground(Void... params) {
-            getPosts();
-            return null;
-        }
-
+/*
         @Override
         protected void onPostExecute(Void aVoid) {
             try {
@@ -113,6 +106,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         private List<Post> getPosts(){
+
+
+
             String url = "http://chooser.cloudapp.net:8080/getAllPosts";
             String charset = "UTF-8";
             String param1 = "value1";
@@ -171,11 +167,52 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     }
+    */
 
     private void refresh(){
-        Log.i("ChooserApp", "refreshing posts");
-        GetPosts getPosts = new GetPosts(posts);
-        getPosts.execute();
+        Runnable doAtFinish = new Runnable() {
+            @Override
+            public void run() {
+                posts.clear();
+                String responseText = sessionDetails.responseString;
+                try {
+                    JSONArray jArray = new JSONArray(responseText);
+                    Log.i("ChooserApp", "Number of Posts found: " + jArray.length());
+                    for (int i = 0; i < jArray.length(); i++) {
+                        Log.i("ChooserApp", "Creating post - Iteration: " + i);
+                        JSONObject jObject = jArray.getJSONObject(i);
+                        String title = jObject.getString("title");
+                        String image1 = jObject.getString("image1");
+                        String description1 = jObject.getString("description1");
+                        String image2 = jObject.getString("image2");
+                        String description2 = jObject.getString("description2");
+                        int id = jObject.getInt("id");
+                        Log.i("chooserHTTP", title);
+
+                        //Convert Images:
+                        Bitmap image1Bitmap = null;
+                        Bitmap image2Bitmap = null;
+                        try {
+                            byte[] decodedString = Base64.decode(image1, Base64.DEFAULT);
+                            image1Bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                            decodedString = Base64.decode(image2, Base64.DEFAULT);
+                            image2Bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                        }
+                        catch (Exception e){
+                            e.printStackTrace();
+                        }
+                        Post newPost = new Post(title, image1Bitmap, description1, image2Bitmap, description2, id);
+                        posts.add(newPost);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if(posts.size()>0)
+                    loadPosts(0);
+            }
+        };
+        ConnectionManager connectionManager = new ConnectionManager(sessionDetails);
+        connectionManager.GetPosts(doAtFinish);
     }
 
     private void previewImage(int imageNumber){
