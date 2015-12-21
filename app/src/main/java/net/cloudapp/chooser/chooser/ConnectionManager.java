@@ -18,13 +18,10 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
-/**
- * Created by Barak on 10/12/2015.
- */
 public class ConnectionManager {
     private SessionDetails sessionDetails;
-    //private final String chooserServerAddress = "http://chooser.cloudapp.net";
-    private final String chooserServerAddress = "http://192.168.14.93:8080"; // DONT FORGET TO TURN WIFI ON!!!
+    private final String chooserServerAddress = "http://chooser.cloudapp.net:8080";
+    //private final String chooserServerAddress = "http://192.168.14.93:8080"; // DONT FORGET TO TURN WIFI ON!!!
 
     public ConnectionManager(){
         this.sessionDetails = new SessionDetails();

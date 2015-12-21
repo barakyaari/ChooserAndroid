@@ -21,8 +21,6 @@ public class Post {
     }
 
     public String title;
-    public String image1Url;
-    public String image2Url;
     public String description1;
     public String description2;
     public int id;

@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.posts_view);
         sessionDetails = (SessionDetails) getIntent().getSerializableExtra("SessionDetails");
 
+        //Controls initialization:
         TitleTextView = (TextView) findViewById(R.id.titleTextView);
         Description1TextView = (TextView) findViewById(R.id.description1TextView);
         Description2TextView = (TextView) findViewById(R.id.description2TextView);
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button refreshPostsButton = (Button) findViewById(R.id.buttonRefreshPosts);
         Button deleteCurrentPostButton = (Button) findViewById(R.id.buttonDeleteCurrentPost);
 
-        posts = new ArrayList<Post>();
+        //Set Click Listeners:
         addPostButton.setOnClickListener(this);
         refreshPostsButton.setOnClickListener(this);
         buttonRight.setOnClickListener(this);
@@ -74,6 +75,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         deleteCurrentPostButton.setOnClickListener(this);
         Image1.setOnClickListener(this);
         Image2.setOnClickListener(this);
+
+        //Load Posts:
+        posts = new ArrayList<Post>();
         refresh();
 
     }
@@ -126,6 +130,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         connectionManager.GetPosts(doAtFinish);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refresh();
+    }
+
     private void previewImage(int imageNumber){
         final Dialog nagDialog = new Dialog(this, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
         nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -150,17 +160,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         nagDialog.show();
     }
 
-    private class doAtDelete implements Runnable{
-        @Override
-        public void run() {
-            Toast.makeText(getApplicationContext(), "Post Deleted!", Toast.LENGTH_LONG).show();
-            refresh();
-        }
-    }
-
     private void deleteCurrentImage(){
+
+        Runnable doAtFinish = new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), "Post Deleted!", Toast.LENGTH_LONG).show();
+                refresh();
+            }
+        };
         ConnectionManager connectionManager = new ConnectionManager(sessionDetails);
-        connectionManager.deletePost(posts.get(currentPost).id, new doAtDelete());
+        connectionManager.deletePost(posts.get(currentPost).id, doAtFinish);
     }
 
 

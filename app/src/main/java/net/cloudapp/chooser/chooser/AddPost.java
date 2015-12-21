@@ -90,12 +90,6 @@ public class AddPost extends Activity implements View.OnClickListener {
         sessionDetails = (SessionDetails) getIntent().getSerializableExtra("SessionDetails");
     }
 
-    private void takeImage(int imageNumber) {
-        Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        i.putExtra("ImageNumber", imageNumber);
-        startActivityForResult(i, cameraData);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -150,16 +144,13 @@ public class AddPost extends Activity implements View.OnClickListener {
         description1 = editTextDescription1.getText().toString();
         description2 = editTextDescription2.getText().toString();
         ConnectionManager connectionManager = new ConnectionManager(sessionDetails);
-        connectionManager.AddPostWithBlob(title, image1, description1, image2, description2, new doAtFinish());
-        ;
-    }
-
-    private class doAtFinish implements Runnable
-    {
-        @Override
-        public void run() {
-            finish();
-        }
+        Runnable doAtFinish = new Runnable() {
+            @Override
+            public void run() {
+                finish();
+            }
+        };
+        connectionManager.AddPostWithBlob(title, image1, description1, image2, description2, doAtFinish);
     }
 
     @Override
@@ -175,6 +166,7 @@ public class AddPost extends Activity implements View.OnClickListener {
             break;
 
             case R.id.cancelButton: {
+                finish();
             }
             break;
 
