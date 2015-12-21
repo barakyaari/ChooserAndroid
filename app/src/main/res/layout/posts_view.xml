@@ -33,7 +33,7 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="363dp">
+            android:layout_height="327dp">
 
             <ImageView
                 android:layout_width="130dp"
@@ -70,6 +70,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:layout_gravity="center" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -107,22 +108,34 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="64dp"
             android:layout_gravity="center_horizontal">
 
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="58dp"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="Delete Current Post"
+                android:id="@+id/buttonDeleteCurrentPost"
+                android:layout_weight="0.5" />
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
                 android:text="Add A New Post"
                 android:id="@+id/addPostButton"
                 android:layout_below="@+id/buttonLeft"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="87dp"
-                android:layout_gravity="right"
-                android:layout_weight="0.14" />
+                android:layout_weight="0.5" />
 
         </LinearLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Refresh Posts"
+            android:id="@+id/buttonRefreshPosts"
+            android:layout_weight="0.14" />
 
     </LinearLayout>
 </LinearLayout>
