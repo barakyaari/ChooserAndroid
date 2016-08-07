@@ -1,27 +1,10 @@
 package net.cloudapp.chooser.chooser;
 
-import android.graphics.Bitmap;
-import android.telecom.Call;
-import android.util.Log;
-import android.util.Pair;
-import android.widget.TextView;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
-
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 
 public class ConnectionManager {
     private SessionDetails sessionDetails;
-    private final String chooserServerAddress = "http://chooser.cloudapp.net:8080";
-    //private final String chooserServerAddress = "http://192.168.14.93:8080"; // DONT FORGET TO TURN WIFI ON!!!
+    //private final String chooserServerAddress = "http://chooser.cloudapp.net:8080";
+    private final String chooserServerAddress = "http://10.0.0.8:8080";
 
     public ConnectionManager(){
         this.sessionDetails = new SessionDetails();
@@ -31,23 +14,52 @@ public class ConnectionManager {
         this.sessionDetails = sessionDetails;
     }
 
-    public void Login(String username, String password, Runnable doAtFinish){
-        BaseConnectionData data = new BaseConnectionData("POST", "Login", chooserServerAddress);
-        data.addParameter("username", username);
-        data.addParameter("password", password);
+
+    public void login(String uID, Runnable doAtFinish){
+        BaseConnectionData data = new BaseConnectionData("POST", "login", chooserServerAddress);
+        data.addParameter("uID", uID);
         ConnectionTask task = new ConnectionTask(doAtFinish, this);
-        String result = "";
+        task.execute(data);
+    }
+
+    public void updateUser(String id, String firstName, String lastName, String email, String gender, String birthDate, String country){
+        BaseConnectionData data = new BaseConnectionData("POST", "updateUser", chooserServerAddress);
+        String sqlBdate = birthDate.substring(6) + "-" + birthDate.substring(0,2) + "-" + birthDate.substring(3,5) + " 12:00:00.000";
+        System.out.println(sqlBdate);
+        data.addParameter("ID", id);
+        data.addParameter("FirstName", firstName);
+        data.addParameter("LastName", lastName);
+        data.addParameter("Email", email);
+        data.addParameter("Gender", gender);
+        data.addParameter("BirthDate", sqlBdate);
+        data.addParameter("Country", country);
+
+        ConnectionTask task = new ConnectionTask(this);
         task.execute(data);
     }
 
     public void GetPosts(Runnable doAtFinish){
         BaseConnectionData data = new BaseConnectionData("GET", "getAllPosts", chooserServerAddress);
-        data.addParameter("id", String.valueOf(sessionDetails.userId));
+        data.addParameter("uID", String.valueOf(sessionDetails.userId));
         ConnectionTask task = new ConnectionTask(doAtFinish, this);
         task.execute(data);
     }
 
-    public void setId(int id){
+    public void getMyPosts(Runnable doAtFinish){
+        BaseConnectionData data = new BaseConnectionData("GET", "getMyPosts", chooserServerAddress);
+        data.addParameter("uID", String.valueOf(sessionDetails.userId));
+        ConnectionTask task = new ConnectionTask(doAtFinish, this);
+        task.execute(data);
+    }
+
+    public void getStatistics(String post_id, Runnable doAtFinish){
+        BaseConnectionData data = new BaseConnectionData("GET", "getStatistics", chooserServerAddress);
+        data.addParameter("post_id", post_id);
+        ConnectionTask task = new ConnectionTask(doAtFinish, this);
+        task.execute(data);
+    }
+
+    public void setId(String id){
         this.sessionDetails.userId = id;
     }
 
@@ -55,7 +67,7 @@ public class ConnectionManager {
         this.sessionDetails.responseString = responseText;
     }
 
-    public void AddPostWithBlob(String title, String image1, String description1, String image2, String description2, Runnable doAtFinish){
+    public void AddPostWithBlob(String title, String image1, String description1, String image2, String description2, Runnable doAtFinish, int promotionDuration, String promotionTime){
         BaseConnectionData data = new BaseConnectionData("POST", "AddPostWithBlob", chooserServerAddress);
         data.addParameter("title", title);
         data.addParameter("image1", image1);
@@ -63,6 +75,32 @@ public class ConnectionManager {
         data.addParameter("image2", image2);
         data.addParameter("description2", description2);
         data.addParameter("user_id", String.valueOf(sessionDetails.userId));
+        data.addParameter("promotionDuration", String.valueOf(promotionDuration));
+        data.addParameter("promotionTime", promotionTime);
+
+        ConnectionTask task = new ConnectionTask(doAtFinish, this);
+        task.execute(data);
+    }
+
+    public void vote(String vote, String post_id, Runnable doAtFinish){
+        BaseConnectionData data = new BaseConnectionData("POST", "vote", chooserServerAddress);
+        data.addParameter("vote", vote);
+        data.addParameter("uid", sessionDetails.userId);
+        data.addParameter("id", post_id);
+        ConnectionTask task = new ConnectionTask(doAtFinish, this);
+        task.execute(data);
+    }
+
+    public void getTokenCount(String uID, Runnable doAtFinish){
+        BaseConnectionData data = new BaseConnectionData("GET", "getTokenCount", chooserServerAddress);
+        data.addParameter("uid", sessionDetails.userId);
+        ConnectionTask task = new ConnectionTask(doAtFinish, this);
+        task.execute(data);
+    }
+
+    public void reportPost(String post_id, Runnable doAtFinish){
+        BaseConnectionData data = new BaseConnectionData("POST", "report", chooserServerAddress);
+        data.addParameter("id", post_id);
         ConnectionTask task = new ConnectionTask(doAtFinish, this);
         task.execute(data);
     }
@@ -71,7 +109,7 @@ public class ConnectionManager {
         return this.sessionDetails;
     }
 
-    public void deletePost(int id, Runnable doAtFinish) {
+    public void deletePost(String id, Runnable doAtFinish) {
         BaseConnectionData data = new BaseConnectionData("POST", "deletePost", chooserServerAddress);
         data.addParameter("id", String.valueOf(id));
         ConnectionTask task = new ConnectionTask(doAtFinish, this);

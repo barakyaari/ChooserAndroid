@@ -18,17 +18,10 @@ public class ConnectionTask extends AsyncTask<BaseConnectionData, Void, String> 
         this.doAtFinish = doAtFinish;
         this.connectionManager = connectionManager;
     }
-
-    @Override
-    protected void onPostExecute(String s) {
-        super.onPostExecute(s);
-        this.connectionManager.setResponseText(s);
-        try {
-            doAtFinish.run();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public ConnectionTask(ConnectionManager connectionManager){
+        this.connectionManager = connectionManager;
     }
+
 
     @Override
     protected String doInBackground(BaseConnectionData... params) {
@@ -76,4 +69,19 @@ public class ConnectionTask extends AsyncTask<BaseConnectionData, Void, String> 
         }
         return responseText;
     }
+
+    @Override
+    protected void onPostExecute(String s) {
+        super.onPostExecute(s);
+        this.connectionManager.setResponseText(s);
+        if (doAtFinish != null) {
+            try {
+                doAtFinish.run();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 }

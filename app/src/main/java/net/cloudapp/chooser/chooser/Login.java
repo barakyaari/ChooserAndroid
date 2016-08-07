@@ -3,43 +3,66 @@ package net.cloudapp.chooser.chooser;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.telecom.Call;
-import android.text.Editable;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import org.json.JSONArray;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.concurrent.Callable;
+import java.util.Arrays;
 
-/**
- * Created by Barak on 08/12/2015.
- */
-public class Login extends Activity implements View.OnClickListener{
-    TextView idTextView;
-    EditText usernameEditText;
-    EditText passwordEditText;
-    String id;
 
+public class Login extends Activity {
+    String uID;
+    LoginButton fbLoginButton;
+    CallbackManager callbackManager;
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        callbackManager = CallbackManager.Factory.create();
         setContentView(R.layout.login);
+        AppEventsLogger.activateApp(getApplication());
+        fbLoginButton = (LoginButton) findViewById(R.id.login_fb_button);
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        for (int i = 0; i < 10; i++) {
+            if (accessToken != null)
+                break;
+            System.out.println("AccessToken not yet initialized");
+            try {
+                Thread.sleep(10);  //temp fix for access token
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            accessToken = AccessToken.getCurrentAccessToken();
+        }
 
-        usernameEditText = (EditText) findViewById(R.id.usernameEditText);
-        passwordEditText = (EditText) findViewById(R.id.passwordEditText);
-        idTextView = (TextView) findViewById(R.id.idTextView);
-        Button buttonLogin = (Button) findViewById(R.id.loginButton);
-        buttonLogin.setOnClickListener(this);
+        if (accessToken == null || accessToken.isExpired()) {
+            System.out.println("NULL/EXPIRED TOKEN");
+            facebookLogin();
+        }
+        else {
+            System.out.println("FOUND TOKEN");
+            uID = accessToken.getUserId();
+            ConnectionManager connectionManager = new ConnectionManager();
+            connectionManager.setId(uID);
+            AtFinishRunnable runnable = new AtFinishRunnable(connectionManager.getSessionDetails());
+            connectionManager.login(uID, runnable);
+        }
     }
 
-    public class AtFinishRunnable implements Runnable{
+
+    public class AtFinishRunnable implements Runnable {
         private SessionDetails sessionDetails;
         public AtFinishRunnable(SessionDetails sessionDetails){
             this.sessionDetails = sessionDetails;
@@ -47,32 +70,106 @@ public class Login extends Activity implements View.OnClickListener{
 
         @Override
         public void run(){
-            String responseText = sessionDetails.responseString;
-            sessionDetails.userId = Integer.parseInt(responseText);
-            idTextView.setText(responseText);
-            if(sessionDetails.userId > 0){
-                Intent i = new Intent("android.intent.action.MainActivity");
-                i.putExtra("SessionDetails", sessionDetails);
-                startActivity(i);
-            }
+            sessionDetails.userTokenCount = Integer.valueOf(sessionDetails.responseString);
+            Intent i = new Intent("android.intent.action.MainActivity");
+            i.putExtra("SessionDetails", sessionDetails);
+            startActivity(i);
         }
-
-    }
-
-    private void login(){
-        ConnectionManager connectionManager = new ConnectionManager();
-        AtFinishRunnable runnable = new AtFinishRunnable(connectionManager.getSessionDetails());
-        String username = usernameEditText.getText().toString().toLowerCase().trim();
-        String password = passwordEditText.getText().toString();
-        connectionManager.Login(username, password, runnable);
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.loginButton:
-                login();
-                break;
-        }
+    protected void onResume() {
+        super.onResume();
+        facebookLogin();
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+
+    private void facebookLogin() {
+        fbLoginButton.setReadPermissions(Arrays.asList("email", "public_profile", "user_birthday", "user_location"));
+        fbLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                final AccessToken accessToken = loginResult.getAccessToken();
+                uID = accessToken.getUserId();
+
+                GraphRequest request = GraphRequest.newMeRequest(accessToken,
+                        new GraphRequest.GraphJSONObjectCallback() {
+                            @Override
+                            public void onCompleted(JSONObject jObject, GraphResponse response) {
+                                try {
+                                    final String uID = jObject.getString("id");
+                                    final String firstName = jObject.getString("first_name");
+                                    final String lastName = jObject.getString("last_name");
+                                    final String email = jObject.getString("email");
+                                    final String gender = jObject.getString("gender");
+                                    final String birthDate = jObject.getString("birthday");
+                                    JSONObject addrObj = jObject.optJSONObject("location");
+                                    if (addrObj != null) {
+                                        String locationID = jObject.optJSONObject("location").getString("id");
+
+                                        GraphRequest request = GraphRequest.newGraphPathRequest(accessToken, "/" + locationID,
+                                                new GraphRequest.Callback() {
+                                                    @Override
+                                                    public void onCompleted(GraphResponse response) {
+                                                        JSONObject locJObject = response.getJSONObject();
+
+                                                        try {
+                                                            String country = locJObject.getJSONObject("location").getString("country");
+                                                            ConnectionManager connectionManager = new ConnectionManager();
+                                                            connectionManager.updateUser(uID, firstName, lastName, email, gender, birthDate, country);
+
+                                                        } catch (JSONException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                    }
+                                                });
+
+                                        Bundle parameters = new Bundle();
+                                        parameters.putString("fields", "location");
+                                        request.setParameters(parameters);
+                                        request.executeAsync();
+                                    }
+
+                                    else {
+                                        ConnectionManager connectionManager = new ConnectionManager();
+                                        connectionManager.updateUser(uID, firstName, lastName, email, gender, birthDate, "");
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id, first_name, last_name, email, gender, birthday, location");
+                request.setParameters(parameters);
+                request.executeAsync();
+
+                ConnectionManager connectionManager = new ConnectionManager();
+                connectionManager.setId(uID);
+                AtFinishRunnable runnable = new AtFinishRunnable(connectionManager.getSessionDetails());
+                connectionManager.login(uID, runnable);
+            }
+
+            @Override
+            public void onCancel() {
+                System.out.println("CANCELLED");
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                System.out.println("ERROR");
+            }
+        });
+    }
+
+
+
+
 }

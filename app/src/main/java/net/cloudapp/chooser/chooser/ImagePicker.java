@@ -38,8 +38,7 @@ public class ImagePicker {
 
         List<Intent> intentList = new ArrayList<>();
 
-        Intent pickIntent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         takePhotoIntent.putExtra("return-data", true);
         takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getTempFile(context)));
@@ -47,8 +46,7 @@ public class ImagePicker {
         intentList = addIntentsToList(context, intentList, takePhotoIntent);
 
         if (intentList.size() > 0) {
-            chooserIntent = Intent.createChooser(intentList.remove(intentList.size() - 1),
-                    "image_string");
+            chooserIntent = Intent.createChooser(intentList.remove(intentList.size() - 1),"image_string");
             chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentList.toArray(new Parcelable[]{}));
         }
 
@@ -68,8 +66,7 @@ public class ImagePicker {
     }
 
 
-    public static Bitmap getImageFromResult(Context context, int resultCode,
-                                            Intent imageReturnedIntent) {
+    public static Bitmap getImageFromResult(Context context, int resultCode, Intent imageReturnedIntent) {
         Log.d(TAG, "getImageFromResult, resultCode: " + resultCode);
         Bitmap bm = null;
         File imageFile = getTempFile(context);
@@ -78,11 +75,11 @@ public class ImagePicker {
             boolean isCamera = (imageReturnedIntent == null ||
                     imageReturnedIntent.getData() == null  ||
                     imageReturnedIntent.getData().equals(Uri.fromFile(imageFile)));
-            if (isCamera) {     /** CAMERA **/
+            if (isCamera)     /** CAMERA **/
                 selectedImage = Uri.fromFile(imageFile);
-            } else {            /** ALBUM **/
+            else           /** ALBUM **/
                 selectedImage = imageReturnedIntent.getData();
-            }
+
             Log.d(TAG, "selectedImage: " + selectedImage);
 
             bm = getImageResized(context, selectedImage);
@@ -110,8 +107,7 @@ public class ImagePicker {
             e.printStackTrace();
         }
 
-        Bitmap actuallyUsableBitmap = BitmapFactory.decodeFileDescriptor(
-                fileDescriptor.getFileDescriptor(), null, options);
+        Bitmap actuallyUsableBitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor.getFileDescriptor(), null, options);
 
         Log.d(TAG, options.inSampleSize + " sample method bitmap ... " +
                 actuallyUsableBitmap.getWidth() + " " + actuallyUsableBitmap.getHeight());
@@ -137,11 +133,11 @@ public class ImagePicker {
 
     private static int getRotation(Context context, Uri imageUri, boolean isCamera) {
         int rotation;
-        if (isCamera) {
+        if (isCamera)
             rotation = getRotationFromCamera(context, imageUri);
-        } else {
+         else
             rotation = getRotationFromGallery(context, imageUri);
-        }
+
         Log.d(TAG, "Image rotation: " + rotation);
         return rotation;
     }
@@ -149,7 +145,6 @@ public class ImagePicker {
     private static int getRotationFromCamera(Context context, Uri imageFile) {
         int rotate = 0;
         try {
-
             context.getContentResolver().notifyChange(imageFile, null);
             ExifInterface exif = new ExifInterface(imageFile.getPath());
             int orientation = exif.getAttributeInt(
@@ -176,7 +171,8 @@ public class ImagePicker {
     public static int getRotationFromGallery(Context context, Uri imageUri) {
         String[] columns = {MediaStore.Images.Media.ORIENTATION};
         Cursor cursor = context.getContentResolver().query(imageUri, columns, null, null, null);
-        if (cursor == null) return 0;
+        if (cursor == null)
+            return 0;
 
         cursor.moveToFirst();
 

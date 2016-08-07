@@ -1,6 +1,31 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+
+    <item
+        android:title="Options"
+        android:id="@+id/options_menu"
+        android:icon="@drawable/ic_menu_black_24dp"
+        app:showAsAction="always" >
+        <menu>
+            <group>
+                <item
+                    android:id="@+id/add_poll"
+                    android:title="Add Poll"
+                    android:icon="@drawable/ic_add_circle_outline_black_24dp"
+                    app:showAsAction="always" />
+                <item
+                    android:id="@+id/settings"
+                    android:title="Settings"
+                    android:icon="@drawable/ic_settings_black_24dp"
+                    app:showAsAction="always" />
+
+                <item
+                    android:id="@+id/logout"
+                    android:title="Logout"
+                    android:icon="@drawable/ic_power_settings_new_black_24dp"
+                    app:showAsAction="always" />
+            </group>
+        </menu>
+    </item>
 </menu>

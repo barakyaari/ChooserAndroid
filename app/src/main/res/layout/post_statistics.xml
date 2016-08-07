@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#32405d"
+    android:weightSum="1">
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="60dp"
+            android:id="@+id/imageView1"
+            android:background="#dddddd"
+            android:layout_margin="3dp"
+            android:layout_gravity="left" />
+
+        <FrameLayout
+            android:layout_width="180dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.62"
+            android:layout_gravity="center">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="23dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Headline"
+                android:id="@+id/headline"
+                android:layout_gravity="center_horizontal"
+                android:textAlignment="center"
+                android:textColor="#dddddd"
+                android:textSize="14dp"
+                android:layout_marginLeft="3dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="0.0%"
+                android:id="@+id/percentage1"
+                android:textColor="#dddddd"
+                android:layout_gravity="bottom" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="0.0%"
+                android:id="@+id/percentage2"
+                android:layout_gravity="bottom|right"
+                android:textColor="#dddddd" />
+
+            <com.github.mikephil.charting.charts.HorizontalBarChart
+                android:id="@+id/stat_bar"
+                android:layout_width="212dp"
+                android:layout_height="62dp"
+                android:layout_gravity="center_horizontal|top"
+                android:layout_marginLeft="7dp" />
+
+        </FrameLayout>
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="60dp"
+            android:id="@+id/imageView2"
+            android:layout_gravity="right"
+            android:background="#dddddd"
+            android:layout_margin="3dp" />
+    </FrameLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="380dp"
+        android:orientation="vertical"
+        android:layout_weight="0.51">
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/sliding_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabMode="scrollable" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.68" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Promote Post"
+            android:id="@+id/promotePost"
+            android:layout_gravity="right" />
+
+        <Button
+            android:layout_width="129dp"
+            android:layout_height="wrap_content"
+            android:text="Delete post"
+            android:id="@+id/deletePost"
+            android:layout_marginLeft="10dp" />
+    </LinearLayout>
+
+</LinearLayout>

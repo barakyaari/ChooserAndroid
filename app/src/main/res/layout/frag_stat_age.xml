@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#32405d">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Voters Age Distribution"
+            android:id="@+id/textView10"
+            android:textColor="#CACACA"
+            android:textSize="20dp" />
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/pieChart"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="top|center" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="41dp"
+            android:text="Change interval"
+            android:id="@+id/changeIntervalButton"
+            android:textSize="12dp"
+            android:layout_gravity="center_horizontal" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_weight="0.06"
+            android:layout_gravity="right">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="0.0%"
+                    android:id="@+id/ageData1"
+                    android:layout_gravity="left|center_vertical"
+                    android:textColor="#cacaca"
+                    android:layout_marginLeft="50dp" />
+
+                <com.github.mikephil.charting.charts.HorizontalBarChart
+                    android:id="@+id/barChart"
+                    android:layout_width="230dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="9dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="0.0%"
+                    android:id="@+id/ageData2"
+                    android:layout_gravity="center_vertical|right"
+                    android:textColor="#cacaca"
+                    android:layout_marginRight="50dp" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:weightSum="1"
+                android:layout_gravity="bottom|center_horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="Show votes in age group"
+                    android:id="@+id/textView11"
+                    android:textColor="#CACACA"
+                    android:textSize="18dp" />
+
+                <Button
+                    android:layout_width="40dp"
+                    android:layout_height="35dp"
+                    android:text="0"
+                    android:id="@+id/fromAgeButton"
+                    android:layout_gravity="right" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="to"
+                    android:id="@+id/textView12"
+                    android:textColor="#CACACA"
+                    android:textSize="18dp" />
+
+                <Button
+                    android:layout_width="40dp"
+                    android:layout_height="35dp"
+                    android:text="0"
+                    android:id="@+id/toAgeButton" />
+            </LinearLayout>
+        </FrameLayout>
+
+    </LinearLayout>
+</LinearLayout>

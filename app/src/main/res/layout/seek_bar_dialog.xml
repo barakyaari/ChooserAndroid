@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#CACACA">
+    <SeekBar
+        android:layout_height="wrap_content"
+        android:id="@+id/intervalSeekBar"
+        android:layout_width="fill_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="40dp">
+
+    </SeekBar>
+
+    <TextView
+        android:text="Headline"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBarHeadline"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"></TextView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="#"
+        android:id="@+id/seekBarValue"
+        android:layout_below="@+id/intervalSeekBar"
+        android:layout_centerHorizontal="true" />
+
+
+</RelativeLayout>

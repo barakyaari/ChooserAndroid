@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Chooser</string>
-    <string name="action_settings">Settings</string>
+    <string name="facebook_app_id">1768515096768793</string>
+    <string name="drawer_open">drawer open</string>
+    <string name="drawer_close">drawer close</string>
+
 </resources>
