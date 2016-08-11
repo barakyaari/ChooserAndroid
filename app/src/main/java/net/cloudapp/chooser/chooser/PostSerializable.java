@@ -11,7 +11,7 @@ public class PostSerializable implements Serializable {
     public String title;
     public String description1;
     public String description2;
-    public GregorianCalendar date;
+    public GregorianCalendar date, promotionExpiration;
     public String id;
     public String image1Serializable;
     public String image2Serializable;
@@ -30,6 +30,7 @@ public class PostSerializable implements Serializable {
         this.image1Serializable = Post.bitmap2String(post.image1,80,60);
         this.image2Serializable = Post.bitmap2String(post.image2,80,60);
         this.postStatistics = post.postStatistics;
+        this.promotionExpiration = post.promotionExpiration;
     }
 
     public Post getPost() {
@@ -37,6 +38,7 @@ public class PostSerializable implements Serializable {
         Bitmap image2 = Post.string2Bitmap(image2Serializable);
         Post post = new Post(title,image1,description1,image2,description2,id,votes1,votes2);
         post.date = date;
+        post.promotionExpiration = promotionExpiration;
         post.postStatistics = postStatistics;
         return post;
     }

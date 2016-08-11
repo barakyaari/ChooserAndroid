@@ -10,15 +10,12 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-/**
- * Created by Barak on 29/11/2015.
- */
+
 public class Post {
     public String title;
     public String description1;
     public String description2;
-    public GregorianCalendar date;
-    public int promotionMinutes;
+    public GregorianCalendar date, promotionExpiration;
     public String id;
     public Bitmap image1;
     public Bitmap image2;
@@ -37,10 +34,6 @@ public class Post {
         this.votes1 = votes1;
         this.votes2 = votes2;
         postStatistics = new PostStatistics();
-    }
-
-    public boolean isPromoted () {
-        return promotionMinutes == -1;
     }
 
     public void addVote(int picNum) {
@@ -70,7 +63,15 @@ public class Post {
 
     public void setDate (String stringDate) {
         // "yyyy.mm.dd hh:mm:ss"
+        System.out.println("POST DATE:" + stringDate);
         date = string2Calendar(stringDate);
+        if (promotionExpiration == null)
+            promotionExpiration = date;
+    }
+
+    public void setPromotionExpiration (String stringDate) {
+        System.out.println("EXPIRATION:" + stringDate);
+        promotionExpiration = string2Calendar(stringDate);
     }
 
     public static GregorianCalendar string2Calendar (String stringDate) {

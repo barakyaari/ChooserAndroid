@@ -28,6 +28,7 @@ import java.util.ArrayList;
 public class Statistics extends AppCompatActivity implements View.OnClickListener {
     private SessionDetails sessionDetails;
     private Post post;
+    private Button promotePost,deletePost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +40,8 @@ public class Statistics extends AppCompatActivity implements View.OnClickListene
         updatePostHeadline();
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
-        Button promotePost = (Button) findViewById(R.id.promotePost);
-        Button deletePost = (Button) findViewById(R.id.deletePost);
+        promotePost = (Button) findViewById(R.id.promotePost);
+        deletePost = (Button) findViewById(R.id.deletePost);
         deletePost.setOnClickListener(this);
         promotePost.setOnClickListener(this);
 

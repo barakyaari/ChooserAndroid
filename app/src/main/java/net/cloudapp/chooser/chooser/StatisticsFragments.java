@@ -174,6 +174,7 @@ public class StatisticsFragments extends Fragment {
         totalVotes = (TextView) view.findViewById(R.id.totalVotes);
         postDate = (TextView) view.findViewById(R.id.postDate);
         promotionStatus = (TextView) view.findViewById(R.id.promotion);
+        promotionStatus.setVisibility(View.INVISIBLE);
     }
 
 
@@ -369,7 +370,7 @@ public class StatisticsFragments extends Fragment {
     private void updateGeneralBarData () {
         ArrayList<BarEntry> vals = new ArrayList<>();
         vals.add(new BarEntry(1f, post.votes1));
-        vals.add(new BarEntry(2.2f,post.votes2));
+        vals.add(new BarEntry(2.2f, post.votes2));
 
 
         BarDataSet set = new BarDataSet(vals, "General Info");
@@ -390,9 +391,18 @@ public class StatisticsFragments extends Fragment {
         generalBarChart.notifyDataSetChanged();
         generalBarChart.invalidate();
 
-        totalVotes.setText("Total Votes: " + (post.votes1+post.votes2));
-        postDate.setText("Posted: " + postedTime() + " ago");
+        totalVotes.setText("Total Votes: " + (post.votes1 + post.votes2));
+        postDate.setText("Posted: " + postedTime(post.date, sessionDetails.currentServerTime) + " ago");
+
+        if (post.promotionExpiration.compareTo(sessionDetails.currentServerTime) > 0)
+            promotionStatus.setText("Promotion Time Left: " + postedTime(sessionDetails.currentServerTime, post.promotionExpiration));
+        else
+            promotionStatus.setText("Promotion Expired!");
+
+        if (post.date != post.promotionExpiration)
+            promotionStatus.setVisibility(View.VISIBLE);
     }
+
 
     private void updateGenderBarData (HorizontalBarChart horizontalBarChart, int color1, int color2, float data1, float data2, TextView dataText1, TextView dataText2) {
         ArrayList<BarEntry> vals = new ArrayList<>();
@@ -505,16 +515,18 @@ public class StatisticsFragments extends Fragment {
 
 
         jObject = jArray.getJSONObject(2);
+        System.out.println("NOW DATE:" + jObject.getString("currentTime"));
         sessionDetails.currentServerTime = Post.string2Calendar(jObject.getString("currentTime"));
     }
 
 
-    private String postedTime() {
-        GregorianCalendar currentTime = sessionDetails.currentServerTime;
-        GregorianCalendar postTime = post.date;
-        int currentDay = currentTime.get(Calendar.DAY_OF_YEAR) + currentTime.get(Calendar.YEAR)*365;
-        int postDay = postTime.get(Calendar.DAY_OF_YEAR) + postTime.get(Calendar.YEAR)*365;
-        int amount = currentDay-postDay;
+    private String postedTime(GregorianCalendar earlyDate, GregorianCalendar laterDate) {
+        System.out.println("EARLYDATE: " + earlyDate);
+        System.out.println("LATERDATE: " + laterDate);
+
+        int laterTime = laterDate.get(Calendar.DAY_OF_YEAR) + laterDate.get(Calendar.YEAR)*365;
+        int earlyTime = earlyDate.get(Calendar.DAY_OF_YEAR) + earlyDate.get(Calendar.YEAR)*365;
+        int amount = laterTime-earlyTime;
         if (amount > 730)
             return amount/365 + " years";
         if (amount >= 365)
@@ -529,18 +541,17 @@ public class StatisticsFragments extends Fragment {
         if (amount >= 1)
             return "a day";
 
-        amount = currentTime.get(Calendar.HOUR)-postTime.get(Calendar.HOUR);
-        if (amount > 2)
-            return amount + " hours";
-        if (amount >= 1)
+        laterTime = laterDate.get(Calendar.MINUTE) + laterDate.get(Calendar.HOUR)*60;
+        earlyTime = earlyDate.get(Calendar.MINUTE) + earlyDate.get(Calendar.HOUR)*60;
+        amount = laterTime-earlyTime;
+        if (amount > 120)
+            return amount/60 + " hours";
+        if (amount >= 60)
             return "an hour";
-
-        amount = currentTime.get(Calendar.MINUTE)-postTime.get(Calendar.MINUTE);
-        if (amount > 2)
+        if (amount > 1)
             return amount + " minutes";
-        if (amount >= 1)
+        if (amount == 1)
             return "a minute";
         return "less than a minute";
     }
-
 }

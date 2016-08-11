@@ -310,6 +310,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Post newPost = new Post(title, Post.string2Bitmap(image1), description1, Post.string2Bitmap(image2), description2, id, votes1, votes2);
             if (isMyPosts) {
                 newPost.setDate(jObject.getString("date"));
+                String expDate = jObject.getString("promotion_expiration");
+                if (!expDate.equals("null"))
+                    newPost.setPromotionExpiration(expDate);
                 myPosts.add(newPost);
             } else
                 posts.add(newPost);
