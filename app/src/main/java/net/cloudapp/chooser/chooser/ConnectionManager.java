@@ -59,6 +59,16 @@ public class ConnectionManager {
         task.execute(data);
     }
 
+    public void addPromotion(String user_id, String post_id, int promotionDuration, String promotionTime, Runnable doAtFinish){
+        BaseConnectionData data = new BaseConnectionData("POST", "addPromotion", chooserServerAddress);
+        data.addParameter("user_id", user_id);
+        data.addParameter("post_id", post_id);
+        data.addParameter("promotionDuration", String.valueOf(promotionDuration));
+        data.addParameter("promotionTime", promotionTime);
+        ConnectionTask task = new ConnectionTask(doAtFinish, this);
+        task.execute(data);
+    }
+
     public void setId(String id){
         this.sessionDetails.userId = id;
     }

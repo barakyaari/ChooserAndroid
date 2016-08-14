@@ -7,7 +7,7 @@
     android:background="#CACACA">
 
     <TextView
-        android:text="Promote Post For:"
+        android:text="Headline"
         android:layout_height="wrap_content"
         android:id="@+id/promotionHeadline"
         android:textAppearance="?android:attr/textAppearanceLarge"

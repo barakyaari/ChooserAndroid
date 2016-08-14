@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -27,8 +28,11 @@ import java.util.ArrayList;
 
 public class Statistics extends AppCompatActivity implements View.OnClickListener {
     private SessionDetails sessionDetails;
+    ViewPager viewPager;
     private Post post;
     private Button promotePost,deletePost;
+    private PromotionDialog promotionDialog;
+    private StatisticsFragments currentFrag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,15 +42,14 @@ public class Statistics extends AppCompatActivity implements View.OnClickListene
         post = sessionDetails.post.getPost();
 
         updatePostHeadline();
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         promotePost = (Button) findViewById(R.id.promotePost);
         deletePost = (Button) findViewById(R.id.deletePost);
         deletePost.setOnClickListener(this);
         promotePost.setOnClickListener(this);
 
-
-        viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager(), Statistics.this));
+        viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager(), this));
         tabLayout.setupWithViewPager(viewPager);
     }
 
@@ -120,6 +123,31 @@ public class Statistics extends AppCompatActivity implements View.OnClickListene
                 .show();
     }
 
+    private void promotePost () {
+        promotionDialog = new PromotionDialog(sessionDetails, "Promote Post For:") {
+            @Override
+            public void onPromoteDialogFinish() {
+                sessionDetails.userTokenCount -= getPrice();
+
+                Runnable doAtFinish = new Runnable() {
+                    @Override
+                    public void run() {
+                        if (sessionDetails.responseString.equals("1")) {
+                            viewPager.getAdapter().notifyDataSetChanged();
+
+                            Toast.makeText(getApplicationContext(), "Promotion Added!", Toast.LENGTH_LONG).show();
+                        }
+
+                        Toast.makeText(getApplicationContext(), "Promotion Failed!", Toast.LENGTH_LONG).show();
+                    }
+                };
+                ConnectionManager connectionManager = new ConnectionManager(sessionDetails);
+                connectionManager.addPromotion(sessionDetails.userId, post.id,getDuration(),promotionTime.name(), doAtFinish);
+            }
+        };
+        promotionDialog.show(getFragmentManager(), "PromotionDialog");
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -128,6 +156,7 @@ public class Statistics extends AppCompatActivity implements View.OnClickListene
                 break;
 
             case R.id.promotePost:
+                promotePost();
                 break;
         }
     }
@@ -135,11 +164,9 @@ public class Statistics extends AppCompatActivity implements View.OnClickListene
     public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
         final int TAB_COUNT = 5;
         private String tabTitles[] = new String[] { "Home", "Gender", "Age", "Map", "More" };
-        private Context context;
 
         public SampleFragmentPagerAdapter(FragmentManager fm, Context context) {
             super(fm);
-            this.context = context;
         }
 
         @Override
@@ -149,12 +176,21 @@ public class Statistics extends AppCompatActivity implements View.OnClickListene
 
         @Override
         public android.support.v4.app.Fragment getItem(int position) {
-            return StatisticsFragments.newInstance(++position, sessionDetails);
+            currentFrag = StatisticsFragments.newInstance(++position, sessionDetails);
+            return currentFrag;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             return tabTitles[position];
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            StatisticsFragments fragment = (StatisticsFragments) object;
+            if (fragment != null)
+                fragment.refreshStatisticsTabs();
+            return super.getItemPosition(object);
         }
     }
 }

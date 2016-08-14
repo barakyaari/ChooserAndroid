@@ -63,14 +63,12 @@ public class Post {
 
     public void setDate (String stringDate) {
         // "yyyy.mm.dd hh:mm:ss"
-        System.out.println("POST DATE:" + stringDate);
         date = string2Calendar(stringDate);
         if (promotionExpiration == null)
             promotionExpiration = date;
     }
 
     public void setPromotionExpiration (String stringDate) {
-        System.out.println("EXPIRATION:" + stringDate);
         promotionExpiration = string2Calendar(stringDate);
     }
 
