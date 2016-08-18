@@ -2,13 +2,12 @@ package net.cloudapp.chooser.chooser;
 
 import android.os.AsyncTask;
 import android.util.Log;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.StringWriter;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 
 public class ConnectionTask extends AsyncTask<BaseConnectionData, Void, String> {
@@ -64,10 +63,14 @@ public class ConnectionTask extends AsyncTask<BaseConnectionData, Void, String> 
             responseText = responseText.substring(0, responseText.length() - 1); //Cut the last '\n'.
             Log.i("ChooserApp", "Got response from server: " + responseText);
             urlConnection.disconnect();
+        } catch (SocketTimeoutException e) {
+            Log.i("ChooserApp", "SERVER IS DOWN");
+            return "-2";
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return responseText;
+            return responseText;
+
     }
 
     @Override

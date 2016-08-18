@@ -1,6 +1,9 @@
 package net.cloudapp.chooser.chooser;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -14,6 +17,8 @@ import com.facebook.GraphResponse;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.facebook.login.LoginManager;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,10 +30,12 @@ public class Login extends Activity {
     String uID;
     LoginButton fbLoginButton;
     CallbackManager callbackManager;
+    ProgressDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        createLoadingDialog();
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
         setContentView(R.layout.login);
@@ -57,10 +64,18 @@ public class Login extends Activity {
             ConnectionManager connectionManager = new ConnectionManager();
             connectionManager.setId(uID);
             AtFinishRunnable runnable = new AtFinishRunnable(connectionManager.getSessionDetails());
+            loadingDialog.show();
             connectionManager.login(uID, runnable);
         }
     }
 
+
+    public void createLoadingDialog() {
+        loadingDialog = new ProgressDialog(this);
+        loadingDialog.setMessage("Connecting to Server...\nPlease Wait");
+        loadingDialog.setCancelable(false);
+        loadingDialog.setInverseBackgroundForced(false);
+    }
 
     public class AtFinishRunnable implements Runnable {
         private SessionDetails sessionDetails;
@@ -69,12 +84,44 @@ public class Login extends Activity {
         }
 
         @Override
-        public void run(){
-            sessionDetails.userTokenCount = Integer.valueOf(sessionDetails.responseString);
-            Intent i = new Intent("android.intent.action.MainActivity");
-            i.putExtra("SessionDetails", sessionDetails);
-            startActivity(i);
+        public void run() {
+            loadingDialog.hide();
+            if (sessionDetails.responseString.equals("-2")) {
+                serverIsDownDialog();
+            } else {
+                sessionDetails.userTokenCount = Integer.valueOf(sessionDetails.responseString);
+                Intent i = new Intent("android.intent.action.MainActivity");
+                i.putExtra("SessionDetails", sessionDetails);
+                startActivity(i);
+            }
         }
+    }
+
+    private void serverIsDownDialog () {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Server Is Down")
+                .setMessage("The server is not responding")
+                .setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ConnectionManager connectionManager = new ConnectionManager();
+                        connectionManager.setId(uID);
+                        AtFinishRunnable runnable = new AtFinishRunnable(connectionManager.getSessionDetails());
+                        loadingDialog.show();
+                        connectionManager.login(uID, runnable);
+                    }
+
+                })
+                .setNegativeButton("Quit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        LoginManager.getInstance().logOut();
+                        finish();
+                    }
+
+                })
+                .show();
     }
 
     @Override
@@ -154,6 +201,7 @@ public class Login extends Activity {
                 ConnectionManager connectionManager = new ConnectionManager();
                 connectionManager.setId(uID);
                 AtFinishRunnable runnable = new AtFinishRunnable(connectionManager.getSessionDetails());
+                loadingDialog.show();
                 connectionManager.login(uID, runnable);
             }
 
