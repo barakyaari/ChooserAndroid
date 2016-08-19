@@ -1,7 +1,9 @@
 package net.cloudapp.chooser.chooser;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -531,19 +533,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private class DrawerItemClickListener implements ListView.OnItemClickListener, ListView.OnItemLongClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
-            /*
-            // Create a new fragment and specify the post to show based on position
-            Fragment fragment = new PostClass();
-            Bundle args = new Bundle();
-            args.putInt(PostClass.ARG_POST_NUMBER, position);
-            fragment.setArguments(args);
-            // Insert the fragment by replacing any existing fragment
-            FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
 
-            // Highlight the selected item, update the title, and close the drawer
-
-            */
             Toast.makeText(getApplicationContext(), "Post " + position + " Selected!", Toast.LENGTH_LONG).show();
             sessionDetails.post = new PostSerializable(myPosts.get(position));
             Intent i = new Intent("net.cloudapp.chooser.chooser.Statistics");
@@ -556,10 +546,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         public boolean onItemLongClick(AdapterView parent, View view, int position, long id) {
-            //Add confirmation screen for deleting a post.
-            Toast.makeText(getApplicationContext(), "TODO: Post " + position + " Will be deleted!", Toast.LENGTH_LONG).show();
+            deletePost(position);
+            drawerLayout.closeDrawer(drawerList);
             return true;
         }
+    }
+
+    private void deletePost (final int position) {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Deleting Post")
+                .setMessage("Are you sure you want to delete this post?\nNote: All your promotion time will be lost!")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Runnable doAtFinish = new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), "Post Deleted!", Toast.LENGTH_LONG).show();
+                                refreshMyPosts();
+                            }
+                        };
+                        ConnectionManager connectionManager = new ConnectionManager(sessionDetails);
+                        connectionManager.deletePost(posts.get(position).id, doAtFinish);
+                    }
+
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 
 
