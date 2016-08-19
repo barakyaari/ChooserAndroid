@@ -2,13 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="1">
+    android:weightSum="1"
+    android:baselineAligned="true">
 
     <ImageView
         android:layout_width="80dp"
         android:layout_height="60dp"
         android:id="@+id/imageView1"
-        android:background="#dddddd"
         android:layout_margin="3dp" />
 
     <LinearLayout
@@ -36,7 +36,7 @@
 
             <com.github.mikephil.charting.charts.HorizontalBarChart
                 android:id="@+id/stat_bar"
-                android:layout_width="204dp"
+                android:layout_width="190dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="7dp"
@@ -86,6 +86,5 @@
         android:layout_height="60dp"
         android:id="@+id/imageView2"
         android:layout_gravity="top|right"
-        android:background="#dddddd"
         android:layout_margin= "3dp" />
 </LinearLayout>

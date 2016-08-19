@@ -2,6 +2,9 @@ package net.cloudapp.chooser.chooser;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.Base64;
 import android.util.Log;
 
@@ -106,7 +109,41 @@ public class Post {
 
     public static Bitmap string2Bitmap(String str) {
         byte[] decodedString = Base64.decode(str, Base64.DEFAULT);
+
         return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+    }
+
+    public static Bitmap addStroke(Bitmap bitmap) {
+        final float PHOTO_BORDER_WIDTH = 12.0f;
+
+        final Paint sPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
+        final Paint sStrokePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        final Paint sNumPaint = new Paint(Paint.LINEAR_TEXT_FLAG);
+
+        sNumPaint.setColor(Color.BLACK);
+        sNumPaint.setTextAlign(Paint.Align.RIGHT);
+
+        sStrokePaint.setStrokeWidth(PHOTO_BORDER_WIDTH);
+        sStrokePaint.setStyle(Paint.Style.STROKE);
+        sStrokePaint.setColor(Color.BLACK);
+
+        final int bitmapWidth = bitmap.getWidth();
+        final int bitmapHeight = bitmap.getHeight();
+
+        final int strokedWidth = (int) (bitmapWidth + 2 * PHOTO_BORDER_WIDTH);
+        final int strokedHeight = (int) (bitmapHeight + 2 * PHOTO_BORDER_WIDTH);
+
+        final float x = (strokedWidth - bitmapWidth) / 2.0f;
+        final float y = (strokedHeight - bitmapHeight) / 2.0f;
+
+        final Bitmap strokedBitmap = Bitmap.createBitmap(strokedWidth, strokedHeight, Bitmap.Config.ARGB_8888);
+
+        final Canvas canvas = new Canvas(strokedBitmap);
+
+        canvas.drawBitmap(bitmap, x, y, sPaint);
+        canvas.drawRect(x, y, x + bitmapWidth, y + bitmapHeight, sStrokePaint);
+
+        return strokedBitmap;
     }
 
 

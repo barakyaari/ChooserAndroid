@@ -28,6 +28,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
@@ -81,11 +82,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tokens = (TextView) findViewById(R.id.tokens);
         imageSwitcher1 = (ImageSwitcher) findViewById(R.id.imageSwitcher1);
         imageSwitcher2 = (ImageSwitcher) findViewById(R.id.imageSwitcher2);
-        imageSwitcher1.setFactory(new ImageSwitchFactory());
-        imageSwitcher2.setFactory(new ImageSwitchFactory());
         textSwitcher1 = (TextSwitcher) findViewById(R.id.percentage1);
         textSwitcher2 = (TextSwitcher) findViewById(R.id.percentage2);
 
+        imageSwitcher1.setFactory(new ImageSwitchFactory());
+        imageSwitcher2.setFactory(new ImageSwitchFactory());
         textSwitcher1.setFactory(new TextSwitchFactory());
         textSwitcher2.setFactory(new TextSwitchFactory());
 
@@ -93,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //init myPosts
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerList = (ListView) findViewById(R.id.left_drawer);
+        drawerList.setBackgroundColor(Color.parseColor("#FF494949"));
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close){
 
             public void onDrawerClosed(View view) {
@@ -154,11 +156,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private class ImageSwitchFactory implements ViewFactory {
         @Override
         public View makeView() {
+            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT);
             ImageView image = new ImageView(getApplicationContext());
-            ImageSwitcher.LayoutParams lp = new ImageSwitcher.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT);
-            image.setScaleType(ImageView.ScaleType.FIT_CENTER); //this doesn't work for some reason.
             image.setLayoutParams(lp);
-            //image.setBackgroundResource(R.drawable.imageoutline);
             return image;
         }
     }
@@ -307,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             Log.i("chooserHTTP", title);
 
-            Post newPost = new Post(title, Post.string2Bitmap(image1), description1, Post.string2Bitmap(image2), description2, id, votes1, votes2);
+            Post newPost = new Post(title, Post.addStroke(Post.string2Bitmap(image1)), description1, Post.addStroke(Post.string2Bitmap(image2)), description2, id, votes1, votes2);
             if (isMyPosts) {
                 newPost.setDate(jObject.getString("date"));
                 String expDate = jObject.getString("promotion_expiration");

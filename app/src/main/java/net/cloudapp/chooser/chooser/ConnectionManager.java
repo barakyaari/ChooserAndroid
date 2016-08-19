@@ -4,7 +4,7 @@ package net.cloudapp.chooser.chooser;
 public class ConnectionManager {
     private SessionDetails sessionDetails;
     //private final String chooserServerAddress = "http://chooser.cloudapp.net:8080";
-    private final String chooserServerAddress = "http://10.0.0.7:8080";
+    private final String chooserServerAddress = "http://10.0.0.1:8080";
 
     public ConnectionManager(){
         this.sessionDetails = new SessionDetails();
