@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -37,6 +38,8 @@ public class Statistics extends AppCompatActivity implements View.OnClickListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.post_statistics);
         sessionDetails = (SessionDetails) getIntent().getSerializableExtra("SessionDetails");
         post = sessionDetails.post.getPost();
@@ -66,6 +69,17 @@ public class Statistics extends AppCompatActivity implements View.OnClickListene
         image1.setImageBitmap(post.image1);
         image2.setImageBitmap(post.image2);
         updatePostPercentage();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void updatePostPercentage() {
