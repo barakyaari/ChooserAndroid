@@ -1,6 +1,8 @@
 package net.cloudapp.chooser.chooser;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -20,7 +22,9 @@ public class AddPost extends AppCompatActivity implements View.OnClickListener {
     private boolean promoted;
     private int promotionDuration, promotionPrice;
     private PromotionDialog promotionDialog;
-    Button buttonAddPost, buttonCancel, buttonPromote;
+    private NotificationDialog notificationDialog;
+    public NotificationDialog.NotificationMethod notificationMethod;
+    Button buttonAddPost, buttonCancel, buttonPromote, buttonNotify;
     EditText editTextTitle, editTextDescription1, editTextDescription2;
     ImageView image1, image2;
     TextView tokens, promotionText;
@@ -44,12 +48,14 @@ public class AddPost extends AppCompatActivity implements View.OnClickListener {
         buttonAddPost = (Button) findViewById(R.id.postButton);
         buttonCancel = (Button) findViewById(R.id.cancelButton);
         buttonPromote = (Button) findViewById(R.id.promoteButton);
+        buttonNotify = (Button) findViewById(R.id.notificationButton);
 
         tokens.setText(String.valueOf(sessionDetails.userTokenCount));
         promotionText.setVisibility(View.INVISIBLE);
         buttonAddPost.setOnClickListener(this);
         buttonCancel.setOnClickListener(this);
         buttonPromote.setOnClickListener(this);
+        buttonNotify.setOnClickListener(this);
         image1.setOnClickListener(this);
         image2.setOnClickListener(this);
 
@@ -109,22 +115,75 @@ public class AddPost extends AppCompatActivity implements View.OnClickListener {
             connectionManager.AddPostWithBlob(title, image1, description1, image2, description2, doAtFinish, 0, "");
     }
 
-    @Override
+    private void promote() {
+        if (promoted) {
+            promoted = false;
+            buttonPromote.setText("Promote");
+            promotionText.setVisibility(View.INVISIBLE);
+            sessionDetails.userTokenCount += promotionPrice;
+            tokens.setText(String.valueOf(sessionDetails.userTokenCount));
+            promotionPrice = 0;
+        } else {
+            promotionDialog = new PromotionDialog(sessionDetails, "Promote Post For:") {
+                @Override
+                public void onPromoteDialogFinish() {
+                    promoted = true;
+                    promotionDuration = getDuration();
+                    promotionPrice = getPrice();
+                    sessionDetails.userTokenCount -= promotionPrice;
+                    tokens.setText(String.valueOf(sessionDetails.userTokenCount));
+                    String pText = "Promotion enabled for " + promotionDuration + " " + promotionTime.name().toLowerCase();
+                    if (promotionDuration > 1)
+                        pText += "s";
+                    promotionText.setText(pText);
+                    promotionText.setVisibility(View.VISIBLE);
+                    buttonPromote.setText("Cancel Promotion");
+                }
+            };
+            promotionDialog.show(getFragmentManager(), "PromotionDialog");
+        }
+    }
+
+    private void notification() {
+        notificationDialog = new NotificationDialog("Post Notification", 0) {
+            @Override
+            public void onNotificationDialogFinish() {
+                notificationMethod = notificationDialog.notificationMethod;
+                // get timestamp or vote threshold
+            }
+        };
+        notificationDialog.show(getFragmentManager(), "PromotionDialog");
+
+        SharedPreferences sp = getSharedPreferences("db", Context.MODE_PRIVATE);
+
+
+
+    }
+
+
+
+        @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.postButton: {
+            case R.id.postButton:
                 Bitmap bitmap1 = ((BitmapDrawable) image1.getDrawable()).getBitmap();
                 image1BitMap = bitmap1;
                 Bitmap bitmap2 = ((BitmapDrawable) image2.getDrawable()).getBitmap();
                 image2BitMap = bitmap2;
                 uploadPost();
-            }
-            break;
+                break;
 
-            case R.id.cancelButton: {
+            case R.id.cancelButton:
                 finish();
-            }
-            break;
+                break;
+
+            case R.id.notificationButton:
+                notification();
+                break;
+
+            case R.id.promoteButton:
+                promote();
+                break;
 
             case R.id.addPostImageView1:
                 selectedImage = 1;
@@ -137,37 +196,8 @@ public class AddPost extends AppCompatActivity implements View.OnClickListener {
                 Intent chooseImageIntent2 = ImagePicker.getPickImageIntent(this);
                 startActivityForResult(chooseImageIntent2, SELECT_PHOTO);
                 break;
-            case R.id.promoteButton:
-                if (promoted) {
-                    promoted = false;
-                    buttonPromote.setText("Promote");
-                    promotionText.setVisibility(View.INVISIBLE);
-                    sessionDetails.userTokenCount += promotionPrice;
-                    tokens.setText(String.valueOf(sessionDetails.userTokenCount));
-                    promotionPrice = 0;
-                } else {
-                    promotionDialog = new PromotionDialog(sessionDetails, "Promote Post For:") {
-                        @Override
-                        public void onPromoteDialogFinish() {
-                            promoted = true;
-                            promotionDuration = getDuration();
-                            promotionPrice = getPrice();
-                            sessionDetails.userTokenCount -= promotionPrice;
-                            tokens.setText(String.valueOf(sessionDetails.userTokenCount));
-                            String pText = "Promotion enabled for " + promotionDuration + " " + promotionTime.name().toLowerCase();
-                            if (promotionDuration > 1)
-                                pText += "s";
-                            promotionText.setText(pText);
-                            promotionText.setVisibility(View.VISIBLE);
-                            buttonPromote.setText("Cancel Promotion");
-                        }
-                    };
-                    promotionDialog.show(getFragmentManager(), "PromotionDialog");
-                    break;
-                }
         }
     }
-
 
 
 

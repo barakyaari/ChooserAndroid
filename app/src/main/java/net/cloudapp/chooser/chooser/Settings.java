@@ -28,18 +28,17 @@ public  class Settings extends PreferenceActivity implements SharedPreferences.O
         }
     }
 
+    @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Preference connectionPref;
         switch (key) {
             case "prefUnitSwitch":
                 connectionPref = findPreference(key);
-                // Set summary to be the user-description for the selected value
                 connectionPref.setSummary(sharedPreferences.getString(key, ""));
                 break;
 
             case "prefSkipResSwitch":
                 connectionPref = findPreference(key);
-                // Set summary to be the user-description for the selected value
                 connectionPref.setSummary(sharedPreferences.getString(key, ""));
                 break;
         }

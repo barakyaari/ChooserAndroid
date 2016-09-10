@@ -97,14 +97,6 @@ public class StatisticsFragments extends Fragment {
                 view = inflater.inflate(R.layout.frag_stat_age, container, false);
                 createAgeFragment(view);
                 break;
-            case 4:
-                view = inflater.inflate(R.layout.frag_stat_map, container, false);
-                createMapFragment(view);
-                break;
-            case 5:
-                view = inflater.inflate(R.layout.frag_stat_advanced, container, false);
-                createAdvancedFragment(view);
-                break;
         }
         refreshStatisticsTabs();
         return view;
@@ -143,12 +135,6 @@ public class StatisticsFragments extends Fragment {
             case 3:
                 updateAgePieData();
                 updateAgeBarData();
-                break;
-            case 4:
-
-                break;
-            case 5:
-
                 break;
         }
 
@@ -241,17 +227,6 @@ public class StatisticsFragments extends Fragment {
                 seekBarDialog.show(getActivity().getSupportFragmentManager(), "Seek Bar Dialog");
             }
         });
-    }
-
-
-
-
-    private void createMapFragment(View view){
-
-    }
-
-    private void createAdvancedFragment(View view) {
-
     }
 
     public abstract class SeekBarDialog extends DialogFragment {
@@ -477,6 +452,8 @@ public class StatisticsFragments extends Fragment {
 
         for (int i = 0; i < jAgeArray.length(); i++) {
             jAgeObject = jAgeArray.getJSONObject(i);
+            if (jAgeObject.getString("age").equals("null"))
+                continue;
             vote = Integer.parseInt(jAgeObject.getString("vote"));
             age = Integer.parseInt(jAgeObject.getString("age"));
             sumVotes = Integer.parseInt(jAgeObject.getString("SumVotes"));

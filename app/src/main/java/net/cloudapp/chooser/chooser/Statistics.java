@@ -176,8 +176,8 @@ public class Statistics extends AppCompatActivity implements View.OnClickListene
     }
 
     public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
-        final int TAB_COUNT = 5;
-        private String tabTitles[] = new String[] { "Home", "Gender", "Age", "Map", "More" };
+        final int TAB_COUNT = 3;
+        private String tabTitles[] = new String[] { "Home", "Gender", "Age" };
 
         public SampleFragmentPagerAdapter(FragmentManager fm, Context context) {
             super(fm);

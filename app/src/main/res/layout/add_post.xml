@@ -132,39 +132,48 @@
                 android:id="@+id/promotionText"
                 android:layout_gravity="center"
                 android:textColor="#78c26f"
-                android:textSize="17dp"
+                android:textSize="16dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="3dp" />
 
         </LinearLayout>
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
 
             <Button
-                android:layout_width="98dp"
+                android:layout_width="65dp"
                 android:layout_height="wrap_content"
-                android:text="Cancel"
-                android:id="@+id/cancelButton"
-                android:layout_gravity="right|center_vertical" />
-
-            <Button
-                android:layout_width="96dp"
-                android:layout_height="wrap_content"
-                android:text="Post!"
+                android:text="Post"
                 android:id="@+id/postButton"
                 android:paddingLeft="20dp"
-                android:layout_weight="0.18"
-                android:layout_gravity="left|center_vertical" />
+                android:singleLine="true"
+                android:textSize="12dp" />
+
+            <Button
+                android:layout_width="73dp"
+                android:layout_height="wrap_content"
+                android:text="notify"
+                android:id="@+id/notificationButton"
+                android:textSize="12dp" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Promote"
                 android:id="@+id/promoteButton"
-                android:layout_gravity="center_horizontal" />
-        </FrameLayout>
+                android:textSize="12dp" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cancel"
+                android:id="@+id/cancelButton"
+                android:textSize="12dp" />
+        </LinearLayout>
 
     </LinearLayout>
 

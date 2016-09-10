@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#CACACA"
+    android:weightSum="1">
+
+    <TextView
+        android:text="Headline"
+        android:layout_height="wrap_content"
+        android:id="@+id/dialogHeadline"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="bottom"
+        android:layout_margin="10dp"></TextView>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="59dp"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:text="Choose notification method:"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView15"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:textSize="17dp"
+            android:layout_gravity="left|center_vertical" />
+
+        <Spinner
+            android:layout_width="83dp"
+            android:layout_height="31dp"
+            android:id="@+id/methodSpinner" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="51dp"
+        android:layout_weight="0.03">
+
+        <SeekBar
+            android:layout_height="wrap_content"
+            android:id="@+id/intervalSeekBar"
+            android:layout_width="fill_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="#"
+            android:id="@+id/seekBarValue"
+            android:layout_gravity="bottom|center"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="select time"
+            android:id="@+id/timeButton"
+            android:layout_gravity="top|center" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="236dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="10dp">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Notify"
+            android:id="@+id/notifyButton"
+            android:layout_gravity="left|center_vertical" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:id="@+id/cancelButton"
+            android:layout_gravity="right|center_vertical" />
+    </FrameLayout>
+
+
+</LinearLayout>
