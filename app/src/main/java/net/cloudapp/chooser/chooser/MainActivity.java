@@ -47,6 +47,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,7 +77,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         sessionDetails = (SessionDetails) getIntent().getSerializableExtra("SessionDetails");
         sessionDetails.updateSharedPrefs(sharedPrefs);
-
         //Controls initialization:
         titleTextView = (TextView) findViewById(R.id.titleTextView);
         description1TextView = (TextView) findViewById(R.id.description1TextView);
@@ -564,6 +564,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         Runnable doAtFinish = new Runnable() {
                             @Override
                             public void run() {
+                                NotificationFileSystem.deleteNotification(Integer.parseInt(posts.get(position).id), getBaseContext());
                                 Toast.makeText(getApplicationContext(), "Post Deleted!", Toast.LENGTH_LONG).show();
                                 refreshMyPosts();
                             }
@@ -669,18 +670,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         client.disconnect();
     }
 
-
-    private void deleteMyPost(){
-        Runnable doAtFinish = new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getApplicationContext(), "Post Deleted!", Toast.LENGTH_LONG).show();
-                refresh();
-            }
-        };
-        ConnectionManager connectionManager = new ConnectionManager(sessionDetails);
-        connectionManager.deletePost(posts.get(currentPost).id, doAtFinish);
-    }
 
 
 }

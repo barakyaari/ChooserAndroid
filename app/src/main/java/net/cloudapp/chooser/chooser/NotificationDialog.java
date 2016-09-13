@@ -16,11 +16,14 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.text.format.DateFormat;
 import android.widget.TimePicker;
+import android.widget.Toast;
+
 /**
  * Created by Ben on 28/08/2016.
  */
@@ -28,12 +31,12 @@ import android.widget.TimePicker;
 public abstract class NotificationDialog extends DialogFragment implements View.OnClickListener {
     public enum NotificationMethod {VOTES, TIME}
     public NotificationMethod notificationMethod;
+    private GregorianCalendar time;
     private TextView seekBarValue;
     private Spinner methodSpinner;
     private SeekBar seekBar;
     private int maxVal, voteThreshold;
     private int minVal;
-    private boolean isValidTime;
     private String stringHeadline;
     private Button confirmButton, cancelButton, timeButton;
 
@@ -54,6 +57,7 @@ public abstract class NotificationDialog extends DialogFragment implements View.
         seekBar = (SeekBar) view.findViewById(R.id.intervalSeekBar);
         seekBarValue = (TextView) view.findViewById(R.id.seekBarValue);
         methodSpinner = (Spinner) view.findViewById(R.id.methodSpinner);
+        time = new GregorianCalendar();
 
         methodSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -74,9 +78,7 @@ public abstract class NotificationDialog extends DialogFragment implements View.
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
         notificationMethod = NotificationMethod.TIME;
         maxVal = minVal + 9999;
@@ -118,48 +120,28 @@ public abstract class NotificationDialog extends DialogFragment implements View.
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.notifyButton:
+                onNotificationDialogFinish();
+
             case R.id.cancelButton:
                 dismiss();
                 break;
-            case R.id.notifyButton:
-                onNotificationDialogFinish();
-                break;
             case R.id.timeButton:
-                DialogFragment newFragment = new TimePickerFragment();
-                newFragment.show(getFragmentManager(), "timePicker");
+                DialogFragment newFragment = new DatePickerFragment();
+                newFragment.show(getFragmentManager(), "datePicker");
                 break;
         }
     }
 
-    public int getDuration() {
-        return voteThreshold+minVal;
+    public long getValue() {
+        if (notificationMethod == NotificationMethod.TIME)
+            return time.getTimeInMillis();
+        else
+            return voteThreshold+minVal;
     }
 
     public abstract void onNotificationDialogFinish();
 
-
-
-    public class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the current time as the default values for the picker
-            final Calendar c = Calendar.getInstance();
-            int hour = c.get(Calendar.HOUR_OF_DAY);
-            int minute = c.get(Calendar.MINUTE);
-
-            // Create a new instance of TimePickerDialog and return it
-            return new TimePickerDialog(getActivity(), this, hour, minute, DateFormat.is24HourFormat(getActivity()));
-        }
-
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            // Do something with the time chosen by the user
-            //"Hour: "+view.getCurrentHour()+" Minute: "+view.getCurrentMinute();
-            DialogFragment newFragment = new DatePickerFragment();
-            newFragment.show(getFragmentManager(), "datePicker");
-
-        }
-    }
 
     public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
         @Override
@@ -168,15 +150,39 @@ public abstract class NotificationDialog extends DialogFragment implements View.
             int day = c.get(Calendar.DAY_OF_MONTH);
             int month = c.get(Calendar.MONTH);
             int year = c.get(Calendar.YEAR);
-
-            // Create a new instance of TimePickerDialog and return it
-            return new DatePickerDialog(getActivity(), this, year, month,day);
+            DatePickerDialog dialog = new DatePickerDialog(getActivity(), this, year, month,day);
+            dialog.getDatePicker().setMinDate(c.getTimeInMillis());
+            return dialog;
         }
 
 
         @Override
         public void onDateSet(DatePicker arg0, int year, int month, int day) {
-            // TODO Auto-generated method stub
+            time.set(year,month,day);
+            DialogFragment newFragment = new TimePickerFragment();
+            newFragment.show(getFragmentManager(), "timePicker");
         }
     }
+
+    public class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final Calendar c = Calendar.getInstance();
+            int hour = c.get(Calendar.HOUR_OF_DAY);
+            int minute = c.get(Calendar.MINUTE);
+            return new TimePickerDialog(getActivity(), this, hour, minute, DateFormat.is24HourFormat(getActivity()));
+        }
+
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            time.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            time.set(Calendar.MINUTE, minute);
+            time.set(Calendar.SECOND, 0);
+            if (time.getTimeInMillis() <= Calendar.getInstance().getTimeInMillis()) {
+                Toast.makeText(view.getContext(), "Please set future date", Toast.LENGTH_LONG).show();
+                DialogFragment newFragment = new TimePickerFragment();
+                newFragment.show(getFragmentManager(), "timePicker");
+            }
+        }
+    }
+
 }

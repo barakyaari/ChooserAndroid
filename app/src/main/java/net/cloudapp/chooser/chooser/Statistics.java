@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -31,8 +30,9 @@ public class Statistics extends AppCompatActivity implements View.OnClickListene
     private SessionDetails sessionDetails;
     ViewPager viewPager;
     private Post post;
-    private Button promotePost,deletePost;
+    private Button promotePost,deletePost, notifyPost;
     private PromotionDialog promotionDialog;
+    private NotificationDialog notificationDialog;
     private StatisticsFragments currentFrag;
 
     @Override
@@ -49,9 +49,10 @@ public class Statistics extends AppCompatActivity implements View.OnClickListene
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         promotePost = (Button) findViewById(R.id.promotePost);
         deletePost = (Button) findViewById(R.id.deletePost);
+        notifyPost = (Button) findViewById(R.id.notifyPost);
         deletePost.setOnClickListener(this);
         promotePost.setOnClickListener(this);
-
+        notifyPost.setOnClickListener(this);
         viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager(), this));
         tabLayout.setupWithViewPager(viewPager);
     }
@@ -124,6 +125,7 @@ public class Statistics extends AppCompatActivity implements View.OnClickListene
                         Runnable doAtFinish = new Runnable() {
                             @Override
                             public void run() {
+                                NotificationFileSystem.deleteNotification(Integer.parseInt(post.id), getBaseContext());
                                 Toast.makeText(getApplicationContext(), "Post Deleted!", Toast.LENGTH_LONG).show();
                                 finish();
                             }
@@ -162,6 +164,22 @@ public class Statistics extends AppCompatActivity implements View.OnClickListene
         promotionDialog.show(getFragmentManager(), "PromotionDialog");
     }
 
+    private void notifyPost() {
+        notificationDialog = new NotificationDialog("Post Notification", post.votes1+post.votes2) {
+            @Override
+            public void onNotificationDialogFinish() {
+                if (notificationMethod == NotificationDialog.NotificationMethod.VOTES || (notificationMethod == NotificationDialog.NotificationMethod.TIME && (getValue() - System.currentTimeMillis()) > 100)) {
+                    NotificationFileSystem.addNotification(Integer.parseInt(post.id), getValue(), notificationMethod, sessionDetails, getBaseContext());
+                    Toast.makeText(getApplicationContext(), "Notification added!", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Notification failed!", Toast.LENGTH_LONG).show();
+                }
+
+            }
+        };
+        notificationDialog.show(getFragmentManager(), "PromotionDialog");
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -171,6 +189,10 @@ public class Statistics extends AppCompatActivity implements View.OnClickListene
 
             case R.id.promotePost:
                 promotePost();
+                break;
+
+            case R.id.notifyPost:
+                notifyPost();
                 break;
         }
     }

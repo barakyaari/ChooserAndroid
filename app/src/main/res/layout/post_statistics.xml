@@ -103,14 +103,21 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Promote Post"
+            android:text="notify"
+            android:id="@+id/notifyPost"
+            android:layout_gravity="right" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Promote"
             android:id="@+id/promotePost"
             android:layout_gravity="right" />
 
         <Button
-            android:layout_width="129dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Delete post"
+            android:text="Delete"
             android:id="@+id/deletePost"
             android:layout_marginLeft="10dp" />
     </LinearLayout>

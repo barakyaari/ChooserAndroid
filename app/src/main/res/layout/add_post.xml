@@ -142,37 +142,37 @@
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center">
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp">
 
             <Button
-                android:layout_width="65dp"
-                android:layout_height="wrap_content"
+                android:layout_width="90dp"
+                android:layout_height="fill_parent"
                 android:text="Post"
                 android:id="@+id/postButton"
-                android:paddingLeft="20dp"
                 android:singleLine="true"
-                android:textSize="12dp" />
+                android:textSize="15dp" />
 
             <Button
-                android:layout_width="73dp"
-                android:layout_height="wrap_content"
+                android:layout_width="96dp"
+                android:layout_height="fill_parent"
                 android:text="notify"
                 android:id="@+id/notificationButton"
-                android:textSize="12dp" />
+                android:textSize="15dp" />
 
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="95dp"
+                android:layout_height="fill_parent"
                 android:text="Promote"
                 android:id="@+id/promoteButton"
-                android:textSize="12dp" />
+                android:textSize="15dp" />
 
             <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="90dp"
+                android:layout_height="fill_parent"
                 android:text="Cancel"
                 android:id="@+id/cancelButton"
-                android:textSize="12dp" />
+                android:textSize="15dp" />
         </LinearLayout>
 
     </LinearLayout>

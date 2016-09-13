@@ -52,6 +52,22 @@ public class ConnectionManager {
         task.execute(data);
     }
 
+    public void getMyPost(String post_id, Runnable doAtFinish){
+        BaseConnectionData data = new BaseConnectionData("GET", "getMyPost", chooserServerAddress);
+        data.addParameter("uID", String.valueOf(sessionDetails.userId));
+        data.addParameter("post_id", post_id);
+        ConnectionTask task = new ConnectionTask(doAtFinish, this);
+        task.execute(data);
+    }
+
+    public void getTotalVotes(String post_id, Runnable doAtFinish){
+        BaseConnectionData data = new BaseConnectionData("GET", "getTotalVotes", chooserServerAddress);
+        data.addParameter("uID", String.valueOf(sessionDetails.userId));
+        data.addParameter("post_id", post_id);
+        ConnectionTask task = new ConnectionTask(doAtFinish, this);
+        task.execute(data);
+    }
+
     public void getStatistics(String post_id, Runnable doAtFinish){
         BaseConnectionData data = new BaseConnectionData("GET", "getStatistics", chooserServerAddress);
         data.addParameter("post_id", post_id);

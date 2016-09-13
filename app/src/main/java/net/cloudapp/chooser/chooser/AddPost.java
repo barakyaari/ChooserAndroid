@@ -14,16 +14,28 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
+
 
 public class AddPost extends AppCompatActivity implements View.OnClickListener {
     private static final int SELECT_PHOTO = 100;
     private int selectedImage = 0;
     private SessionDetails sessionDetails;
-    private boolean promoted;
+    private boolean promoted, notified;
     private int promotionDuration, promotionPrice;
     private PromotionDialog promotionDialog;
     private NotificationDialog notificationDialog;
-    public NotificationDialog.NotificationMethod notificationMethod;
+    private long nValue;
+    private NotificationDialog.NotificationMethod nMethod;
     Button buttonAddPost, buttonCancel, buttonPromote, buttonNotify;
     EditText editTextTitle, editTextDescription1, editTextDescription2;
     ImageView image1, image2;
@@ -106,6 +118,10 @@ public class AddPost extends AppCompatActivity implements View.OnClickListener {
         Runnable doAtFinish = new Runnable() {
             @Override
             public void run() {
+                if (notified) {
+                    if (nMethod == NotificationDialog.NotificationMethod.VOTES ||nMethod == NotificationDialog.NotificationMethod.TIME && (nValue - System.currentTimeMillis()) > 100)
+                        NotificationFileSystem.addNotification(Integer.parseInt(sessionDetails.responseString), nValue, nMethod, sessionDetails, getBaseContext());
+                }
                 finish();
             }
         };
@@ -115,10 +131,13 @@ public class AddPost extends AppCompatActivity implements View.OnClickListener {
             connectionManager.AddPostWithBlob(title, image1, description1, image2, description2, doAtFinish, 0, "");
     }
 
+
+
     private void promote() {
         if (promoted) {
             promoted = false;
             buttonPromote.setText("Promote");
+            buttonPromote.setTextSize(15);
             promotionText.setVisibility(View.INVISIBLE);
             sessionDetails.userTokenCount += promotionPrice;
             tokens.setText(String.valueOf(sessionDetails.userTokenCount));
@@ -138,6 +157,8 @@ public class AddPost extends AppCompatActivity implements View.OnClickListener {
                     promotionText.setText(pText);
                     promotionText.setVisibility(View.VISIBLE);
                     buttonPromote.setText("Cancel Promotion");
+                    buttonPromote.setTextSize(10);
+
                 }
             };
             promotionDialog.show(getFragmentManager(), "PromotionDialog");
@@ -145,19 +166,24 @@ public class AddPost extends AppCompatActivity implements View.OnClickListener {
     }
 
     private void notification() {
-        notificationDialog = new NotificationDialog("Post Notification", 0) {
-            @Override
-            public void onNotificationDialogFinish() {
-                notificationMethod = notificationDialog.notificationMethod;
-                // get timestamp or vote threshold
-            }
-        };
-        notificationDialog.show(getFragmentManager(), "PromotionDialog");
+        if (notified) {
+            notified = false;
+            buttonNotify.setText("Notify");
+            buttonNotify.setTextSize(15);
 
-        SharedPreferences sp = getSharedPreferences("db", Context.MODE_PRIVATE);
-
-
-
+        } else {
+            notificationDialog = new NotificationDialog("Post Notification", 0) {
+                @Override
+                public void onNotificationDialogFinish() {
+                    notified = true;
+                    nValue = getValue();
+                    nMethod = notificationMethod;
+                    buttonNotify.setText("Cancel Notification");
+                    buttonNotify.setTextSize(10);
+                }
+            };
+            notificationDialog.show(getFragmentManager(), "PromotionDialog");
+        }
     }
 
 
@@ -166,10 +192,6 @@ public class AddPost extends AppCompatActivity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.postButton:
-                Bitmap bitmap1 = ((BitmapDrawable) image1.getDrawable()).getBitmap();
-                image1BitMap = bitmap1;
-                Bitmap bitmap2 = ((BitmapDrawable) image2.getDrawable()).getBitmap();
-                image2BitMap = bitmap2;
                 uploadPost();
                 break;
 
