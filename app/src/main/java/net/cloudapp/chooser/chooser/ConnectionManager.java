@@ -1,10 +1,14 @@
 package net.cloudapp.chooser.chooser;
 
 
+import android.util.Log;
+
+import com.facebook.AccessToken;
+
 public class ConnectionManager {
     private SessionDetails sessionDetails;
     //private final String chooserServerAddress = "http://chooser.cloudapp.net:8080";
-    private final String chooserServerAddress = "http://10.0.0.1:8080";
+    private final String chooserServerAddress = "http://192.168.14.37:3000";
 
     public ConnectionManager(){
         this.sessionDetails = new SessionDetails();
@@ -15,9 +19,11 @@ public class ConnectionManager {
     }
 
 
-    public void login(String uID, Runnable doAtFinish){
+    public void login(AccessToken token, Runnable doAtFinish){
+        Log.d("Chooser", "Calling Login");
         BaseConnectionData data = new BaseConnectionData("POST", "login", chooserServerAddress);
-        data.addParameter("uID", uID);
+        data.addParameter("token", token.getToken());
+        data.addParameter("userId", token.getUserId());
         ConnectionTask task = new ConnectionTask(doAtFinish, this);
         task.execute(data);
     }

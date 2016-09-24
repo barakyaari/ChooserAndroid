@@ -5,7 +5,12 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -23,11 +28,15 @@ import com.facebook.login.LoginManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+
+import static android.R.attr.fragment;
 
 
 public class Login extends Activity {
-    String uID;
+    AccessToken accessToken;
     LoginButton fbLoginButton;
     CallbackManager callbackManager;
     ProgressDialog loadingDialog;
@@ -35,24 +44,43 @@ public class Login extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+//-------------------------------------------------------
+        //Get Hash ID printed in log:
         createLoadingDialog();
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "net.cloudapp.chooser.chooser",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+        } catch (NoSuchAlgorithmException e) {
+        }
+
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
         setContentView(R.layout.login);
         AppEventsLogger.activateApp(getApplication());
         fbLoginButton = (LoginButton) findViewById(R.id.login_fb_button);
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        for (int i = 0; i < 10; i++) {
-            if (accessToken != null)
-                break;
-            System.out.println("AccessToken not yet initialized");
-            try {
-                Thread.sleep(10);  //temp fix for access token
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            accessToken = AccessToken.getCurrentAccessToken();
-        }
+
+
+
+        //accessToken = AccessToken.getCurrentAccessToken();
+//        for (int i = 0; i < 10; i++) {
+//            if (accessToken != null)
+//                break;
+//            System.out.println("AccessToken not yet initialized");
+//            try {
+//                Thread.sleep(10);  //temp fix for access token
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            accessToken = AccessToken.getCurrentAccessToken();
+//        }
 
         if (accessToken == null || accessToken.isExpired()) {
             System.out.println("NULL/EXPIRED TOKEN");
@@ -60,15 +88,17 @@ public class Login extends Activity {
         }
         else {
             System.out.println("FOUND TOKEN");
-            uID = accessToken.getUserId();
+            LoginManager.getInstance().logInWithReadPermissions(
+                    this,
+                    Arrays.asList("email")
+            );
             ConnectionManager connectionManager = new ConnectionManager();
-            connectionManager.setId(uID);
+            connectionManager.setId(accessToken.getUserId());
             AtFinishRunnable runnable = new AtFinishRunnable(connectionManager.getSessionDetails());
             loadingDialog.show();
-            connectionManager.login(uID, runnable);
+            connectionManager.login(accessToken, runnable);
         }
     }
-
 
     public void createLoadingDialog() {
         loadingDialog = new ProgressDialog(this);
@@ -106,10 +136,10 @@ public class Login extends Activity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         ConnectionManager connectionManager = new ConnectionManager();
-                        connectionManager.setId(uID);
+                        connectionManager.setId(accessToken.getUserId());
                         AtFinishRunnable runnable = new AtFinishRunnable(connectionManager.getSessionDetails());
                         loadingDialog.show();
-                        connectionManager.login(uID, runnable);
+                        connectionManager.login(accessToken, runnable);
                     }
 
                 })
@@ -139,12 +169,13 @@ public class Login extends Activity {
 
 
     private void facebookLogin() {
+        Log.d("Chooser", "Logging in with facebook!");
         fbLoginButton.setReadPermissions(Arrays.asList("email", "public_profile", "user_birthday", "user_location"));
         fbLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 final AccessToken accessToken = loginResult.getAccessToken();
-                uID = accessToken.getUserId();
+                String uID = accessToken.getUserId();
 
                 GraphRequest request = GraphRequest.newMeRequest(accessToken,
                         new GraphRequest.GraphJSONObjectCallback() {
@@ -157,9 +188,6 @@ public class Login extends Activity {
                                     final String email = jObject.getString("email");
                                     final String gender = jObject.getString("gender");
                                     final String birthDate = jObject.getString("birthday");
-                                    JSONObject addrObj = jObject.optJSONObject("location");
-                                    if (addrObj != null) {
-                                        String locationID = jObject.optJSONObject("location").getString("id");
 
                                         GraphRequest request = GraphRequest.newGraphPathRequest(accessToken, "/" + locationID,
                                                 new GraphRequest.Callback() {
@@ -202,7 +230,7 @@ public class Login extends Activity {
                 connectionManager.setId(uID);
                 AtFinishRunnable runnable = new AtFinishRunnable(connectionManager.getSessionDetails());
                 loadingDialog.show();
-                connectionManager.login(uID, runnable);
+                connectionManager.login(accessToken, runnable);
             }
 
             @Override

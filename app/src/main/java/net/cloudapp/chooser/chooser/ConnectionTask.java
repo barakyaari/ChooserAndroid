@@ -2,6 +2,8 @@ package net.cloudapp.chooser.chooser;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.util.Pair;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -9,6 +11,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.util.List;
 
 public class ConnectionTask extends AsyncTask<BaseConnectionData, Void, String> {
     private Runnable doAtFinish;
@@ -28,7 +31,6 @@ public class ConnectionTask extends AsyncTask<BaseConnectionData, Void, String> 
         BaseConnectionData data = params[0];
         String urlString = data.getAddress();
         String type = data.getType();
-        byte[] postData = data.getRequestData();
         String charset = "UTF-8";
         try {
             //Open HttpUrlConnection:
@@ -37,17 +39,18 @@ public class ConnectionTask extends AsyncTask<BaseConnectionData, Void, String> 
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setDoOutput(true);
             urlConnection.setDoInput(true);
-            urlConnection.setRequestProperty("Connection", "Keep-Alive");
-            urlConnection.setRequestProperty("Cache-Control", "no-cache");
-            urlConnection.setReadTimeout(35000);
-            urlConnection.setConnectTimeout(35000);
             urlConnection.setRequestMethod(type);
             urlConnection.setRequestProperty("Accept-Charset", charset);
+
+            List<Pair<String, String>> headers = data.getHeaders();
+
+            for (Pair<String, String> header: headers) {
+                urlConnection.setRequestProperty(header.first, header.second);
+            }
+
             OutputStream os = urlConnection.getOutputStream();
-            os.write(postData);
             os.flush();
             os.close();
-//            System.out.println("Response Code: " + urlConnection.getResponseCode());
 
             //Send:
             InputStream response = urlConnection.getInputStream();

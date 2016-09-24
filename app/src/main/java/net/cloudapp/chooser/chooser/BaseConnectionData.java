@@ -33,6 +33,10 @@ public class BaseConnectionData {
         return type;
     }
 
+    public List<Pair<String, String>> getHeaders(){
+        return this.pairs;
+    }
+
     public byte[] getRequestData(){
         JSONObject json = JsonCreator(pairs);
         return json.toString().getBytes();
