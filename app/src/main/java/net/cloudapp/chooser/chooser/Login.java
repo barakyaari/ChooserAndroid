@@ -44,29 +44,12 @@ public class Login extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initializeFacebookSdk();
 
-//-------------------------------------------------------
-        //Get Hash ID printed in log:
-        createLoadingDialog();
-        try {
-            PackageInfo info = getPackageManager().getPackageInfo(
-                    "net.cloudapp.chooser.chooser",
-                    PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-        } catch (NoSuchAlgorithmException e) {
-        }
+        initializeUI();
+        printAppHashId();
 
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        callbackManager = CallbackManager.Factory.create();
-        setContentView(R.layout.login);
-        AppEventsLogger.activateApp(getApplication());
-        fbLoginButton = (LoginButton) findViewById(R.id.login_fb_button);
-
+        facebookLogin();
 
 
         //accessToken = AccessToken.getCurrentAccessToken();
@@ -85,8 +68,7 @@ public class Login extends Activity {
         if (accessToken == null || accessToken.isExpired()) {
             System.out.println("NULL/EXPIRED TOKEN");
             facebookLogin();
-        }
-        else {
+        } else {
             System.out.println("FOUND TOKEN");
             LoginManager.getInstance().logInWithReadPermissions(
                     this,
@@ -100,6 +82,33 @@ public class Login extends Activity {
         }
     }
 
+    private void initializeFacebookSdk() {
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        callbackManager = CallbackManager.Factory.create();
+        AppEventsLogger.activateApp(getApplication());
+    }
+
+    private void initializeUI() {
+        setContentView(R.layout.login);
+        fbLoginButton = (LoginButton) findViewById(R.id.login_fb_button);
+    }
+
+    private void printAppHashId() {
+        createLoadingDialog();
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "net.cloudapp.chooser.chooser",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+        } catch (NoSuchAlgorithmException e) {
+        }
+    }
+
     public void createLoadingDialog() {
         loadingDialog = new ProgressDialog(this);
         loadingDialog.setMessage("Connecting to Server...\nPlease Wait");
@@ -109,7 +118,8 @@ public class Login extends Activity {
 
     public class AtFinishRunnable implements Runnable {
         private SessionDetails sessionDetails;
-        public AtFinishRunnable(SessionDetails sessionDetails){
+
+        public AtFinishRunnable(SessionDetails sessionDetails) {
             this.sessionDetails = sessionDetails;
         }
 
@@ -127,7 +137,7 @@ public class Login extends Activity {
         }
     }
 
-    private void serverIsDownDialog () {
+    private void serverIsDownDialog() {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Server Is Down")
@@ -167,10 +177,9 @@ public class Login extends Activity {
     }
 
 
-
     private void facebookLogin() {
         Log.d("Chooser", "Logging in with facebook!");
-        fbLoginButton.setReadPermissions(Arrays.asList("email", "public_profile", "user_birthday", "user_location"));
+        fbLoginButton.setReadPermissions(Arrays.asList("email", "public_profile", "user_birthday"));
         fbLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -189,33 +198,21 @@ public class Login extends Activity {
                                     final String gender = jObject.getString("gender");
                                     final String birthDate = jObject.getString("birthday");
 
-                                        GraphRequest request = GraphRequest.newGraphPathRequest(accessToken, "/" + locationID,
-                                                new GraphRequest.Callback() {
-                                                    @Override
-                                                    public void onCompleted(GraphResponse response) {
-                                                        JSONObject locJObject = response.getJSONObject();
+                                    GraphRequest request = GraphRequest.newGraphPathRequest(accessToken, "/",
+                                            new GraphRequest.Callback() {
+                                                @Override
+                                                public void onCompleted(GraphResponse response) {
+                                                    JSONObject locJObject = response.getJSONObject();
+                                                    ConnectionManager connectionManager = new ConnectionManager();
+                                                    connectionManager.updateUser(uID, firstName, lastName, email, gender, birthDate);
+                                                }
+                                            });
 
-                                                        try {
-                                                            String country = locJObject.getJSONObject("location").getString("country");
-                                                            ConnectionManager connectionManager = new ConnectionManager();
-                                                            connectionManager.updateUser(uID, firstName, lastName, email, gender, birthDate, country);
+                                    Bundle parameters = new Bundle();
+                                    parameters.putString("fields", "location");
+                                    request.setParameters(parameters);
+                                    request.executeAsync();
 
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                    }
-                                                });
-
-                                        Bundle parameters = new Bundle();
-                                        parameters.putString("fields", "location");
-                                        request.setParameters(parameters);
-                                        request.executeAsync();
-                                    }
-
-                                    else {
-                                        ConnectionManager connectionManager = new ConnectionManager();
-                                        connectionManager.updateUser(uID, firstName, lastName, email, gender, birthDate, "");
-                                    }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -244,8 +241,6 @@ public class Login extends Activity {
             }
         });
     }
-
-
 
 
 }

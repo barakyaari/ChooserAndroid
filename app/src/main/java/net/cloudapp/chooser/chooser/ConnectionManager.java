@@ -8,7 +8,8 @@ import com.facebook.AccessToken;
 public class ConnectionManager {
     private SessionDetails sessionDetails;
     //private final String chooserServerAddress = "http://chooser.cloudapp.net:8080";
-    private final String chooserServerAddress = "http://192.168.14.37:3000";
+    //private final String chooserServerAddress = "http://192.168.14.37:3000";
+    private final String chooserServerAddress = "http://192.168.43.2:3000";
 
     public ConnectionManager(){
         this.sessionDetails = new SessionDetails();
@@ -28,7 +29,7 @@ public class ConnectionManager {
         task.execute(data);
     }
 
-    public void updateUser(String id, String firstName, String lastName, String email, String gender, String birthDate, String country){
+    public void updateUser(String id, String firstName, String lastName, String email, String gender, String birthDate){
         BaseConnectionData data = new BaseConnectionData("POST", "updateUser", chooserServerAddress);
         String sqlBdate = birthDate.substring(6) + "-" + birthDate.substring(0,2) + "-" + birthDate.substring(3,5) + " 12:00:00.000";
         System.out.println(sqlBdate);
@@ -38,7 +39,6 @@ public class ConnectionManager {
         data.addParameter("Email", email);
         data.addParameter("Gender", gender);
         data.addParameter("BirthDate", sqlBdate);
-        data.addParameter("Country", country);
 
         ConnectionTask task = new ConnectionTask(this);
         task.execute(data);
