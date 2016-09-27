@@ -42,7 +42,7 @@ public class Statistics extends AppCompatActivity implements View.OnClickListene
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.post_statistics);
         sessionDetails = (SessionDetails) getIntent().getSerializableExtra("SessionDetails");
-        post = sessionDetails.post.getPost();
+        post = sessionDetails.post;
 
         updatePostHeadline();
         viewPager = (ViewPager) findViewById(R.id.viewpager);

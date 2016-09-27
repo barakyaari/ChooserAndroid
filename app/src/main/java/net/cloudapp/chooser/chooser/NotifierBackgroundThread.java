@@ -108,8 +108,8 @@ public class NotifierBackgroundThread extends IntentService {
                 try {
                     JSONArray jArray = new JSONArray(sessionDetails.responseString);
                     post = json2post(jArray);
-                    sessionDetails.responseString = "";
-                    sessionDetails.post = new PostSerializable(post);
+                    SessionDetails.getInstance().responseString = "";
+                    SessionDetails.getInstance().post = post;
                     sendNotification();
                     NotificationFileSystem.deleteNotification(postID, getApplicationContext());
                 } catch (JSONException e) {
@@ -137,7 +137,7 @@ public class NotifierBackgroundThread extends IntentService {
     }
 
     private void attachIntent() {
-        sessionDetails.post = new PostSerializable(post);
+        SessionDetails.getInstance().post = post;
         Intent i = new Intent("net.cloudapp.chooser.chooser.Statistics");
         i.putExtra("SessionDetails", sessionDetails);
         PendingIntent pi = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);

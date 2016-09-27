@@ -76,7 +76,7 @@ public class StatisticsFragments extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         sessionDetails = (SessionDetails) getArguments().getSerializable("SessionDetails");
-        post = sessionDetails.post.getPost();
+        post = SessionDetails.getInstance().post;
         postStatistics = post.postStatistics;
         super.onCreate(savedInstanceState);
     }

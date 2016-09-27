@@ -39,10 +39,17 @@ import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher.ViewFactory;
+
+import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import net.cloudapp.chooser.chooser.HttpConnection.PostObject;
+import net.cloudapp.chooser.chooser.HttpConnection.ServerAPI;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,6 +57,12 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -59,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Bitmap image1Bitmap, image2Bitmap;
     boolean animating;
     private SessionDetails sessionDetails;
-    private List<Post> posts, myPosts;
+    private List<PostObject> posts, myPosts;
     private SharedPreferences sharedPrefs;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
@@ -74,9 +87,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.posts_view);
-        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        sessionDetails = (SessionDetails) getIntent().getSerializableExtra("SessionDetails");
-        sessionDetails.updateSharedPrefs(sharedPrefs);
+        sessionDetails = SessionDetails.getInstance();
+        Log.d("Chooser", "Session userId is: " + sessionDetails.getAccessToken().getUserId());
+
         //Controls initialization:
         titleTextView = (TextView) findViewById(R.id.titleTextView);
         description1TextView = (TextView) findViewById(R.id.description1TextView);
@@ -97,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerList = (ListView) findViewById(R.id.left_drawer);
         drawerList.setBackgroundColor(Color.parseColor("#FF494949"));
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close){
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
 
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
@@ -153,12 +166,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        refresh();
     }
 
     private class ImageSwitchFactory implements ViewFactory {
         @Override
         public View makeView() {
-            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT);
+            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
             ImageView image = new ImageView(getApplicationContext());
             image.setLayoutParams(lp);
             return image;
@@ -172,9 +186,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             text.setTypeface(null, Typeface.BOLD);
             text.setGravity(Gravity.CENTER);
             text.setTextSize(50);
-            ImageSwitcher.LayoutParams lp = new ImageSwitcher.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT);
+            ImageSwitcher.LayoutParams lp = new ImageSwitcher.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
             text.setLayoutParams(lp);
-            text.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/CooperBlackStd.otf"));
+            text.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/CooperBlackStd.otf"));
             text.setTextColor(Color.parseColor("#dddddd"));  //Light gray
             text.setStrokeSize(15);
             text.setStrokeColor(Color.BLACK);
@@ -186,8 +200,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public TextWithStroke(Context context) {
             super(context);
         }
+
         private float strokeWidth;
         private int strokeColor;
+
         @Override
         protected void onDraw(Canvas pCanvas) {
             int textColor = getTextColors().getDefaultColor();
@@ -200,8 +216,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             getPaint().setStyle(Paint.Style.FILL);
             super.onDraw(pCanvas);
         }
-        public void setStrokeSize (float strokeWidth) {this.strokeWidth = strokeWidth;}
-        public void setStrokeColor (float strokeColor) {this.strokeColor = (int)strokeColor;}
+
+        public void setStrokeSize(float strokeWidth) {
+            this.strokeWidth = strokeWidth;
+        }
+
+        public void setStrokeColor(float strokeColor) {
+            this.strokeColor = (int) strokeColor;
+        }
     }
 
     private void refreshMyPosts() {
@@ -213,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 sessionDetails.responseString = "";
                 try {
                     JSONArray jArray = new JSONArray(responseText);
-                    json2posts(jArray, true);
+                    //json2posts(jArray, true);
                     drawerAdapter.notifyDataSetChanged();
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -225,29 +247,52 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void refresh() {
+        Log.d("Chooser", "Refreshing posts");
         setPicAnimationPrev();
-        Runnable doAtFinish = new Runnable() {
-            @Override
-            public void run() {
-                posts.clear();
-                String responseText = sessionDetails.responseString;
+        posts.clear();
 
-                sessionDetails.responseString = "";
-                try {
-                    JSONArray jArray = new JSONArray(responseText);
-                    json2posts(jArray, false);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                if (posts.size() > 0) {
-                    currentPost = 0;
-                    loadPosts(true);
+        Gson gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(sessionDetails.serverAddress)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        ServerAPI serverAPI = retrofit.create(ServerAPI.class);
+
+        Call<List<PostObject>> call = serverAPI.allPosts();
+
+        call.enqueue(new Callback<List<PostObject>>() {
+            @Override
+            public void onResponse(Call<List<PostObject>> call, Response<List<PostObject>> response) {
+                int code = response.code();
+                if (code == 200) {
+                    Log.d("Chooser", "all posts OK.");
+
+                    List<PostObject> newPosts = response.body();
+                    if (posts.size() > 0) {
+                        posts.addAll(newPosts);
+                        currentPost = 0;
+                        Log.d("Chooser", "Recieved: " + posts.size() + " posts");
+                        loadPosts();
+                    }
+                    else{
+                        Log.d("Chooser", "Got 0 posts.");
+                    }
+                } else {
+                    Log.e("Chooser", "all posts - bad response code.");
                 }
             }
-        };
-        ConnectionManager connectionManager = new ConnectionManager(sessionDetails);
-        connectionManager.GetPosts(doAtFinish);
+
+            @Override
+            public void onFailure(Call<List<PostObject>> call, Throwable t) {
+                Log.e("Chooser", "all posts - Callback failure");
+            }
+        });
     }
+
 
     private void getTokenCount() {
         Runnable doAtFinish = new Runnable() {
@@ -264,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         connectionManager.getTokenCount(sessionDetails.userId, doAtFinish);
     }
 
-    private void reportPost () {
+    private void reportPost() {
         Runnable doAtFinish = new Runnable() {
             @Override
             public void run() {
@@ -273,52 +318,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (responseText) {
                     Toast.makeText(getApplicationContext(), "Report Received!", Toast.LENGTH_LONG).show();
                     nextPic();
-                }
-
-                else
+                } else
                     Toast.makeText(getApplicationContext(), "Report failed!", Toast.LENGTH_LONG).show();
             }
         };
         ConnectionManager connectionManager = new ConnectionManager(sessionDetails);
-        connectionManager.reportPost(posts.get(currentPost).id,doAtFinish);
+        //  connectionManager.reportPost(posts.get(currentPost).id, doAtFinish);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        refresh();
-        getTokenCount();
-        refreshMyPosts();
-        tokens.setText(String.valueOf(sessionDetails.userTokenCount));
-        sessionDetails.updateSharedPrefs(sharedPrefs);
-    }
-
-    private void json2posts(JSONArray jArray, boolean isMyPosts) throws JSONException {
-        Log.i("ChooserApp", "Number of Posts found: " + jArray.length());
-        for (int i = 0; i < jArray.length(); i++) {
-            Log.i("ChooserApp", "Creating post - Iteration: " + i);
-            JSONObject jObject = jArray.getJSONObject(i);
-            String title = jObject.getString("title");
-            String image1 = jObject.getString("image1");
-            String description1 = jObject.getString("description1");
-            String image2 = jObject.getString("image2");
-            String description2 = jObject.getString("description2");
-            String id = jObject.getString("id");
-            int votes1 = Integer.parseInt(jObject.getString("votes1"));
-            int votes2 = Integer.parseInt(jObject.getString("votes2"));
-
-            Log.i("chooserHTTP", title);
-
-            Post newPost = new Post(title, Post.addStroke(Post.string2Bitmap(image1)), description1, Post.addStroke(Post.string2Bitmap(image2)), description2, id, votes1, votes2);
-            if (isMyPosts) {
-                newPost.setDate(jObject.getString("date"));
-                String expDate = jObject.getString("promotion_expiration");
-                if (!expDate.equals("null"))
-                    newPost.setPromotionExpiration(expDate);
-                myPosts.add(newPost);
-            } else
-                posts.add(newPost);
-        }
+//        refresh();
+//        getTokenCount();
+//        refreshMyPosts();
+//        tokens.setText(String.valueOf(sessionDetails.userTokenCount));
+//        sessionDetails.updateSharedPrefs(sharedPrefs);
     }
 
     private void previewImage(int imageNumber) {
@@ -345,7 +360,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void vote(final int vote) {
-        posts.get(currentPost).addVote(vote);
+        if (posts.size() < 1) {
+            return;
+        }
+        // posts.get(currentPost).addVote(vote);
         Runnable doAtFinish = new Runnable() {
             @Override
             public void run() {
@@ -359,35 +377,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
         ConnectionManager connectionManager = new ConnectionManager(sessionDetails);
-        connectionManager.vote(String.valueOf(vote), posts.get(currentPost).id, doAtFinish);
+        //  connectionManager.vote(String.valueOf(vote), posts.get(currentPost).id, doAtFinish);
     }
 
 
-    private void loadPosts(boolean hideResults) {
+    private void loadPosts() {
         if (posts.isEmpty()) {
             Log.i("ChooserApp", "Empty posts...");
             return;
         }
-        Post post = posts.get(currentPost);
-        image1Bitmap = post.image1;
-        image2Bitmap = post.image2;
-        Log.i("ChooserApp", "Loading current post: " + currentPost + " Title: " + post.title);
-        if (hideResults) {
-            imageSwitcher1.setImageDrawable(new BitmapDrawable(getResources(), post.image1));
-            imageSwitcher2.setImageDrawable(new BitmapDrawable(getResources(), post.image2));
-            titleTextView.setText(post.title);
-            description1TextView.setText(post.description1);
-            description2TextView.setText(post.description2);
-        } else {
-            setTextAnimations(); //loads post after percentage appears on screen
-            if (sessionDetails.usePercentage) {
-                textSwitcher1.setText(String.valueOf(posts.get(prevPost).getPercentage(1)) + "%");
-                textSwitcher2.setText(String.valueOf(posts.get(prevPost).getPercentage(2)) + "%");
-            } else {
-                textSwitcher1.setText(String.valueOf(posts.get(prevPost).votes1));
-                textSwitcher2.setText(String.valueOf(posts.get(prevPost).votes2));
-            }
-        }
+        PostObject post = posts.get(currentPost);
+        Log.i("ChooserApp", "Loading current post: " + currentPost + " Title: " + post.getTitle());
+
+        Glide.with(this).load(post.getUrl1()).into((ImageView) imageSwitcher1.getCurrentView());
+        Glide.with(this).load(post.getUrl2()).into((ImageView) imageSwitcher2.getCurrentView());
+        setTextAnimations(); //loads post after percentage appears on screen
+//            textSwitcher1.setText(String.valueOf(posts.get(prevPost).votes1));
+//            textSwitcher2.setText(String.valueOf(posts.get(prevPost).votes2));
+
     }
 
 
@@ -402,18 +409,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         inAnimation1.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onAnimationStart(Animation animation) {}
+            public void onAnimationStart(Animation animation) {
+            }
 
             @Override
-            public void onAnimationRepeat(Animation animation) {}
+            public void onAnimationRepeat(Animation animation) {
+            }
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                Post post = posts.get(currentPost);
-                titleTextView.setText(post.title);
-                description1TextView.setText(post.description1);
+                PostObject post = posts.get(currentPost);
+                titleTextView.setText((String)post.getTitle());
+                description1TextView.setText((String)post.getDescription1());
                 textSwitcher1.setVisibility(View.GONE);
-                imageSwitcher1.setImageDrawable(new BitmapDrawable(getResources(), post.image1));
+                Glide.with(getApplicationContext()).load(post.getUrl1()).into((ImageView) imageSwitcher1.getCurrentView());
             }
         });
 
@@ -424,15 +433,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             @Override
-            public void onAnimationRepeat(Animation animation) {}
+            public void onAnimationRepeat(Animation animation) {
+            }
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                Post post = posts.get(currentPost);
-                description2TextView.setText(post.description2);
-                textSwitcher2.setVisibility(View.GONE);
-                imageSwitcher2.setImageDrawable(new BitmapDrawable(getResources(), post.image2));
-                animating = false;
+//                PostObject post = posts.get(currentPost);
+//                description2TextView.setText(post.getDescription1());
+//                textSwitcher2.setVisibility(View.GONE);
+//                imageSwitcher2.setImageDrawable(new BitmapDrawable(getResources(), post));
+//                animating = false;
             }
         });
 
@@ -468,7 +478,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.buttonRefreshPosts:
                 refresh();
-                refreshMyPosts();
+                //refreshMyPosts();
                 break;
 
             case R.id.flagButton:
@@ -500,9 +510,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (currentPost < posts.size() - 1) {
             currentPost++;
             setPicAnimationNext();
-            loadPosts(sessionDetails.skipResults);
+            loadPosts();
         } else
-            loadPosts(sessionDetails.skipResults);
+            loadPosts();
     }
 
     private void nextPic() {
@@ -510,11 +520,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (currentPost < posts.size() - 1) {
             currentPost++;
             setPicAnimationNext();
-            loadPosts(false);
+            loadPosts();
         } else
-            loadPosts(false);
+            loadPosts();
     }
-
 
 
     private void prevPic() {
@@ -522,12 +531,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (currentPost > 0) {
             currentPost--;
             setPicAnimationPrev();
-            loadPosts(false);
-        }
-        else
-            loadPosts(false);
+            loadPosts();
+        } else
+            loadPosts();
     }
-
 
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener, ListView.OnItemLongClickListener {
@@ -535,13 +542,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void onItemClick(AdapterView parent, View view, int position, long id) {
 
             Toast.makeText(getApplicationContext(), "Post " + position + " Selected!", Toast.LENGTH_LONG).show();
-            sessionDetails.post = new PostSerializable(myPosts.get(position));
+            //SessionDetails.getInstance().post = myPosts.get(position); //TODO: Remove this line
             Intent i = new Intent("net.cloudapp.chooser.chooser.Statistics");
             i.putExtra("SessionDetails", sessionDetails);
             startActivity(i);
 
             drawerList.setItemChecked(position, true);
-            setTitle(posts.get(position).title);
+            //setTitle(posts.get(position).getTitle());
             drawerLayout.closeDrawer(drawerList);
         }
 
@@ -550,34 +557,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             drawerLayout.closeDrawer(drawerList);
             return true;
         }
+
     }
 
-    private void deletePost (final int position) {
+    private void deletePost(final int position) {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Deleting Post")
                 .setMessage("Are you sure you want to delete this post?\nNote: All your promotion time will be lost!")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
-                {
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Runnable doAtFinish = new Runnable() {
                             @Override
                             public void run() {
-                                NotificationFileSystem.deleteNotification(Integer.parseInt(posts.get(position).id), getBaseContext());
+                                //                       NotificationFileSystem.deleteNotification(Integer.parseInt(posts.get(position).id), getBaseContext());
                                 Toast.makeText(getApplicationContext(), "Post Deleted!", Toast.LENGTH_LONG).show();
                                 refreshMyPosts();
                             }
                         };
                         ConnectionManager connectionManager = new ConnectionManager(sessionDetails);
-                        connectionManager.deletePost(posts.get(position).id, doAtFinish);
+                        connectionManager.deletePost(posts.get(position).getPostId(), doAtFinish);
                     }
 
                 })
                 .setNegativeButton("No", null)
                 .show();
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -627,49 +633,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         moveTaskToBack(true);
         //blocks 'back' button from showing the login screen.
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "Main Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app URL is correct.
-                Uri.parse("android-app://net.cloudapp.chooser.chooser/http/host/path")
-        );
-        AppIndex.AppIndexApi.start(client, viewAction);
-    }
-
-
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "Main Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app URL is correct.
-                Uri.parse("android-app://net.cloudapp.chooser.chooser/http/host/path")
-        );
-        AppIndex.AppIndexApi.end(client, viewAction);
-        client.disconnect();
-    }
-
-
-
 }

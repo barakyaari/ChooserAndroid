@@ -17,22 +17,28 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.login.LoginManager;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import net.cloudapp.chooser.chooser.HttpConnection.ServerAPI;
 
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-import static android.R.attr.fragment;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static android.R.attr.data;
 
 
 public class Login extends Activity {
@@ -49,37 +55,8 @@ public class Login extends Activity {
         initializeUI();
         printAppHashId();
 
-        facebookLogin();
+        RegisterFacebookLogin();
 
-
-        //accessToken = AccessToken.getCurrentAccessToken();
-//        for (int i = 0; i < 10; i++) {
-//            if (accessToken != null)
-//                break;
-//            System.out.println("AccessToken not yet initialized");
-//            try {
-//                Thread.sleep(10);  //temp fix for access token
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            accessToken = AccessToken.getCurrentAccessToken();
-//        }
-
-        if (accessToken == null || accessToken.isExpired()) {
-            System.out.println("NULL/EXPIRED TOKEN");
-            facebookLogin();
-        } else {
-            System.out.println("FOUND TOKEN");
-            LoginManager.getInstance().logInWithReadPermissions(
-                    this,
-                    Arrays.asList("email")
-            );
-            ConnectionManager connectionManager = new ConnectionManager();
-            connectionManager.setId(accessToken.getUserId());
-            AtFinishRunnable runnable = new AtFinishRunnable(connectionManager.getSessionDetails());
-            loadingDialog.show();
-            connectionManager.login(accessToken, runnable);
-        }
     }
 
     private void initializeFacebookSdk() {
@@ -116,27 +93,6 @@ public class Login extends Activity {
         loadingDialog.setInverseBackgroundForced(false);
     }
 
-    public class AtFinishRunnable implements Runnable {
-        private SessionDetails sessionDetails;
-
-        public AtFinishRunnable(SessionDetails sessionDetails) {
-            this.sessionDetails = sessionDetails;
-        }
-
-        @Override
-        public void run() {
-            loadingDialog.hide();
-            if (sessionDetails.responseString.equals("-2")) {
-                serverIsDownDialog();
-            } else {
-                sessionDetails.userTokenCount = Integer.valueOf(sessionDetails.responseString);
-                Intent i = new Intent("android.intent.action.MainActivity");
-                i.putExtra("SessionDetails", sessionDetails);
-                startActivity(i);
-            }
-        }
-    }
-
     private void serverIsDownDialog() {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -147,9 +103,9 @@ public class Login extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         ConnectionManager connectionManager = new ConnectionManager();
                         connectionManager.setId(accessToken.getUserId());
-                        AtFinishRunnable runnable = new AtFinishRunnable(connectionManager.getSessionDetails());
                         loadingDialog.show();
-                        connectionManager.login(accessToken, runnable);
+                        SessionDetails.getInstance().setAccessToken(accessToken);
+                        Log.e("Chooser", "Not implemented!");
                     }
 
                 })
@@ -167,80 +123,86 @@ public class Login extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        facebookLogin();
+        RegisterFacebookLogin();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
-    }
-
-
-    private void facebookLogin() {
+    private void RegisterFacebookLogin() {
         Log.d("Chooser", "Logging in with facebook!");
+
         fbLoginButton.setReadPermissions(Arrays.asList("email", "public_profile", "user_birthday"));
         fbLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
+                Log.d("Chooser", "Facebook call successful");
+
                 final AccessToken accessToken = loginResult.getAccessToken();
                 String uID = accessToken.getUserId();
-
-                GraphRequest request = GraphRequest.newMeRequest(accessToken,
-                        new GraphRequest.GraphJSONObjectCallback() {
-                            @Override
-                            public void onCompleted(JSONObject jObject, GraphResponse response) {
-                                try {
-                                    final String uID = jObject.getString("id");
-                                    final String firstName = jObject.getString("first_name");
-                                    final String lastName = jObject.getString("last_name");
-                                    final String email = jObject.getString("email");
-                                    final String gender = jObject.getString("gender");
-                                    final String birthDate = jObject.getString("birthday");
-
-                                    GraphRequest request = GraphRequest.newGraphPathRequest(accessToken, "/",
-                                            new GraphRequest.Callback() {
-                                                @Override
-                                                public void onCompleted(GraphResponse response) {
-                                                    JSONObject locJObject = response.getJSONObject();
-                                                    ConnectionManager connectionManager = new ConnectionManager();
-                                                    connectionManager.updateUser(uID, firstName, lastName, email, gender, birthDate);
-                                                }
-                                            });
-
-                                    Bundle parameters = new Bundle();
-                                    parameters.putString("fields", "location");
-                                    request.setParameters(parameters);
-                                    request.executeAsync();
-
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-                Bundle parameters = new Bundle();
-                parameters.putString("fields", "id, first_name, last_name, email, gender, birthday, location");
-                request.setParameters(parameters);
-                request.executeAsync();
-
                 ConnectionManager connectionManager = new ConnectionManager();
                 connectionManager.setId(uID);
-                AtFinishRunnable runnable = new AtFinishRunnable(connectionManager.getSessionDetails());
                 loadingDialog.show();
-                connectionManager.login(accessToken, runnable);
+                connectionManager.setId(accessToken.getUserId());
+                SessionDetails.getInstance().setAccessToken(accessToken);
+                String chooserServerAddress = "http://192.168.14.37:3000";
+
+                Gson gson = new GsonBuilder()
+                        .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+                        .create();
+
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl(chooserServerAddress)
+                        .addConverterFactory(GsonConverterFactory.create(gson))
+                        .build();
+
+                ServerAPI serverAPI = retrofit.create(ServerAPI.class);
+
+                Call call = serverAPI.login(accessToken.getToken(), accessToken.getUserId());
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onResponse(Call call, Response response) {
+                        if(response.code() == 200){
+                            SessionDetails.getInstance().setAccessToken(accessToken);
+                            Log.d("Chooser", "Callback running");
+                            loadingDialog.hide();
+                            Intent i = new Intent("android.intent.action.MainActivity");
+                            Log.d("Chooser", "Starting main activity");
+                            startActivity(i);
+                        }
+                        else{
+                            logout();
+                        }
+                        }
+
+                    @Override
+                    public void onFailure(Call call, Throwable t) {
+                        Log.d("Chooser", "Login response: Server is down");
+                        serverIsDownDialog();
+                    }
+                });
             }
 
             @Override
             public void onCancel() {
-                System.out.println("CANCELLED");
+                Log.d("Chooser", "Facebook login cancelled");
             }
 
             @Override
-            public void onError(FacebookException exception) {
-                System.out.println("ERROR");
+            public void onError(FacebookException error) {
+                Log.e("Chooser", "Facebook login Error");
+                error.printStackTrace();
             }
+
         });
+
     }
 
+    private void logout() {
+        //TODO: implement
+    }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode,
+                resultCode, data);
+    }
 }

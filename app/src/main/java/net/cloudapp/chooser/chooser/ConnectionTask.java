@@ -79,9 +79,12 @@ public class ConnectionTask extends AsyncTask<BaseConnectionData, Void, String> 
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
+
         this.connectionManager.setResponseText(s);
         if (doAtFinish != null) {
             try {
+                Log.d("Chooser", "ConnectionTask on post execute!");
+
                 doAtFinish.run();
             } catch (Exception e) {
                 e.printStackTrace();

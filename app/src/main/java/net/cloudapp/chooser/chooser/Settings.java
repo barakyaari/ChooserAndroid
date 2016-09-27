@@ -9,7 +9,7 @@ import android.view.MenuItem;
 /**
  * Created by Ben on 05/07/2016.
  */
-public  class Settings extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class Settings extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

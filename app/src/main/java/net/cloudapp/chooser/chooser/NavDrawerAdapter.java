@@ -15,15 +15,14 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 
+import net.cloudapp.chooser.chooser.HttpConnection.PostObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Ben on 26/06/2016.
- */
-public class NavDrawerAdapter extends ArrayAdapter<Post> {
+public class NavDrawerAdapter extends ArrayAdapter<PostObject> {
 
-    public NavDrawerAdapter(Context context, List<Post> myPosts) {
+    public NavDrawerAdapter(Context context, List<PostObject> myPosts) {
         super(context, R.layout.custom_row, myPosts);
     }
 
@@ -39,15 +38,15 @@ public class NavDrawerAdapter extends ArrayAdapter<Post> {
         ImageView image1 = (ImageView) customView.findViewById(R.id.imageView1);
         ImageView image2 = (ImageView) customView.findViewById(R.id.imageView2);
 
-        Post post = getItem(position);
-        percentage1.setText(post.getPercentage(1) + "%");
-        percentage2.setText(post.getPercentage(2) + "%");
-        headline.setText(post.title);
-        date.setText(post.getShortDate());
-        image1.setImageBitmap(post.image1);
-        image2.setImageBitmap(post.image2);
-
-        updatePostPercentage(customView, post.getPercentage(1), post.getPercentage(2));
+        PostObject post = getItem(position);
+//        percentage1.setText(post.getPercentage(1) + "%");
+//        percentage2.setText(post.getPercentage(2) + "%");
+//        headline.setText(post.title);
+//        date.setText(post.getShortDate());
+//        image1.setImageBitmap(post.image1);
+//        image2.setImageBitmap(post.image2);
+//
+//        updatePostPercentage(customView, post.getPercentage(1), post.getPercentage(2));
 
         return customView;
     }

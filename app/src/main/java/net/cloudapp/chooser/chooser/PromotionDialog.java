@@ -77,7 +77,7 @@ public abstract class PromotionDialog extends DialogFragment implements View.OnC
         promotionTime = Time.MINUTE;
         maxVal = 59;
         price.setText(String.valueOf(50));
-        dialogTokens.setText(String.valueOf(sessionDetails.userTokenCount));
+        dialogTokens.setText(String.valueOf(SessionDetails.getInstance().userTokenCount));
         canAfford = (sessionDetails.userTokenCount >= 50);
         if (canAfford)
             affordNote.setVisibility(View.INVISIBLE);
