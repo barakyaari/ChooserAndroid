@@ -23,6 +23,7 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import net.cloudapp.chooser.chooser.Controller.LoginController;
 import net.cloudapp.chooser.chooser.Network.RestFramework.RestClient;
 import net.cloudapp.chooser.chooser.Common.SessionDetails;
 
@@ -46,35 +47,21 @@ public class LoginView extends Activity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         initializeComponents();
-        Log.d("Chooser", "Login loaded");
-        if(AccessToken.getCurrentAccessToken() != null){
-            final AccessToken token = AccessToken.getCurrentAccessToken();
-            Log.d("Chooser", "Access token exists: " + token.getToken());
-            Log.d("Chooser", "User ID: " + token.getUserId());
-            restClient.getService().login(token.getToken(), token.getUserId(), new Callback<Void>() {
-                @Override
-                public void success(Void aVoid, Response response) {
-                    Log.d("Chooser", "Successful login on server.");
-                    loadFeed();
-                }
 
-                @Override
-                public void failure(RetrofitError error) {
-                    error.printStackTrace();
-                    Log.d("Chooser", "LoginView failed on server.");
-                }
-            });
+        if(AccessToken.getCurrentAccessToken() != null){
+            LoginController.login();
+            loadFeed();
+            finish();
         }
+        Log.d("Chooser", "Login loaded");
+
     }
 
     public void initializeComponents(){
         initializeFacebookSdk();
         initializeUI();
         printAppHashId();
-        restClient = new RestClient();
-
         RegisterFacebookLogin();
     }
 
@@ -155,20 +142,7 @@ public class LoginView extends Activity{
                 String uID = accessToken.getUserId();
                 loadingDialog.show();
                 sessionDetails.setAccessToken(accessToken);
-                Log.d("Chooser", "Facebook call successful. Token is: " + accessToken.getToken());
 
-                restClient.getService().login(accessToken.getToken(), accessToken.getUserId(), new Callback<Void>(){
-
-                    @Override
-                    public void success(Void aVoid, Response response) {
-
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-
-                    }
-                });
             }
 
             @Override

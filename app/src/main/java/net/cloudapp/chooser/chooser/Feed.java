@@ -28,6 +28,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
 
+import net.cloudapp.chooser.chooser.Common.PostRepository;
+import net.cloudapp.chooser.chooser.Controller.PostsController;
 import net.cloudapp.chooser.chooser.Images.ImagePicker;
 import net.cloudapp.chooser.chooser.Network.RestFramework.RestClient;
 import net.cloudapp.chooser.chooser.Images.CloudinaryClient;
@@ -70,8 +72,6 @@ public class Feed extends AppCompatActivity implements View.OnClickListener {
         initializeViewElements();
         initializeOnClickListeners();
 
-        restClient = new RestClient();
-
         //Controls initialization:
         imageSwitcher1.setFactory(new ImageSwitchFactory(this));
         imageSwitcher2.setFactory(new ImageSwitchFactory(this));
@@ -89,6 +89,25 @@ public class Feed extends AppCompatActivity implements View.OnClickListener {
 
         drawerAdapter = new NavDrawerAdapter(this, myPosts);
         drawerList.setAdapter(drawerAdapter);
+        PostsController postsController = new PostsController(this);
+        postsController.getPosts();
+    }
+
+
+    public void refreshView(){
+        Post post = PostRepository.postsFeed.poll();
+        Log.i("ChooserApp", "Loading post " + post.title);
+        String url1 = CloudinaryClient.bigImageUrl(post.image1);
+        String url2 = CloudinaryClient.bigImageUrl(post.image2);
+
+        Glide.with(this).load(url1).into((ImageView) imageSwitcher1.getCurrentView());
+        Glide.with(this).load(url2).into((ImageView) imageSwitcher2.getCurrentView());
+        titleTextView.setText(post.title);
+        description1TextView.setText(post.description1);
+        description2TextView.setText(post.description2);
+        setTextAnimations(); //loads post after percentage appears on screen
+//            textSwitcher1.setText(String.valueOf(posts.get(prevPost).votes1));
+//            textSwitcher2.setText(String.valueOf(posts.get(prevPost).votes2));
     }
 
     private void initializeOnClickListeners() {
@@ -169,7 +188,7 @@ public class Feed extends AppCompatActivity implements View.OnClickListener {
                         posts.addAll(newPosts);
                         currentPost = 0;
                         Log.d("Chooser", "Recieved: " + posts.size() + " posts");
-                        loadPosts();
+//                        loadPosts();
                     }
                     else{
                         Log.d("Chooser", "Got 0 posts.");
@@ -218,27 +237,6 @@ public class Feed extends AppCompatActivity implements View.OnClickListener {
             }
         });
         nagDialog.show();
-    }
-
-    private void loadPosts() {
-        if (posts.isEmpty()) {
-            Log.i("ChooserApp", "Empty posts...");
-            return;
-        }
-        Post post = posts.get(currentPost);
-        Log.i("ChooserApp", "Loading current post: " + currentPost + " Title: " + post.title);
-        String url1 = CloudinaryClient.bigImageUrl(post.image1);
-        String url2 = CloudinaryClient.bigImageUrl(post.image2);
-
-        Glide.with(this).load(url1).into((ImageView) imageSwitcher1.getCurrentView());
-        Glide.with(this).load(url2).into((ImageView) imageSwitcher2.getCurrentView());
-        titleTextView.setText(post.title);
-        description1TextView.setText(post.description1);
-        description2TextView.setText(post.description2);
-        setTextAnimations(); //loads post after percentage appears on screen
-//            textSwitcher1.setText(String.valueOf(posts.get(prevPost).votes1));
-//            textSwitcher2.setText(String.valueOf(posts.get(prevPost).votes2));
-
     }
 
     private void setTextAnimations() {
@@ -324,53 +322,53 @@ public class Feed extends AppCompatActivity implements View.OnClickListener {
                 //refreshMyPosts();
                 break;
 
-            case R.id.buttonLeft:
-                prevPic();
-                break;
-
-            case R.id.buttonRight:
-                skipPic();
-                break;
-
-            case R.id.imageSwitcher1:
-                // vote(1);
-                nextPic();
-                break;
-
-            case R.id.imageSwitcher2:
-                // vote(2);
-                nextPic();
-                break;
+//            case R.id.buttonLeft:
+//                prevPic();
+//                break;
+//
+//            case R.id.buttonRight:
+//                skipPic();
+//                break;
+//
+//            case R.id.imageSwitcher1:
+//                // vote(1);
+//                nextPic();
+//                break;
+//
+//            case R.id.imageSwitcher2:
+//                // vote(2);
+//                nextPic();
+//                break;
         }
     }
-
-    private void skipPic() {
-        if (currentPost < posts.size() - 1) {
-            currentPost++;
-            setPicAnimationNext();
-            loadPosts();
-        } else
-            loadPosts();
-    }
-
-    private void nextPic() {
-        if (currentPost < posts.size() - 1) {
-            currentPost++;
-            setPicAnimationNext();
-            loadPosts();
-        } else
-            loadPosts();
-    }
-
-
-    private void prevPic() {
-        if (currentPost > 0) {
-            currentPost--;
-            setPicAnimationPrev();
-            loadPosts();
-        } else
-            loadPosts();
-    }
+//
+//    private void skipPic() {
+//        if (currentPost < posts.size() - 1) {
+//            currentPost++;
+//            setPicAnimationNext();
+//            loadPosts();
+//        } else
+//            loadPosts();
+//    }
+//
+//    private void nextPic() {
+//        if (currentPost < posts.size() - 1) {
+//            currentPost++;
+//            setPicAnimationNext();
+//            loadPosts();
+//        } else
+//            loadPosts();
+//    }
+//
+//
+//    private void prevPic() {
+//        if (currentPost > 0) {
+//            currentPost--;
+//            setPicAnimationPrev();
+//            loadPosts();
+//        } else
+//            loadPosts();
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
