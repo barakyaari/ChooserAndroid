@@ -1,6 +1,6 @@
 package net.cloudapp.chooser.chooser.Network.RestFramework;
 
-import net.cloudapp.chooser.chooser.Model.Post;
+import net.cloudapp.chooser.chooser.model.Post;
 
 import java.util.List;
 

@@ -30,11 +30,11 @@ import com.facebook.login.LoginManager;
 
 import net.cloudapp.chooser.chooser.Images.ImagePicker;
 import net.cloudapp.chooser.chooser.Network.RestFramework.RestClient;
-import net.cloudapp.chooser.chooser.Model.Post;
 import net.cloudapp.chooser.chooser.Images.CloudinaryClient;
 import net.cloudapp.chooser.chooser.Common.SessionDetails;
 import net.cloudapp.chooser.chooser.Animations.ImageSwitchFactory;
 import net.cloudapp.chooser.chooser.Animations.TextSwitchFactory;
+import net.cloudapp.chooser.chooser.model.Post;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +65,7 @@ public class Feed extends AppCompatActivity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("Chooser", "Feed activity loading");
         setContentView(R.layout.posts_view);
         initializeViewElements();
         initializeOnClickListeners();
@@ -85,6 +86,7 @@ public class Feed extends AppCompatActivity implements View.OnClickListener {
         //Load Posts:
         posts = new ArrayList();
         myPosts = new ArrayList();
+
         drawerAdapter = new NavDrawerAdapter(this, myPosts);
         drawerList.setAdapter(drawerAdapter);
     }

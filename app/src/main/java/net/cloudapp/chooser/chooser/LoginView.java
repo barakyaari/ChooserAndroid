@@ -1,5 +1,6 @@
 package net.cloudapp.chooser.chooser;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -7,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
@@ -17,31 +19,57 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.facebook.login.LoginManager;
 
 import net.cloudapp.chooser.chooser.Network.RestFramework.RestClient;
-import net.cloudapp.chooser.chooser.R;
 import net.cloudapp.chooser.chooser.Common.SessionDetails;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-import static com.facebook.FacebookSdk.getApplicationContext;
-
-public class LoginView {
+public class LoginView extends Activity{
     LoginButton fbLoginButton;
     CallbackManager callbackManager;
     ProgressDialog loadingDialog;
     RestClient restClient;
 
-    public void initializeView(){
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        initializeComponents();
+        Log.d("Chooser", "Login loaded");
+        if(AccessToken.getCurrentAccessToken() != null){
+            final AccessToken token = AccessToken.getCurrentAccessToken();
+            Log.d("Chooser", "Access token exists: " + token.getToken());
+            Log.d("Chooser", "User ID: " + token.getUserId());
+            restClient.getService().login(token.getToken(), token.getUserId(), new Callback<Void>() {
+                @Override
+                public void success(Void aVoid, Response response) {
+                    Log.d("Chooser", "Successful login on server.");
+                    loadFeed();
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    error.printStackTrace();
+                    Log.d("Chooser", "LoginView failed on server.");
+                }
+            });
+        }
+    }
+
+    public void initializeComponents(){
         initializeFacebookSdk();
         initializeUI();
         printAppHashId();

@@ -14,9 +14,8 @@ import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
-
-import net.cloudapp.chooser.chooser.Model.Post;
 import net.cloudapp.chooser.chooser.R;
+import net.cloudapp.chooser.chooser.model.Post;
 
 import java.util.ArrayList;
 import java.util.List;

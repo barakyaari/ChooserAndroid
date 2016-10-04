@@ -4,7 +4,8 @@ import android.content.SharedPreferences;
 
 import com.facebook.AccessToken;
 
-import net.cloudapp.chooser.chooser.Model.Post;
+
+import net.cloudapp.chooser.chooser.model.Post;
 
 import java.io.Serializable;
 import java.util.GregorianCalendar;
@@ -31,9 +32,8 @@ public class SessionDetails implements Serializable {
         skipResults = sharedPrefs.getBoolean("prefSkipResSwitch",skipResults);
     }
 
-   // public final String serverAddress = "http://192.168.43.2:3000";
+   public final String serverAddress = "http://192.168.43.2:3000";
     //public final String serverAddress = "http://10.0.2.2:3000"; // For Virtual device
-    public final String serverAddress = "http://10.100.102.12:3000"; // For Virtual device
 
 
     public static final SessionDetails sessionDetailsInstance = new SessionDetails();
