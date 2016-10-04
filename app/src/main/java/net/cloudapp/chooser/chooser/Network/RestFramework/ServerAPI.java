@@ -1,17 +1,19 @@
-package net.cloudapp.chooser.chooser.HttpConnection;
+package net.cloudapp.chooser.chooser.Network.RestFramework;
 
-import net.cloudapp.chooser.chooser.HttpConnection.Post;
+import net.cloudapp.chooser.chooser.Model.Post;
 
 import java.util.List;
 
 import retrofit.Callback;
 import retrofit.http.GET;
 import retrofit.http.Header;
-import retrofit.http.POST;
 
 public interface ServerAPI {
     @GET("/login")
-    public void login(@Header("token") String token, @Header("userId") String userId, Callback<Void> callback);
+    public void login(
+            @Header("token") String token,
+            @Header("userId") String userId,
+            Callback<Void> callback);
 
     @GET("/allPosts")
     public void allPosts(

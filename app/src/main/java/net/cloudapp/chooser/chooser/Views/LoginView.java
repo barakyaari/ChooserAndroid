@@ -1,4 +1,4 @@
-package net.cloudapp.chooser.chooser;
+package net.cloudapp.chooser.chooser.Views;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
-import android.content.pm.PackageInstaller;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.os.Bundle;
@@ -24,58 +23,35 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.login.LoginManager;
 
-import net.cloudapp.chooser.chooser.HttpConnection.Post;
-import net.cloudapp.chooser.chooser.HttpConnection.RestClient;
-import net.cloudapp.chooser.chooser.HttpConnection.ServerAPI;
+import net.cloudapp.chooser.chooser.Controller.LoginController;
+import net.cloudapp.chooser.chooser.Network.ConnectionMethods.LoginService;
+import net.cloudapp.chooser.chooser.Network.RestFramework.RestClient;
+import net.cloudapp.chooser.chooser.R;
+import net.cloudapp.chooser.chooser.Common.SessionDetails;
 
-import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Vector;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-import static android.R.attr.data;
+import static com.facebook.FacebookSdk.getApplicationContext;
 
-
-public class Login extends Activity {
+public class LoginView {
     LoginButton fbLoginButton;
     CallbackManager callbackManager;
     ProgressDialog loadingDialog;
     RestClient restClient;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void initializeView(){
         initializeFacebookSdk();
-        restClient = new RestClient();
-
         initializeUI();
         printAppHashId();
+        restClient = new RestClient();
 
         RegisterFacebookLogin();
-        if(AccessToken.getCurrentAccessToken() != null){
-            final AccessToken token = AccessToken.getCurrentAccessToken();
-            Log.d("Chooser", "Access token exists: " + token.getToken());
-            Log.d("Chooser", "User ID: " + token.getUserId());
-            restClient.getService().login(token.getToken(), token.getUserId(), new Callback<Void>() {
-                @Override
-                public void success(Void aVoid, Response response) {
-                    Log.d("Chooser", "Successful login on server.");
-                    startMainActivity(token);
-                }
-
-                @Override
-                public void failure(RetrofitError error) {
-                    error.printStackTrace();
-                    Log.d("Chooser", "Login failed on server.");
-                }
-            });
-        }
     }
 
     private void initializeFacebookSdk() {
@@ -153,10 +129,7 @@ public class Login extends Activity {
 
                 final AccessToken accessToken = loginResult.getAccessToken();
                 String uID = accessToken.getUserId();
-                ConnectionManager connectionManager = new ConnectionManager();
-                connectionManager.setId(uID);
                 loadingDialog.show();
-                connectionManager.setId(accessToken.getUserId());
                 sessionDetails.setAccessToken(accessToken);
                 Log.d("Chooser", "Facebook call successful. Token is: " + accessToken.getToken());
 
@@ -172,25 +145,6 @@ public class Login extends Activity {
 
                     }
                 });
-
-                restClient.getService().allPosts(new Callback<List<Post>>() {
-                    @Override
-                    public void success(List<Post> posts, Response response) {
-                        if(response.getStatus() == 200){
-                            startMainActivity(accessToken);
-                        }
-                        else{
-                            logout();
-                        }
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-                        Log.d("Chooser", "Login response: Server is down");
-                        error.printStackTrace();
-                        serverIsDownDialog();
-                    }
-                });
             }
 
             @Override
@@ -203,16 +157,13 @@ public class Login extends Activity {
                 Log.e("Chooser", "Facebook login Error");
                 error.printStackTrace();
             }
-
         });
-
     }
 
-    private void startMainActivity(AccessToken token) {
-        SessionDetails.getInstance().setAccessToken(token);
+    private void loadFeed() {
         Log.d("Chooser", "Callback running");
         loadingDialog.hide();
-        Intent i = new Intent("android.intent.action.MainActivity");
+        Intent i = new Intent("android.intent.action.Feed");
         Log.d("Chooser", "Starting main activity");
         startActivity(i);
     }

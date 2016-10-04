@@ -1,8 +1,6 @@
-package net.cloudapp.chooser.chooser.HttpConnection;
+package net.cloudapp.chooser.chooser.Network.RestFramework;
 
-import android.content.pm.PackageInstaller;
-
-import net.cloudapp.chooser.chooser.SessionDetails;
+import net.cloudapp.chooser.chooser.Common.SessionDetails;
 
 public class RestClient {
     //You need to change the IP if you testing environment is not local machine

@@ -4,8 +4,6 @@ import android.util.Log;
 
 import com.cloudinary.Cloudinary;
 
-import net.cloudapp.chooser.chooser.SessionDetails;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;

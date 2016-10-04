@@ -1,4 +1,4 @@
-package net.cloudapp.chooser.chooser;
+package net.cloudapp.chooser.chooser.Images;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;

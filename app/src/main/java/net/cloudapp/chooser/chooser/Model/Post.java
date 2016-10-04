@@ -1,4 +1,4 @@
-package net.cloudapp.chooser.chooser.HttpConnection;
+package net.cloudapp.chooser.chooser.Model;
 
 public class Post {
     public String title;

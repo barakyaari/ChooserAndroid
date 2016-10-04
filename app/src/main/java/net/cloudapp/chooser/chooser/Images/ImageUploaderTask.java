@@ -1,15 +1,11 @@
 package net.cloudapp.chooser.chooser.Images;
 
-import android.content.pm.PackageInstaller;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import net.cloudapp.chooser.chooser.SessionDetails;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.UUID;
 
 public class ImageUploaderTask extends AsyncTask<UploadTask, Void, Void>{
 

@@ -1,4 +1,4 @@
-package net.cloudapp.chooser.chooser;
+package net.cloudapp.chooser.chooser.Views;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -15,7 +15,8 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 
-import net.cloudapp.chooser.chooser.HttpConnection.Post;
+import net.cloudapp.chooser.chooser.Model.Post;
+import net.cloudapp.chooser.chooser.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +26,6 @@ public class NavDrawerAdapter extends ArrayAdapter<Post> {
     public NavDrawerAdapter(Context context, List<Post> myPosts) {
         super(context, R.layout.custom_row, myPosts);
     }
-
-
 
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(getContext());

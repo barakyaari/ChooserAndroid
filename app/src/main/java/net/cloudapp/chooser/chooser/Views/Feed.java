@@ -1,23 +1,15 @@
-package net.cloudapp.chooser.chooser;
+package net.cloudapp.chooser.chooser.Views;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.app.ActionBar.LayoutParams;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,27 +17,25 @@ import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ViewSwitcher.ViewFactory;
 
 import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
 
-import net.cloudapp.chooser.chooser.HttpConnection.RestClient;
-import net.cloudapp.chooser.chooser.HttpConnection.Post;
+import net.cloudapp.chooser.chooser.Images.ImagePicker;
+import net.cloudapp.chooser.chooser.Network.RestFramework.RestClient;
+import net.cloudapp.chooser.chooser.Model.Post;
 import net.cloudapp.chooser.chooser.Images.CloudinaryClient;
-
-import org.json.JSONArray;
-import org.json.JSONException;
+import net.cloudapp.chooser.chooser.R;
+import net.cloudapp.chooser.chooser.Common.SessionDetails;
+import net.cloudapp.chooser.chooser.Views.Animations.ImageSwitchFactory;
+import net.cloudapp.chooser.chooser.Views.Animations.TextSwitchFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +44,9 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class Feed extends AppCompatActivity implements View.OnClickListener {
+    Button buttonRight, refreshPostsButton, buttonLeft;
+    ImageButton flagButton;
     TextView titleTextView, description1TextView, description2TextView, tokens;
     ImageSwitcher imageSwitcher1, imageSwitcher2;
     TextSwitcher textSwitcher1, textSwitcher2;
@@ -68,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private NavDrawerAdapter drawerAdapter;
     private ListView drawerList;
     private int currentPost = 0;
-    private int prevPost; // needed for the text animation, (for tests purposes)
     private static final int PICK_IMAGE_ID = 234; // the number doesn't matter
     RestClient restClient;
 
@@ -76,50 +67,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.posts_view);
+        initializeViewElements();
+        initializeOnClickListeners();
+
         restClient = new RestClient();
-        sessionDetails = SessionDetails.getInstance();
-        Log.d("Chooser", "Session userId is: " + sessionDetails.getAccessToken().getUserId());
 
         //Controls initialization:
-        titleTextView = (TextView) findViewById(R.id.titleTextView);
-        description1TextView = (TextView) findViewById(R.id.description1TextView);
-        description2TextView = (TextView) findViewById(R.id.description2TextView);
-        tokens = (TextView) findViewById(R.id.tokens);
-        imageSwitcher1 = (ImageSwitcher) findViewById(R.id.imageSwitcher1);
-        imageSwitcher2 = (ImageSwitcher) findViewById(R.id.imageSwitcher2);
-        textSwitcher1 = (TextSwitcher) findViewById(R.id.percentage1);
-        textSwitcher2 = (TextSwitcher) findViewById(R.id.percentage2);
-
-        imageSwitcher1.setFactory(new ImageSwitchFactory());
-        imageSwitcher2.setFactory(new ImageSwitchFactory());
-        textSwitcher1.setFactory(new TextSwitchFactory());
-        textSwitcher2.setFactory(new TextSwitchFactory());
+        imageSwitcher1.setFactory(new ImageSwitchFactory(this));
+        imageSwitcher2.setFactory(new ImageSwitchFactory(this));
+        textSwitcher1.setFactory(new TextSwitchFactory(this));
+        textSwitcher2.setFactory(new TextSwitchFactory(this));
 
         tokens.setText(String.valueOf(-1));
         //init myPosts
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawerList = (ListView) findViewById(R.id.left_drawer);
-        drawerList.setBackgroundColor(Color.parseColor("#FF494949"));
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
-
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                getSupportActionBar().setTitle("Chooser");
-            }
-
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                getSupportActionBar().setTitle("My Posts");
-            }
-        };
-
         drawerLayout.addDrawerListener(drawerToggle);
 
-        Button buttonRight = (Button) findViewById(R.id.buttonRight);
-        Button buttonLeft = (Button) findViewById(R.id.buttonLeft);
-        Button refreshPostsButton = (Button) findViewById(R.id.buttonRefreshPosts);
-        ImageButton flagButton = (ImageButton) findViewById(R.id.flagButton);
+        animating = false;
+        //Load Posts:
+        posts = new ArrayList();
+        myPosts = new ArrayList();
+        drawerAdapter = new NavDrawerAdapter(this, myPosts);
+        drawerList.setAdapter(drawerAdapter);
+    }
 
+    private void initializeOnClickListeners() {
         //Set Click Listeners:
         refreshPostsButton.setOnClickListener(this);
         buttonRight.setOnClickListener(this);
@@ -144,95 +115,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
         );
-        animating = false;
-        //Load Posts:
-        posts = new ArrayList();
-        myPosts = new ArrayList();
-        drawerAdapter = new NavDrawerAdapter(this, myPosts);
-        drawerList.setAdapter(drawerAdapter);
-        drawerList.setOnItemClickListener(new DrawerItemClickListener());
-        drawerList.setOnItemLongClickListener(new DrawerItemClickListener());
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        refresh();
     }
 
-    private class ImageSwitchFactory implements ViewFactory {
-        @Override
-        public View makeView() {
-            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-            ImageView image = new ImageView(getApplicationContext());
-            image.setLayoutParams(lp);
-            return image;
-        }
-    }
+    private void initializeViewElements() {
+        buttonRight  = (Button) findViewById(R.id.buttonRight);
+        buttonLeft = (Button) findViewById(R.id.buttonLeft);
+        refreshPostsButton = (Button) findViewById(R.id.buttonRefreshPosts);
+        flagButton = (ImageButton) findViewById(R.id.flagButton);
 
-    private class TextSwitchFactory implements ViewFactory {
-        @Override
-        public View makeView() {
-            TextWithStroke text = new TextWithStroke(MainActivity.this);
-            text.setTypeface(null, Typeface.BOLD);
-            text.setGravity(Gravity.CENTER);
-            text.setTextSize(50);
-            ImageSwitcher.LayoutParams lp = new ImageSwitcher.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-            text.setLayoutParams(lp);
-            text.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/CooperBlackStd.otf"));
-            text.setTextColor(Color.parseColor("#dddddd"));  //Light gray
-            text.setStrokeSize(15);
-            text.setStrokeColor(Color.BLACK);
-            return text;
-        }
-    }
+        titleTextView = (TextView) findViewById(R.id.titleTextView);
+        description1TextView = (TextView) findViewById(R.id.description1TextView);
+        description2TextView = (TextView) findViewById(R.id.description2TextView);
+        tokens = (TextView) findViewById(R.id.tokens);
+        imageSwitcher1 = (ImageSwitcher) findViewById(R.id.imageSwitcher1);
+        imageSwitcher2 = (ImageSwitcher) findViewById(R.id.imageSwitcher2);
+        textSwitcher1 = (TextSwitcher) findViewById(R.id.percentage1);
+        textSwitcher2 = (TextSwitcher) findViewById(R.id.percentage2);
 
-    private class TextWithStroke extends TextView {
-        public TextWithStroke(Context context) {
-            super(context);
-        }
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerList = (ListView) findViewById(R.id.left_drawer);
+        drawerList.setBackgroundColor(Color.parseColor("#FF494949"));
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
 
-        private float strokeWidth;
-        private int strokeColor;
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                getSupportActionBar().setTitle("Chooser");
+            }
 
-        @Override
-        protected void onDraw(Canvas pCanvas) {
-            int textColor = getTextColors().getDefaultColor();
-            setTextColor(strokeColor);
-            getPaint().setStrokeWidth(strokeWidth);
-            getPaint().setStyle(Paint.Style.STROKE);
-            super.onDraw(pCanvas);
-            setTextColor(textColor);
-            getPaint().setStrokeWidth(0);
-            getPaint().setStyle(Paint.Style.FILL);
-            super.onDraw(pCanvas);
-        }
-
-        public void setStrokeSize(float strokeWidth) {
-            this.strokeWidth = strokeWidth;
-        }
-
-        public void setStrokeColor(float strokeColor) {
-            this.strokeColor = (int) strokeColor;
-        }
-    }
-
-    private void refreshMyPosts() {
-        Runnable doAtFinish = new Runnable() {
-            @Override
-            public void run() {
-                myPosts.clear();
-                String responseText = sessionDetails.responseString;
-                sessionDetails.responseString = "";
-                try {
-                    JSONArray jArray = new JSONArray(responseText);
-                    //json2posts(jArray, true);
-                    drawerAdapter.notifyDataSetChanged();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                getSupportActionBar().setTitle("My Posts");
             }
         };
-        ConnectionManager connectionManager = new ConnectionManager(sessionDetails);
-        connectionManager.getMyPosts(doAtFinish);
+
     }
 
     private void refresh() {
@@ -240,7 +155,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setPicAnimationPrev();
         posts.clear();
 
-        restClient.getService().allPosts(new Callback<List<Post>>() {
+        restClient.getService().allPosts(
+                SessionDetails.getInstance().getAccessToken().getToken(),
+                new Callback<List<Post>>() {
             @Override
             public void success(List<Post> newPosts, Response response) {
                 int code = response.getStatus();
@@ -259,7 +176,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } else {
                     Log.e("Chooser", "all posts - bad response code.");
                 }
-
             }
 
             @Override
@@ -268,38 +184,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 error.printStackTrace();
             }
         });
-    }
-
-    private void getTokenCount() {
-        Runnable doAtFinish = new Runnable() {
-            @Override
-            public void run() {
-                if (!sessionDetails.responseString.equals("-1")) {
-                    sessionDetails.userTokenCount = Integer.valueOf(sessionDetails.responseString);
-                    tokens.setText(sessionDetails.responseString);
-                    sessionDetails.responseString = "";
-                }
-            }
-        };
-        ConnectionManager connectionManager = new ConnectionManager(sessionDetails);
-        connectionManager.getTokenCount(sessionDetails.userId, doAtFinish);
-    }
-
-    private void reportPost() {
-        Runnable doAtFinish = new Runnable() {
-            @Override
-            public void run() {
-                boolean responseText = Boolean.parseBoolean(sessionDetails.responseString);
-                sessionDetails.responseString = "";
-                if (responseText) {
-                    Toast.makeText(getApplicationContext(), "Report Received!", Toast.LENGTH_LONG).show();
-                    nextPic();
-                } else
-                    Toast.makeText(getApplicationContext(), "Report failed!", Toast.LENGTH_LONG).show();
-            }
-        };
-        ConnectionManager connectionManager = new ConnectionManager(sessionDetails);
-        //  connectionManager.reportPost(posts.get(currentPost).id, doAtFinish);
     }
 
     @Override
@@ -335,28 +219,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         nagDialog.show();
     }
 
-    private void vote(final int vote) {
-        if (posts.size() < 1) {
-            return;
-        }
-        // posts.get(currentPost).addVote(vote);
-        Runnable doAtFinish = new Runnable() {
-            @Override
-            public void run() {
-                String responseText = sessionDetails.responseString;
-                sessionDetails.responseString = "";
-                if (Integer.valueOf(responseText) != -1) {
-                    Toast.makeText(getApplicationContext(), "Vote completed", Toast.LENGTH_LONG).show();
-                    tokens.setText(responseText);
-                    sessionDetails.userTokenCount = Integer.valueOf(responseText);
-                }
-            }
-        };
-        ConnectionManager connectionManager = new ConnectionManager(sessionDetails);
-        //  connectionManager.vote(String.valueOf(vote), posts.get(currentPost).id, doAtFinish);
-    }
-
-
     private void loadPosts() {
         if (posts.isEmpty()) {
             Log.i("ChooserApp", "Empty posts...");
@@ -377,7 +239,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            textSwitcher2.setText(String.valueOf(posts.get(prevPost).votes2));
 
     }
-
 
     private void setTextAnimations() {
         textSwitcher1.setVisibility(View.VISIBLE);
@@ -454,16 +315,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         if (animating)
             return;
-        Log.i("ChooserApp", "MainActivity OnclickListener: " + v.getId());
+        Log.i("ChooserApp", "Feed OnclickListener: " + v.getId());
         switch (v.getId()) {
 
             case R.id.buttonRefreshPosts:
                 refresh();
                 //refreshMyPosts();
-                break;
-
-            case R.id.flagButton:
-                reportPost();
                 break;
 
             case R.id.buttonLeft:
@@ -475,19 +332,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.imageSwitcher1:
-                vote(1);
+                // vote(1);
                 nextPic();
                 break;
 
             case R.id.imageSwitcher2:
-                vote(2);
+                // vote(2);
                 nextPic();
                 break;
         }
     }
 
     private void skipPic() {
-        prevPost = currentPost;
         if (currentPost < posts.size() - 1) {
             currentPost++;
             setPicAnimationNext();
@@ -497,7 +353,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void nextPic() {
-        prevPost = currentPost;
         if (currentPost < posts.size() - 1) {
             currentPost++;
             setPicAnimationNext();
@@ -508,62 +363,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     private void prevPic() {
-        prevPost = currentPost;
         if (currentPost > 0) {
             currentPost--;
             setPicAnimationPrev();
             loadPosts();
         } else
             loadPosts();
-    }
-
-
-    private class DrawerItemClickListener implements ListView.OnItemClickListener, ListView.OnItemLongClickListener {
-        @Override
-        public void onItemClick(AdapterView parent, View view, int position, long id) {
-
-            Toast.makeText(getApplicationContext(), "Post " + position + " Selected!", Toast.LENGTH_LONG).show();
-            //SessionDetails.getInstance().post = myPosts.get(position); //TODO: Remove this line
-            Intent i = new Intent("net.cloudapp.chooser.chooser.Statistics");
-            i.putExtra("SessionDetails", sessionDetails);
-            startActivity(i);
-
-            drawerList.setItemChecked(position, true);
-            //setTitle(posts.get(position).getTitle());
-            drawerLayout.closeDrawer(drawerList);
-        }
-
-        public boolean onItemLongClick(AdapterView parent, View view, int position, long id) {
-            deletePost(position);
-            drawerLayout.closeDrawer(drawerList);
-            return true;
-        }
-
-    }
-
-    private void deletePost(final int position) {
-        new AlertDialog.Builder(this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Deleting Post")
-                .setMessage("Are you sure you want to delete this post?\nNote: All your promotion time will be lost!")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Runnable doAtFinish = new Runnable() {
-                            @Override
-                            public void run() {
-                                //                       NotificationFileSystem.deleteNotification(Integer.parseInt(posts.get(position).id), getBaseContext());
-                                Toast.makeText(getApplicationContext(), "Post Deleted!", Toast.LENGTH_LONG).show();
-                                refreshMyPosts();
-                            }
-                        };
-                        ConnectionManager connectionManager = new ConnectionManager(sessionDetails);
-                        connectionManager.deletePost(posts.get(position)._id, doAtFinish);
-                    }
-
-                })
-                .setNegativeButton("No", null)
-                .show();
     }
 
     @Override
@@ -579,7 +384,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -591,7 +395,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent i;
         switch (item.getItemId()) {
             case R.id.add_poll:
-                i = new Intent("net.cloudapp.chooser.chooser.AddPost");
+                i = new Intent("net.cloudapp.chooser.chooser.Views.AddPost");
                 startActivity(i);
                 return true;
             case R.id.settings:
@@ -607,10 +411,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-
     @Override
     public void onBackPressed() {
+        // prevents 'back' button from showing the login screen.
         moveTaskToBack(true);
-        //blocks 'back' button from showing the login screen.
     }
 }

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:weightSum="1"
     android:background="#32405d"
-    tools:context=".AddPost">
+    tools:context=".Views.AddPost">
 
     <LinearLayout
         android:orientation="horizontal"

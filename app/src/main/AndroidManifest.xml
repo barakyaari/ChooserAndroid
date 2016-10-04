@@ -25,7 +25,7 @@
             android:exported="true" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".Views.Feed"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" >
             <intent-filter>
@@ -35,7 +35,7 @@
         </activity>
 
         <activity
-            android:name=".Login"
+            android:name=".Views.LoginView"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" >
             <intent-filter>
@@ -45,31 +45,11 @@
         </activity>
 
         <activity
-            android:name=".AddPost"
+            android:name=".Views.AddPost"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" >
             <intent-filter>
                 <action android:name="net.cloudapp.chooser.chooser.AddPost" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".Statistics"
-            android:label="Statistics"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" >
-            <intent-filter>
-                <action android:name="net.cloudapp.chooser.chooser.Statistics" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".Settings"
-            android:label="Settings"
-            android:theme="@android:style/Theme.DeviceDefault">
-            <intent-filter>
-                <action android:name="net.cloudapp.chooser.chooser.Settings" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -90,10 +70,6 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
-        <service
-            android:name=".NotifierBackgroundThread"
-            android:exported="false"/>
 
     </application>
 

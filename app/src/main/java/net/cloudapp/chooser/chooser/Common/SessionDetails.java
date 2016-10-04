@@ -1,14 +1,13 @@
-package net.cloudapp.chooser.chooser;
+package net.cloudapp.chooser.chooser.Common;
 
 import android.content.SharedPreferences;
 
 import com.facebook.AccessToken;
 
-import net.cloudapp.chooser.chooser.HttpConnection.Post;
+import net.cloudapp.chooser.chooser.Model.Post;
 
 import java.io.Serializable;
 import java.util.GregorianCalendar;
-import java.util.Objects;
 
 /**
  * Created by Barak on 10/12/2015.
