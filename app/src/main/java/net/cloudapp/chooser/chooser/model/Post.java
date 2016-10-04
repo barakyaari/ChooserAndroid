@@ -1,4 +1,4 @@
-package net.cloudapp.chooser.chooser.domain.model;
+package net.cloudapp.chooser.chooser.model;
 
 public class Post {
     public String title;
