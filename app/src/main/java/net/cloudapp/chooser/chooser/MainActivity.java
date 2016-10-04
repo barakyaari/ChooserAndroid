@@ -12,10 +12,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.app.ActionBar.LayoutParams;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -42,28 +39,20 @@ import android.widget.ViewSwitcher.ViewFactory;
 
 import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-import net.cloudapp.chooser.chooser.HttpConnection.PostObject;
-import net.cloudapp.chooser.chooser.HttpConnection.ServerAPI;
+import net.cloudapp.chooser.chooser.HttpConnection.RestClient;
+import net.cloudapp.chooser.chooser.HttpConnection.Post;
+import net.cloudapp.chooser.chooser.Images.CloudinaryClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     TextView titleTextView, description1TextView, description2TextView, tokens;
@@ -72,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Bitmap image1Bitmap, image2Bitmap;
     boolean animating;
     private SessionDetails sessionDetails;
-    private List<PostObject> posts, myPosts;
+    private List<Post> posts, myPosts;
     private SharedPreferences sharedPrefs;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
@@ -81,12 +70,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int currentPost = 0;
     private int prevPost; // needed for the text animation, (for tests purposes)
     private static final int PICK_IMAGE_ID = 234; // the number doesn't matter
-    private GoogleApiClient client;
+    RestClient restClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.posts_view);
+        restClient = new RestClient();
         sessionDetails = SessionDetails.getInstance();
         Log.d("Chooser", "Session userId is: " + sessionDetails.getAccessToken().getUserId());
 
@@ -105,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         textSwitcher1.setFactory(new TextSwitchFactory());
         textSwitcher2.setFactory(new TextSwitchFactory());
 
-        tokens.setText(String.valueOf(sessionDetails.userTokenCount));
+        tokens.setText(String.valueOf(-1));
         //init myPosts
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerList = (ListView) findViewById(R.id.left_drawer);
@@ -165,7 +155,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         refresh();
     }
 
@@ -251,28 +240,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setPicAnimationPrev();
         posts.clear();
 
-        Gson gson = new GsonBuilder()
-                .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-                .create();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(sessionDetails.serverAddress)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        ServerAPI serverAPI = retrofit.create(ServerAPI.class);
-
-        Call<List<PostObject>> call = serverAPI.allPosts();
-
-        call.enqueue(new Callback<List<PostObject>>() {
+        restClient.getService().allPosts(new Callback<List<Post>>() {
             @Override
-            public void onResponse(Call<List<PostObject>> call, Response<List<PostObject>> response) {
-                int code = response.code();
+            public void success(List<Post> newPosts, Response response) {
+                int code = response.getStatus();
                 if (code == 200) {
                     Log.d("Chooser", "all posts OK.");
 
-                    List<PostObject> newPosts = response.body();
-                    if (posts.size() > 0) {
+                    if (newPosts.size() > 0) {
                         posts.addAll(newPosts);
                         currentPost = 0;
                         Log.d("Chooser", "Recieved: " + posts.size() + " posts");
@@ -284,15 +259,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } else {
                     Log.e("Chooser", "all posts - bad response code.");
                 }
+
             }
 
             @Override
-            public void onFailure(Call<List<PostObject>> call, Throwable t) {
+            public void failure(RetrofitError error) {
                 Log.e("Chooser", "all posts - Callback failure");
+                error.printStackTrace();
             }
         });
     }
-
 
     private void getTokenCount() {
         Runnable doAtFinish = new Runnable() {
@@ -386,11 +362,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.i("ChooserApp", "Empty posts...");
             return;
         }
-        PostObject post = posts.get(currentPost);
-        Log.i("ChooserApp", "Loading current post: " + currentPost + " Title: " + post.getTitle());
+        Post post = posts.get(currentPost);
+        Log.i("ChooserApp", "Loading current post: " + currentPost + " Title: " + post.title);
+        String url1 = CloudinaryClient.bigImageUrl(post.image1);
+        String url2 = CloudinaryClient.bigImageUrl(post.image2);
 
-        Glide.with(this).load(post.getUrl1()).into((ImageView) imageSwitcher1.getCurrentView());
-        Glide.with(this).load(post.getUrl2()).into((ImageView) imageSwitcher2.getCurrentView());
+        Glide.with(this).load(url1).into((ImageView) imageSwitcher1.getCurrentView());
+        Glide.with(this).load(url2).into((ImageView) imageSwitcher2.getCurrentView());
+        titleTextView.setText(post.title);
+        description1TextView.setText(post.description1);
+        description2TextView.setText(post.description2);
         setTextAnimations(); //loads post after percentage appears on screen
 //            textSwitcher1.setText(String.valueOf(posts.get(prevPost).votes1));
 //            textSwitcher2.setText(String.valueOf(posts.get(prevPost).votes2));
@@ -418,11 +399,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                PostObject post = posts.get(currentPost);
-                titleTextView.setText((String)post.getTitle());
-                description1TextView.setText((String)post.getDescription1());
+                Post post = posts.get(currentPost);
+                titleTextView.setText((String)post.title);
+                description1TextView.setText((String)post.description1);
                 textSwitcher1.setVisibility(View.GONE);
-                Glide.with(getApplicationContext()).load(post.getUrl1()).into((ImageView) imageSwitcher1.getCurrentView());
+                Glide.with(getApplicationContext()).load(CloudinaryClient.bigImageUrl(post.image1)).into((ImageView) imageSwitcher1.getCurrentView());
             }
         });
 
@@ -577,7 +558,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             }
                         };
                         ConnectionManager connectionManager = new ConnectionManager(sessionDetails);
-                        connectionManager.deletePost(posts.get(position).getPostId(), doAtFinish);
+                        connectionManager.deletePost(posts.get(position)._id, doAtFinish);
                     }
 
                 })
@@ -611,7 +592,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (item.getItemId()) {
             case R.id.add_poll:
                 i = new Intent("net.cloudapp.chooser.chooser.AddPost");
-                i.putExtra("SessionDetails", sessionDetails);
                 startActivity(i);
                 return true;
             case R.id.settings:

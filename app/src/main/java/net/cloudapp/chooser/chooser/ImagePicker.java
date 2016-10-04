@@ -19,11 +19,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Author: Mario Velasco Casquero
- * Date: 08/09/2015
- * Email: m3ario@gmail.com
- */
 public class ImagePicker {
 
     private static final int DEFAULT_MIN_WIDTH_QUALITY = 400;        // min pixels
@@ -89,8 +84,7 @@ public class ImagePicker {
         return bm;
     }
 
-
-    private static File getTempFile(Context context) {
+    public static File getTempFile(Context context) {
         File imageFile = new File(context.getExternalCacheDir(), TEMP_IMAGE_NAME);
         imageFile.getParentFile().mkdirs();
         return imageFile;

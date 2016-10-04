@@ -27,6 +27,8 @@ import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
+import net.cloudapp.chooser.chooser.HttpConnection.Post;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -77,7 +79,7 @@ public class StatisticsFragments extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         sessionDetails = (SessionDetails) getArguments().getSerializable("SessionDetails");
         post = SessionDetails.getInstance().post;
-        postStatistics = post.postStatistics;
+//        postStatistics = post.postStatistics;
         super.onCreate(savedInstanceState);
     }
 
@@ -119,7 +121,7 @@ public class StatisticsFragments extends Fragment {
             }
         };
         ConnectionManager connectionManager = new ConnectionManager(sessionDetails);
-        connectionManager.getStatistics(post.id,doAtFinish);
+        connectionManager.getStatistics(post._id,doAtFinish);
     }
 
     private void updateStatistics() {
@@ -329,8 +331,8 @@ public class StatisticsFragments extends Fragment {
 
     private void updateGeneralBarData () {
         ArrayList<BarEntry> vals = new ArrayList<>();
-        vals.add(new BarEntry(1f, post.votes1));
-        vals.add(new BarEntry(2.2f, post.votes2));
+//        vals.add(new BarEntry(1f, post.votes1));
+//        vals.add(new BarEntry(2.2f, post.votes2));
 
 
         BarDataSet set = new BarDataSet(vals, "General Info");
@@ -351,16 +353,16 @@ public class StatisticsFragments extends Fragment {
         generalBarChart.notifyDataSetChanged();
         generalBarChart.invalidate();
 
-        totalVotes.setText("Total Votes: " + (post.votes1 + post.votes2));
-        postDate.setText("Posted: " + postedTime(post.date, sessionDetails.currentServerTime) + " ago");
+//        totalVotes.setText("Total Votes: " + (post.votes1 + post.votes2));
+//        postDate.setText("Posted: " + postedTime(post.date, sessionDetails.currentServerTime) + " ago");
 
-        if (post.promotionExpiration.compareTo(sessionDetails.currentServerTime) > 0)
-            promotionStatus.setText("Promotion Time Left: " + postedTime(sessionDetails.currentServerTime, post.promotionExpiration));
-        else
-            promotionStatus.setText("Promotion Expired!");
-
-        if (post.date != post.promotionExpiration)
-            promotionStatus.setVisibility(View.VISIBLE);
+//        if (post.promotionExpiration.compareTo(sessionDetails.currentServerTime) > 0)
+//            promotionStatus.setText("Promotion Time Left: " + postedTime(sessionDetails.currentServerTime, post.promotionExpiration));
+//        else
+//            promotionStatus.setText("Promotion Expired!");
+//
+//        if (post.date != post.promotionExpiration)
+//            promotionStatus.setVisibility(View.VISIBLE);
     }
 
     private void updateGenderBarData (HorizontalBarChart horizontalBarChart, int color1, int color2, float data1, float data2, TextView dataText1, TextView dataText2) {
@@ -440,7 +442,7 @@ public class StatisticsFragments extends Fragment {
         postStatistics.femaleVotes2 = Integer.parseInt(jObject.getString("femaleVotes2"));
         postStatistics.maleVotes1 = Integer.parseInt(jObject.getString("maleVotes1"));
         postStatistics.maleVotes2 = Integer.parseInt(jObject.getString("maleVotes2"));
-        post.postStatistics = postStatistics;
+//        post.postStatistics = postStatistics;
 
         JSONArray jAgeArray = jArray.getJSONArray(1);
         JSONObject jAgeObject;
@@ -476,11 +478,12 @@ public class StatisticsFragments extends Fragment {
 
 
         jObject = jArray.getJSONObject(2);
-        sessionDetails.currentServerTime = Post.string2Calendar(jObject.getString("currentTime"));
+//        sessionDetails.currentServerTime = Post.string2Calendar(jObject.getString("currentTime"));
 
         jObject = jArray.getJSONObject(3);
-        if (!jObject.getString("promotion_expiration").equals("null"))
-            post.setPromotionExpiration(jObject.getString("promotion_expiration"));
+        if (!jObject.getString("promotion_expiration").equals("null")) {
+//            post.setPromotionExpiration(jObject.getString("promotion_expiration"));
+        }
     }
 
     private String postedTime(GregorianCalendar earlyDate, GregorianCalendar laterDate) {

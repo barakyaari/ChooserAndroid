@@ -24,6 +24,8 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 
 
+import net.cloudapp.chooser.chooser.HttpConnection.Post;
+
 import java.util.ArrayList;
 
 public class Statistics extends AppCompatActivity implements View.OnClickListener {
@@ -64,11 +66,11 @@ public class Statistics extends AppCompatActivity implements View.OnClickListene
         ImageView image1 = (ImageView) findViewById(R.id.imageView1);
         ImageView image2 = (ImageView) findViewById(R.id.imageView2);
 
-        percentage1.setText(post.getPercentage(1) + "%");
-        percentage2.setText(post.getPercentage(2) + "%");
-        headline.setText(post.title);
-        image1.setImageBitmap(post.image1);
-        image2.setImageBitmap(post.image2);
+//        percentage1.setText(post.getPercentage(1) + "%");
+//        percentage2.setText(post.getPercentage(2) + "%");
+//        headline.setText(post.title);
+//        image1.setImageBitmap(post.image1);
+//        image2.setImageBitmap(post.image2);
         updatePostPercentage();
     }
 
@@ -96,7 +98,7 @@ public class Statistics extends AppCompatActivity implements View.OnClickListene
         horizontalBarChart.setPinchZoom(false);
 
         ArrayList<BarEntry> vals = new ArrayList<>();
-        vals.add(new BarEntry(0, new float[]{post.getPercentage(1), post.getPercentage(2)}));
+//        vals.add(new BarEntry(0, new float[]{post.getPercentage(1), post.getPercentage(2)}));
 
         BarDataSet set = new BarDataSet(vals, "Percentage");
         set.setBarBorderWidth(2);
@@ -125,13 +127,13 @@ public class Statistics extends AppCompatActivity implements View.OnClickListene
                         Runnable doAtFinish = new Runnable() {
                             @Override
                             public void run() {
-                                NotificationFileSystem.deleteNotification(Integer.parseInt(post.id), getBaseContext());
+                                NotificationFileSystem.deleteNotification(Integer.parseInt(post._id), getBaseContext());
                                 Toast.makeText(getApplicationContext(), "Post Deleted!", Toast.LENGTH_LONG).show();
                                 finish();
                             }
                         };
                         ConnectionManager connectionManager = new ConnectionManager(sessionDetails);
-                        connectionManager.deletePost(post.id, doAtFinish);
+                        connectionManager.deletePost(post._id, doAtFinish);
                     }
 
                 })
@@ -139,46 +141,46 @@ public class Statistics extends AppCompatActivity implements View.OnClickListene
                 .show();
     }
 
-    private void promotePost () {
-        promotionDialog = new PromotionDialog(sessionDetails, "Promote Post For:") {
-            @Override
-            public void onPromoteDialogFinish() {
-                sessionDetails.userTokenCount -= getPrice();
+//    private void promotePost () {
+//        promotionDialog = new PromotionDialog(sessionDetails, "Promote Post For:") {
+//            @Override
+//            public void onPromoteDialogFinish() {
+//                sessionDetails.userTokenCount -= getPrice();
+//
+//                Runnable doAtFinish = new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if (sessionDetails.responseString.equals("1")) {
+//                            viewPager.getAdapter().notifyDataSetChanged();
+//
+//                            Toast.makeText(getApplicationContext(), "Promotion Added!", Toast.LENGTH_LONG).show();
+//                        }
+//
+//                        Toast.makeText(getApplicationContext(), "Promotion Failed!", Toast.LENGTH_LONG).show();
+//                    }
+//                };
+//                ConnectionManager connectionManager = new ConnectionManager(sessionDetails);
+//                connectionManager.addPromotion(sessionDetails.userId, post.id,getDuration(),promotionTime.name(), doAtFinish);
+//            }
+//        };
+//        promotionDialog.show(getFragmentManager(), "PromotionDialog");
+//    }
 
-                Runnable doAtFinish = new Runnable() {
-                    @Override
-                    public void run() {
-                        if (sessionDetails.responseString.equals("1")) {
-                            viewPager.getAdapter().notifyDataSetChanged();
-
-                            Toast.makeText(getApplicationContext(), "Promotion Added!", Toast.LENGTH_LONG).show();
-                        }
-
-                        Toast.makeText(getApplicationContext(), "Promotion Failed!", Toast.LENGTH_LONG).show();
-                    }
-                };
-                ConnectionManager connectionManager = new ConnectionManager(sessionDetails);
-                connectionManager.addPromotion(sessionDetails.userId, post.id,getDuration(),promotionTime.name(), doAtFinish);
-            }
-        };
-        promotionDialog.show(getFragmentManager(), "PromotionDialog");
-    }
-
-    private void notifyPost() {
-        notificationDialog = new NotificationDialog("Post Notification", post.votes1+post.votes2) {
-            @Override
-            public void onNotificationDialogFinish() {
-                if (notificationMethod == NotificationDialog.NotificationMethod.VOTES || (notificationMethod == NotificationDialog.NotificationMethod.TIME && (getValue() - System.currentTimeMillis()) > 100)) {
-                    NotificationFileSystem.addNotification(Integer.parseInt(post.id), getValue(), notificationMethod, sessionDetails, getBaseContext());
-                    Toast.makeText(getApplicationContext(), "Notification added!", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Notification failed!", Toast.LENGTH_LONG).show();
-                }
-
-            }
-        };
-        notificationDialog.show(getFragmentManager(), "PromotionDialog");
-    }
+//    private void notifyPost() {
+//        notificationDialog = new NotificationDialog("Post Notification", post.votes1+post.votes2) {
+//            @Override
+//            public void onNotificationDialogFinish() {
+//                if (notificationMethod == NotificationDialog.NotificationMethod.VOTES || (notificationMethod == NotificationDialog.NotificationMethod.TIME && (getValue() - System.currentTimeMillis()) > 100)) {
+//                    NotificationFileSystem.addNotification(Integer.parseInt(post.id), getValue(), notificationMethod, sessionDetails, getBaseContext());
+//                    Toast.makeText(getApplicationContext(), "Notification added!", Toast.LENGTH_LONG).show();
+//                } else {
+//                    Toast.makeText(getApplicationContext(), "Notification failed!", Toast.LENGTH_LONG).show();
+//                }
+//
+//            }
+//        };
+//        notificationDialog.show(getFragmentManager(), "PromotionDialog");
+//    }
 
     @Override
     public void onClick(View v) {
@@ -188,11 +190,11 @@ public class Statistics extends AppCompatActivity implements View.OnClickListene
                 break;
 
             case R.id.promotePost:
-                promotePost();
+//                promotePost();
                 break;
 
             case R.id.notifyPost:
-                notifyPost();
+//                notifyPost();
                 break;
         }
     }

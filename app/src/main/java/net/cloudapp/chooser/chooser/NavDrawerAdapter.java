@@ -15,14 +15,14 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 
-import net.cloudapp.chooser.chooser.HttpConnection.PostObject;
+import net.cloudapp.chooser.chooser.HttpConnection.Post;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class NavDrawerAdapter extends ArrayAdapter<PostObject> {
+public class NavDrawerAdapter extends ArrayAdapter<Post> {
 
-    public NavDrawerAdapter(Context context, List<PostObject> myPosts) {
+    public NavDrawerAdapter(Context context, List<Post> myPosts) {
         super(context, R.layout.custom_row, myPosts);
     }
 
@@ -38,7 +38,7 @@ public class NavDrawerAdapter extends ArrayAdapter<PostObject> {
         ImageView image1 = (ImageView) customView.findViewById(R.id.imageView1);
         ImageView image2 = (ImageView) customView.findViewById(R.id.imageView2);
 
-        PostObject post = getItem(position);
+        Post post = getItem(position);
 //        percentage1.setText(post.getPercentage(1) + "%");
 //        percentage2.setText(post.getPercentage(2) + "%");
 //        headline.setText(post.title);

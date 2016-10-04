@@ -7,14 +7,11 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import net.cloudapp.chooser.chooser.HttpConnection.Post;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-
-/**
- * Created by Ben on 29/08/2016.
- */
 
 
 public class NotifierBackgroundThread extends IntentService {
@@ -105,63 +102,45 @@ public class NotifierBackgroundThread extends IntentService {
         Runnable doAtFinish = new Runnable() {
             @Override
             public void run() {
-                try {
-                    JSONArray jArray = new JSONArray(sessionDetails.responseString);
-                    post = json2post(jArray);
-                    SessionDetails.getInstance().responseString = "";
-                    SessionDetails.getInstance().post = post;
-                    sendNotification();
-                    NotificationFileSystem.deleteNotification(postID, getApplicationContext());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    JSONArray jArray = new JSONArray(sessionDetails.responseString);
+//                    post = json2post(jArray);
+//                    SessionDetails.getInstance().responseString = "";
+//                    SessionDetails.getInstance().post = post;
+//                    sendNotification();
+//                    NotificationFileSystem.deleteNotification(postID, getApplicationContext());
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        };
+//        connectionManager.getMyPost(String.valueOf(postID), doAtFinish);
             }
         };
-        connectionManager.getMyPost(String.valueOf(postID), doAtFinish);
     }
 
-    private void sendNotification() {
-        notification.setSmallIcon(R.mipmap.ic_launcher);
-        notification.setWhen(System.currentTimeMillis());
-        if (method == NotificationDialog.NotificationMethod.TIME)
-            notification.setContentTitle("Time to follow up on your post!");
-        else
-            notification.setContentTitle("Your post has reached the requested quota!");
+            private void sendNotification() {
+                notification.setSmallIcon(R.mipmap.ic_launcher);
+                notification.setWhen(System.currentTimeMillis());
+                if (method == NotificationDialog.NotificationMethod.TIME)
+                    notification.setContentTitle("Time to follow up on your post!");
+                else
+                    notification.setContentTitle("Your post has reached the requested quota!");
 
-        notification.setContentText("Titled: " + post.title);
+                notification.setContentText("Titled: " + post.title);
 
-        attachIntent();
+//        attachIntent();
 
-        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        nm.notify(uniqueID, notification.build());
-    }
+                NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                nm.notify(uniqueID, notification.build());
+            }
+        }
+//    private void attachIntent() {
+//        SessionDetails.getInstance().post = post;
+//        Intent i = new Intent("net.cloudapp.chooser.chooser.Statistics");
+//        i.putExtra("SessionDetails", sessionDetails);
+////        PendingIntent pi = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+//        notification.setContentIntent(pi);
+//    }
 
-    private void attachIntent() {
-        SessionDetails.getInstance().post = post;
-        Intent i = new Intent("net.cloudapp.chooser.chooser.Statistics");
-        i.putExtra("SessionDetails", sessionDetails);
-        PendingIntent pi = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
-        notification.setContentIntent(pi);
-    }
-
-    private Post json2post(JSONArray jArray) throws JSONException {
-        JSONObject jObject = jArray.getJSONObject(0);
-        String title = jObject.getString("title");
-        String image1 = jObject.getString("image1");
-        String description1 = jObject.getString("description1");
-        String image2 = jObject.getString("image2");
-        String description2 = jObject.getString("description2");
-        String id = jObject.getString("id");
-        int votes1 = Integer.parseInt(jObject.getString("votes1"));
-        int votes2 = Integer.parseInt(jObject.getString("votes2"));
-
-        Post newPost = new Post(title, Post.addStroke(Post.string2Bitmap(image1)), description1, Post.addStroke(Post.string2Bitmap(image2)), description2, id, votes1, votes2);
-        newPost.setDate(jObject.getString("date"));
-        String expDate = jObject.getString("promotion_expiration");
-        if (!expDate.equals("null"))
-            newPost.setPromotionExpiration(expDate);
-        return newPost;
-    }
-
-}
 

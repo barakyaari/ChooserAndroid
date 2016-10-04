@@ -1,15 +1,13 @@
 package net.cloudapp.chooser.chooser;
 
 
+import android.content.pm.PackageInstaller;
 import android.util.Log;
 
 import com.facebook.AccessToken;
 
 public class ConnectionManager {
     private SessionDetails sessionDetails;
-    //private final String chooserServerAddress = "http://chooser.cloudapp.net:8080";
-    private final String chooserServerAddress = "http://192.168.14.37:3000";
-    //private final String chooserServerAddress = "http://192.168.43.2:3000";
 
 
     public ConnectionManager(){
@@ -22,9 +20,10 @@ public class ConnectionManager {
 
 
     public void login(Runnable doAtFinish){
-        AccessToken token = SessionDetails.getInstance().getAccessToken();
-        Log.d("Chooser", "Calling Login");
-        BaseConnectionData data = new BaseConnectionData("POST", "login", chooserServerAddress);
+        SessionDetails sessionDetails = SessionDetails.getInstance();
+        AccessToken token = sessionDetails.getAccessToken();
+        Log.d("Chooser", "Calling Login at: " + sessionDetails.serverAddress);
+        BaseConnectionData data = new BaseConnectionData("POST", "login", sessionDetails.serverAddress);
         data.addParameter("token", token.getToken());
         data.addParameter("userId", token.getUserId());
         ConnectionTask task = new ConnectionTask(doAtFinish, this);
@@ -32,7 +31,9 @@ public class ConnectionManager {
     }
 
     public void updateUser(String id, String firstName, String lastName, String email, String gender, String birthDate){
-        BaseConnectionData data = new BaseConnectionData("POST", "updateUser", chooserServerAddress);
+        SessionDetails sessionDetails = SessionDetails.getInstance();
+
+        BaseConnectionData data = new BaseConnectionData("POST", "updateUser", sessionDetails.serverAddress);
         String sqlBdate = birthDate.substring(6) + "-" + birthDate.substring(0,2) + "-" + birthDate.substring(3,5) + " 12:00:00.000";
         System.out.println(sqlBdate);
         data.addParameter("ID", id);
@@ -47,21 +48,21 @@ public class ConnectionManager {
     }
 
     public void GetPosts(Runnable doAtFinish){
-        BaseConnectionData data = new BaseConnectionData("GET", "getAllPosts", chooserServerAddress);
+        BaseConnectionData data = new BaseConnectionData("GET", "getAllPosts", sessionDetails.serverAddress);
         data.addParameter("access_token", SessionDetails.getInstance().getAccessToken().getToken());
         ConnectionTask task = new ConnectionTask(doAtFinish, this);
         task.execute(data);
     }
 
     public void getMyPosts(Runnable doAtFinish){
-        BaseConnectionData data = new BaseConnectionData("GET", "getMyPosts", chooserServerAddress);
+        BaseConnectionData data = new BaseConnectionData("GET", "getMyPosts", sessionDetails.serverAddress);
         data.addParameter("uID", String.valueOf(sessionDetails.userId));
         ConnectionTask task = new ConnectionTask(doAtFinish, this);
         task.execute(data);
     }
 
     public void getMyPost(String post_id, Runnable doAtFinish){
-        BaseConnectionData data = new BaseConnectionData("GET", "getMyPost", chooserServerAddress);
+        BaseConnectionData data = new BaseConnectionData("GET", "getMyPost", sessionDetails.serverAddress);
         data.addParameter("uID", String.valueOf(sessionDetails.userId));
         data.addParameter("post_id", post_id);
         ConnectionTask task = new ConnectionTask(doAtFinish, this);
@@ -69,7 +70,7 @@ public class ConnectionManager {
     }
 
     public void getTotalVotes(String post_id, Runnable doAtFinish){
-        BaseConnectionData data = new BaseConnectionData("GET", "getTotalVotes", chooserServerAddress);
+        BaseConnectionData data = new BaseConnectionData("GET", "getTotalVotes", sessionDetails.serverAddress);
         data.addParameter("uID", String.valueOf(sessionDetails.userId));
         data.addParameter("post_id", post_id);
         ConnectionTask task = new ConnectionTask(doAtFinish, this);
@@ -77,14 +78,14 @@ public class ConnectionManager {
     }
 
     public void getStatistics(String post_id, Runnable doAtFinish){
-        BaseConnectionData data = new BaseConnectionData("GET", "getStatistics", chooserServerAddress);
+        BaseConnectionData data = new BaseConnectionData("GET", "getStatistics", sessionDetails.serverAddress);
         data.addParameter("post_id", post_id);
         ConnectionTask task = new ConnectionTask(doAtFinish, this);
         task.execute(data);
     }
 
     public void addPromotion(String user_id, String post_id, int promotionDuration, String promotionTime, Runnable doAtFinish){
-        BaseConnectionData data = new BaseConnectionData("POST", "addPromotion", chooserServerAddress);
+        BaseConnectionData data = new BaseConnectionData("POST", "addPromotion", sessionDetails.serverAddress);
         data.addParameter("user_id", user_id);
         data.addParameter("post_id", post_id);
         data.addParameter("promotionDuration", String.valueOf(promotionDuration));
@@ -102,7 +103,7 @@ public class ConnectionManager {
     }
 
     public void AddPostWithBlob(String title, String image1, String description1, String image2, String description2, Runnable doAtFinish, int promotionDuration, String promotionTime){
-        BaseConnectionData data = new BaseConnectionData("POST", "AddPostWithBlob", chooserServerAddress);
+        BaseConnectionData data = new BaseConnectionData("POST", "AddPostWithBlob", sessionDetails.serverAddress);
         data.addParameter("title", title);
         data.addParameter("image1", image1);
         data.addParameter("description1", description1);
@@ -117,7 +118,7 @@ public class ConnectionManager {
     }
 
     public void vote(String vote, String post_id, Runnable doAtFinish){
-        BaseConnectionData data = new BaseConnectionData("POST", "vote", chooserServerAddress);
+        BaseConnectionData data = new BaseConnectionData("POST", "vote", sessionDetails.serverAddress);
         data.addParameter("vote", vote);
         data.addParameter("uid", sessionDetails.userId);
         data.addParameter("id", post_id);
@@ -126,25 +127,21 @@ public class ConnectionManager {
     }
 
     public void getTokenCount(String uID, Runnable doAtFinish){
-        BaseConnectionData data = new BaseConnectionData("GET", "getTokenCount", chooserServerAddress);
+        BaseConnectionData data = new BaseConnectionData("GET", "getTokenCount", sessionDetails.serverAddress);
         data.addParameter("uid", sessionDetails.userId);
         ConnectionTask task = new ConnectionTask(doAtFinish, this);
         task.execute(data);
     }
 
     public void reportPost(String post_id, Runnable doAtFinish){
-        BaseConnectionData data = new BaseConnectionData("POST", "report", chooserServerAddress);
+        BaseConnectionData data = new BaseConnectionData("POST", "report", sessionDetails.serverAddress);
         data.addParameter("id", post_id);
         ConnectionTask task = new ConnectionTask(doAtFinish, this);
         task.execute(data);
     }
 
-    public SessionDetails getSessionDetails(){
-        return this.sessionDetails;
-    }
-
     public void deletePost(String id, Runnable doAtFinish) {
-        BaseConnectionData data = new BaseConnectionData("POST", "deletePost", chooserServerAddress);
+        BaseConnectionData data = new BaseConnectionData("POST", "deletePost", sessionDetails.serverAddress);
         data.addParameter("id", String.valueOf(id));
         ConnectionTask task = new ConnectionTask(doAtFinish, this);
         task.execute(data);
