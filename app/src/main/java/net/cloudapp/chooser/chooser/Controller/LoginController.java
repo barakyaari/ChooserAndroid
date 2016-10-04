@@ -6,14 +6,13 @@ import android.util.Log;
 
 import com.facebook.AccessToken;
 
-import net.cloudapp.chooser.chooser.Views.LoginView;
+import net.cloudapp.chooser.chooser.LoginView;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class LoginController extends Activity{
-    Login
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

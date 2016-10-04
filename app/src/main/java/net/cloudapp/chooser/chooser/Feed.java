@@ -1,4 +1,4 @@
-package net.cloudapp.chooser.chooser.Views;
+package net.cloudapp.chooser.chooser;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -32,10 +32,9 @@ import net.cloudapp.chooser.chooser.Images.ImagePicker;
 import net.cloudapp.chooser.chooser.Network.RestFramework.RestClient;
 import net.cloudapp.chooser.chooser.Model.Post;
 import net.cloudapp.chooser.chooser.Images.CloudinaryClient;
-import net.cloudapp.chooser.chooser.R;
 import net.cloudapp.chooser.chooser.Common.SessionDetails;
-import net.cloudapp.chooser.chooser.Views.Animations.ImageSwitchFactory;
-import net.cloudapp.chooser.chooser.Views.Animations.TextSwitchFactory;
+import net.cloudapp.chooser.chooser.Animations.ImageSwitchFactory;
+import net.cloudapp.chooser.chooser.Animations.TextSwitchFactory;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package net.cloudapp.chooser.chooser.Views;
+package net.cloudapp.chooser.chooser;
 
 import android.content.Context;
 import android.graphics.Color;

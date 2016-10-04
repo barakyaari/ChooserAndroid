@@ -1,4 +1,4 @@
-package net.cloudapp.chooser.chooser.Views.Animations;
+package net.cloudapp.chooser.chooser.Animations;
 
 import android.content.Context;
 import android.graphics.Canvas;

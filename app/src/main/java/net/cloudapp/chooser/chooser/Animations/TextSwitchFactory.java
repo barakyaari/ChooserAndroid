@@ -1,16 +1,13 @@
-package net.cloudapp.chooser.chooser.Views.Animations;
+package net.cloudapp.chooser.chooser.Animations;
 
 import android.app.ActionBar;
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageSwitcher;
 import android.widget.ViewSwitcher;
-
-import net.cloudapp.chooser.chooser.Views.Feed;
 
 public class TextSwitchFactory implements ViewSwitcher.ViewFactory {
     private Context mContext;

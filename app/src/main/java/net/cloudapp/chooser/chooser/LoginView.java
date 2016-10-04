@@ -1,6 +1,5 @@
-package net.cloudapp.chooser.chooser.Views;
+package net.cloudapp.chooser.chooser;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -8,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
-import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
@@ -23,8 +21,6 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.login.LoginManager;
 
-import net.cloudapp.chooser.chooser.Controller.LoginController;
-import net.cloudapp.chooser.chooser.Network.ConnectionMethods.LoginService;
 import net.cloudapp.chooser.chooser.Network.RestFramework.RestClient;
 import net.cloudapp.chooser.chooser.R;
 import net.cloudapp.chooser.chooser.Common.SessionDetails;
