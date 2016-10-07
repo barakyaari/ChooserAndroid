@@ -1,4 +1,4 @@
-package net.cloudapp.chooser.chooser;
+package net.cloudapp.chooser.chooser.views;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -23,9 +23,12 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import net.cloudapp.chooser.chooser.Controller.Callbacks.FacebookLoginCallbackImpl;
+import net.cloudapp.chooser.chooser.Controller.Callbacks.LoginCallback;
 import net.cloudapp.chooser.chooser.Controller.LoginController;
 import net.cloudapp.chooser.chooser.Network.RestFramework.RestClient;
 import net.cloudapp.chooser.chooser.Common.SessionDetails;
+import net.cloudapp.chooser.chooser.R;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -48,13 +51,24 @@ public class LoginView extends Activity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initializeComponents();
+        processLoginIfTokenExists();
 
-        if(AccessToken.getCurrentAccessToken() != null){
-            LoginController.login();
-            loadFeed();
-            finish();
-        }
         Log.d("Chooser", "Login loaded");
+
+    }
+
+    private void processLoginIfTokenExists() {
+        if(AccessToken.getCurrentAccessToken() != null){
+            LoginCallback callback = new LoginCallback(this);
+            LoginController loginController = new LoginController(callback);
+            loginController.login();
+            //loadFeed();
+        }
+    }
+
+    public void endActivity(){
+        loadingDialog.hide();
+        finish();
 
     }
 
@@ -125,37 +139,14 @@ public class LoginView extends Activity{
     @Override
     protected void onResume() {
         super.onResume();
-       // RegisterFacebookLogin();
-        Toast.makeText(this, "Token: " + AccessToken.getCurrentAccessToken().getToken(), Toast.LENGTH_LONG);
+        processLoginIfTokenExists();
     }
 
     private void RegisterFacebookLogin() {
         Log.d("Chooser", "Logging in with facebook!");
 
         fbLoginButton.setReadPermissions(Arrays.asList("email", "public_profile", "user_birthday"));
-        fbLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                SessionDetails sessionDetails = SessionDetails.getInstance();
-
-                final AccessToken accessToken = loginResult.getAccessToken();
-                String uID = accessToken.getUserId();
-                loadingDialog.show();
-                sessionDetails.setAccessToken(accessToken);
-
-            }
-
-            @Override
-            public void onCancel() {
-                Log.d("Chooser", "Facebook login cancelled");
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-                Log.e("Chooser", "Facebook login Error");
-                error.printStackTrace();
-            }
-        });
+        fbLoginButton.registerCallback(callbackManager, new FacebookLoginCallbackImpl());
     }
 
     private void loadFeed() {

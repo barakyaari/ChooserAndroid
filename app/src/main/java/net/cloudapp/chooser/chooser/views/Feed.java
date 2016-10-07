@@ -1,4 +1,4 @@
-package net.cloudapp.chooser.chooser;
+package net.cloudapp.chooser.chooser.views;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -36,6 +36,7 @@ import net.cloudapp.chooser.chooser.Images.CloudinaryClient;
 import net.cloudapp.chooser.chooser.Common.SessionDetails;
 import net.cloudapp.chooser.chooser.Animations.ImageSwitchFactory;
 import net.cloudapp.chooser.chooser.Animations.TextSwitchFactory;
+import net.cloudapp.chooser.chooser.R;
 import net.cloudapp.chooser.chooser.model.Post;
 
 import java.util.ArrayList;
@@ -71,8 +72,18 @@ public class Feed extends AppCompatActivity implements View.OnClickListener {
         setContentView(R.layout.posts_view);
         initializeViewElements();
         initializeOnClickListeners();
+        initializeControls();
 
-        //Controls initialization:
+        posts = new ArrayList();
+        myPosts = new ArrayList();
+
+        drawerAdapter = new NavDrawerAdapter(this, myPosts);
+        drawerList.setAdapter(drawerAdapter);
+        PostsController postsController = new PostsController(this);
+        postsController.getPosts();
+    }
+
+    private void initializeControls() {
         imageSwitcher1.setFactory(new ImageSwitchFactory(this));
         imageSwitcher2.setFactory(new ImageSwitchFactory(this));
         textSwitcher1.setFactory(new TextSwitchFactory(this));
@@ -83,14 +94,6 @@ public class Feed extends AppCompatActivity implements View.OnClickListener {
         drawerLayout.addDrawerListener(drawerToggle);
 
         animating = false;
-        //Load Posts:
-        posts = new ArrayList();
-        myPosts = new ArrayList();
-
-        drawerAdapter = new NavDrawerAdapter(this, myPosts);
-        drawerList.setAdapter(drawerAdapter);
-        PostsController postsController = new PostsController(this);
-        postsController.getPosts();
     }
 
 

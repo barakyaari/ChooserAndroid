@@ -25,7 +25,7 @@
             android:exported="true" />
 
         <activity
-            android:name=".Feed"
+            android:name=".views.Feed"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" >
             <intent-filter>
@@ -35,7 +35,7 @@
         </activity>
 
         <activity
-            android:name=".LoginView"
+            android:name=".views.LoginView"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" >
             <intent-filter>
@@ -45,7 +45,7 @@
         </activity>
 
         <activity
-            android:name=".AddPost"
+            android:name=".views.AddPost"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" >
             <intent-filter>

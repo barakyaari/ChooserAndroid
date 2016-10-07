@@ -1,4 +1,4 @@
-package net.cloudapp.chooser.chooser;
+package net.cloudapp.chooser.chooser.views;
 
 import android.content.Intent;
 import android.graphics.Bitmap;

@@ -3,7 +3,7 @@ package net.cloudapp.chooser.chooser.Controller.Callbacks;
 import android.util.Log;
 
 import net.cloudapp.chooser.chooser.Common.PostRepository;
-import net.cloudapp.chooser.chooser.Feed;
+import net.cloudapp.chooser.chooser.views.Feed;
 import net.cloudapp.chooser.chooser.model.Post;
 
 import java.util.List;
@@ -27,6 +27,7 @@ public class PostsFeedCallback implements Callback<List<Post>> {
             Log.d("Chooser", "get posts result code is OK.");
 
             if (postList.size() > 0) {
+                Log.d("Chooser", "Number of posts received: " + postList.size());
                 PostRepository.postsFeed.addAll(postList);
                 mFeed.refreshView();
             }
