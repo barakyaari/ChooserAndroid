@@ -51,7 +51,7 @@ public class LoginView extends Activity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initializeComponents();
-        processLoginIfTokenExists();
+        //processLoginIfTokenExists();
 
         Log.d("Chooser", "Login loaded");
 
