@@ -55,9 +55,12 @@ public class Feed extends AppCompatActivity implements View.OnClickListener {
         tokens.setText(String.valueOf(-1));
     }
 
-
     public void refreshView(){
         Post post = PostRepository.postsFeed.poll();
+        if(post == null){
+            Log.d("Chooser", "Posts empty...");
+            return;
+        }
         Log.i("ChooserApp", "Loading post " + post.title);
         String url1 = CloudinaryClient.bigImageUrl(post.image1);
         String url2 = CloudinaryClient.bigImageUrl(post.image2);
@@ -116,8 +119,14 @@ public class Feed extends AppCompatActivity implements View.OnClickListener {
 
     private void vote(int selected) {
         Log.d("Chooser", "Vote selection: " + selected);
+        String postId = mCurrentPostId;
         VoteController voteController = new VoteController();
-        voteController.vote(mCurrentPostId, selected);
+        voteController.vote(postId, selected);
+        loadNextPost();
+    }
+
+    private void loadNextPost() {
+        refreshView();
     }
 
     @Override
