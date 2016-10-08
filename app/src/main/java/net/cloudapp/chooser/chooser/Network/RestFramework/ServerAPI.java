@@ -1,5 +1,6 @@
 package net.cloudapp.chooser.chooser.Network.RestFramework;
 
+import net.cloudapp.chooser.chooser.Controller.Callbacks.VoteCallback;
 import net.cloudapp.chooser.chooser.model.Post;
 
 import java.util.List;
@@ -28,5 +29,12 @@ public interface ServerAPI {
             @Header("image2") String image2,
             @Header("description1") String description1,
             @Header("description2") String description2,
+            Callback<Void> callback);
+
+    @GET("/vote")
+    public void vote(
+            @Header("token") String token,
+            @Header("postId") String postId,
+            @Header("selected") int selected,
             Callback<Void> callback);
 }

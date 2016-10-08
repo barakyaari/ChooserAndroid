@@ -1,9 +1,6 @@
 package net.cloudapp.chooser.chooser.views;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -13,7 +10,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 
@@ -22,27 +18,21 @@ import com.facebook.login.LoginManager;
 
 import net.cloudapp.chooser.chooser.Common.PostRepository;
 import net.cloudapp.chooser.chooser.Controller.PostsController;
+import net.cloudapp.chooser.chooser.Controller.VoteController;
 import net.cloudapp.chooser.chooser.Images.CloudinaryClient;
 import net.cloudapp.chooser.chooser.Animations.ImageSwitchFactory;
 import net.cloudapp.chooser.chooser.Animations.TextSwitchFactory;
 import net.cloudapp.chooser.chooser.R;
 import net.cloudapp.chooser.chooser.model.Post;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Feed extends AppCompatActivity implements View.OnClickListener {
-    Button buttonRight, refreshPostsButton, buttonLeft;
+    Button buttonVote1, buttonVote2;
     ImageButton flagButton;
     TextView titleTextView, description1TextView, description2TextView, tokens;
     ImageSwitcher imageSwitcher1, imageSwitcher2;
     TextSwitcher textSwitcher1, textSwitcher2;
-    boolean animating;
-    private List<Post> myPosts;
-    private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle drawerToggle;
-    private NavDrawerAdapter drawerAdapter;
-    private ListView drawerList;
+    String mCurrentPostId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +43,6 @@ public class Feed extends AppCompatActivity implements View.OnClickListener {
         initializeOnClickListeners();
         initializeControls();
 
-        drawerAdapter = new NavDrawerAdapter(this, myPosts);
-        drawerList.setAdapter(drawerAdapter);
         PostsController postsController = new PostsController(this);
         postsController.getPosts();
     }
@@ -64,11 +52,7 @@ public class Feed extends AppCompatActivity implements View.OnClickListener {
         imageSwitcher2.setFactory(new ImageSwitchFactory(this));
         textSwitcher1.setFactory(new TextSwitchFactory(this));
         textSwitcher2.setFactory(new TextSwitchFactory(this));
-
         tokens.setText(String.valueOf(-1));
-        //init myPosts
-        myPosts = new ArrayList<Post>();
-        drawerLayout.addDrawerListener(drawerToggle);
     }
 
 
@@ -83,22 +67,18 @@ public class Feed extends AppCompatActivity implements View.OnClickListener {
         titleTextView.setText(post.title);
         description1TextView.setText(post.description1);
         description2TextView.setText(post.description2);
+        mCurrentPostId = post._id;
     }
 
     private void initializeOnClickListeners() {
         //Set Click Listeners:
-        refreshPostsButton.setOnClickListener(this);
-        buttonRight.setOnClickListener(this);
-        buttonLeft.setOnClickListener(this);
-        flagButton.setOnClickListener(this);
         imageSwitcher1.setOnClickListener(this);
         imageSwitcher2.setOnClickListener(this);
+        buttonVote1.setOnClickListener(this);
+        buttonVote2.setOnClickListener(this);
     }
 
     private void initializeViewElements() {
-        buttonRight  = (Button) findViewById(R.id.buttonRight);
-        buttonLeft = (Button) findViewById(R.id.buttonLeft);
-        refreshPostsButton = (Button) findViewById(R.id.buttonRefreshPosts);
         flagButton = (ImageButton) findViewById(R.id.flagButton);
 
         titleTextView = (TextView) findViewById(R.id.titleTextView);
@@ -109,22 +89,9 @@ public class Feed extends AppCompatActivity implements View.OnClickListener {
         imageSwitcher2 = (ImageSwitcher) findViewById(R.id.imageSwitcher2);
         textSwitcher1 = (TextSwitcher) findViewById(R.id.percentage1);
         textSwitcher2 = (TextSwitcher) findViewById(R.id.percentage2);
+        buttonVote1 = (Button) findViewById(R.id.buttonVote1);
+        buttonVote2 = (Button) findViewById(R.id.buttonVote2);
 
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawerList = (ListView) findViewById(R.id.left_drawer);
-        drawerList.setBackgroundColor(Color.parseColor("#FF494949"));
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
-
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                getSupportActionBar().setTitle("Chooser");
-            }
-
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                getSupportActionBar().setTitle("My Posts");
-            }
-        };
     }
 
     @Override
@@ -134,14 +101,23 @@ public class Feed extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if (animating)
-            return;
         Log.i("ChooserApp", "Feed OnclickListener: " + v.getId());
         switch (v.getId()) {
 
-            case R.id.buttonRefreshPosts:
+            case R.id.buttonVote1:
+                vote(1);
+                break;
+
+            case R.id.buttonVote2:
+                vote(2);
                 break;
         }
+    }
+
+    private void vote(int selected) {
+        Log.d("Chooser", "Vote selection: " + selected);
+        VoteController voteController = new VoteController();
+        voteController.vote(mCurrentPostId, selected);
     }
 
     @Override
