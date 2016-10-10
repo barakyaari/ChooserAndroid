@@ -140,7 +140,7 @@ public class Feed extends AppCompatActivity implements View.OnClickListener {
         Intent i;
         switch (item.getItemId()) {
             case R.id.add_poll:
-                i = new Intent("net.cloudapp.chooser.chooser.Views.AddPost");
+            i = new Intent("net.cloudapp.chooser.chooser.AddPost");
                 startActivity(i);
                 return true;
             case R.id.settings:

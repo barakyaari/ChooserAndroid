@@ -121,6 +121,7 @@ public class AddPost extends AppCompatActivity implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.postButton:
                 uploadPost();
+                finish();
                 break;
 
             case R.id.cancelButton:
