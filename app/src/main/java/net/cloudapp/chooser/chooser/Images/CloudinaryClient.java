@@ -27,7 +27,6 @@ public class CloudinaryClient {
             e.printStackTrace();
         }
     }
-// Hello, Goodbye!
     public static String bigImageUrl(String imageId){
         Map config = new HashMap();
         config.put("cloud_name", CLOUD_NAME);
