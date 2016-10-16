@@ -20,7 +20,6 @@ public class CloudinaryClient {
         config.put("api_key", "291124344125714");
         config.put("api_secret", "arRkoKCCGBPwnxXmMkZXi9q9TrU");
         config.put("public_id",imageId);
-        // my new line
         Cloudinary cloudinary = new Cloudinary(config);
         try {
             cloudinary.uploader().upload(inputStream, config);
