@@ -11,14 +11,10 @@
         android:id="@+id/serverAddressTextView"
         android:layout_weight="0.07" />
 
-    <EditText
+    <ListView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:text="server address...."
-        android:ems="10"
-        android:id="@+id/serverAddressEditText"
-        android:layout_weight="0.07" />
+        android:layout_height="299dp"
+        android:id="@+id/serverAddressListView" />
 
     <Button
         android:text="Connect"

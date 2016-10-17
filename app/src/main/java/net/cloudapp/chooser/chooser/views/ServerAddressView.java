@@ -6,33 +6,43 @@ import android.content.pm.PackageInstaller;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 
 import net.cloudapp.chooser.chooser.Common.SessionDetails;
 import net.cloudapp.chooser.chooser.R;
 
+import java.util.List;
+
 public class ServerAddressView extends Activity {
     Button connectToServerButton;
-    EditText serverAddressEditText;
+    ListView serverAddressListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_server_address);
 
+        serverAddressListView = (ListView) findViewById(R.id.serverAddressListView);
+        String[] values = new String[] {
+                "http://192.168.14.37:3000",
+                "http://chooserserver.herokuapp.com:3000"
+        };
+
+        final ArrayAdapter<String> addresses = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1,
+                values);
+        serverAddressListView.setAdapter(addresses);
+
         connectToServerButton = (Button) findViewById(R.id.connectToServerButton);
-        serverAddressEditText = (EditText) findViewById(R.id.serverAddressEditText);
 
-        serverAddressEditText.setText(SessionDetails.getInstance().serverAddress);
-
-        connectToServerButton.setOnClickListener(new View.OnClickListener() {
+        serverAddressListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                String serverAddress = serverAddressEditText.getText().toString();
-                SessionDetails sessionDetails = SessionDetails.getInstance();
-                sessionDetails.serverAddress = serverAddress;
-
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                SessionDetails.getInstance().serverAddress = addresses.getItem(position).toString();
                 Intent i = new Intent("android.intent.action.LoginView");
                 Log.d("Chooser", "Starting login activity");
                 startActivity(i);
