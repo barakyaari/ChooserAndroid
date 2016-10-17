@@ -64,6 +64,17 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".views.MyPosts.MyPostsView"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" >
+            <intent-filter>
+                <action android:name="net.cloudapp.chooser.chooser.MyPostsView" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+
         <activity android:name="com.facebook.FacebookActivity"
             android:configChanges=
                 "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
