@@ -10,6 +10,8 @@ import net.cloudapp.chooser.chooser.Images.ImageUploaderImpl;
 import net.cloudapp.chooser.chooser.Network.RestFramework.RestClient;
 import net.cloudapp.chooser.chooser.Controller.Callbacks.PostUploadCallback;
 
+import static android.app.PendingIntent.getActivity;
+
 public class PostsUploadController {
 
     public void uploadPost(Context context, String title, Bitmap image1BitMap, Bitmap image2BitMap, String description1, String description2){
