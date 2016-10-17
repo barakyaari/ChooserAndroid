@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.cloudapp.chooser.chooser.Controller.PostsUploadController;
 import net.cloudapp.chooser.chooser.Images.ImagePicker;
@@ -139,6 +140,10 @@ public class AddPostView extends AppCompatActivity implements View.OnClickListen
         Intent chooseImageIntent;
         switch (v.getId()) {
             case R.id.postButton:
+                if(editTextTitle.getText().toString().equals("") || image1BitMap == null || image2BitMap == null){
+                    Toast.makeText(getApplicationContext(), "Post details missing...", Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 uploadPost();
                 finish();
                 break;
@@ -148,6 +153,10 @@ public class AddPostView extends AppCompatActivity implements View.OnClickListen
                 break;
 
             case R.id.notMyPostButton:
+                if(editTextTitle.getText().toString().equals("") || image1BitMap == null || image2BitMap == null){
+                    Toast.makeText(getApplicationContext(), "Post details missing...", Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 uploadNotMyPost();
                 finish();
                 break;

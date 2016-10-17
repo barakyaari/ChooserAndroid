@@ -44,8 +44,6 @@ public class LoginView extends Activity{
     LoginButton fbLoginButton;
     CallbackManager callbackManager;
     ProgressDialog loadingDialog;
-    RestClient restClient;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
