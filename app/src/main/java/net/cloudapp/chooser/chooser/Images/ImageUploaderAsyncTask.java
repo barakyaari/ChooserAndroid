@@ -23,8 +23,10 @@ public class ImageUploaderAsyncTask extends AsyncTask<UploadTask, Void, Void>{
 
 
     public ByteArrayInputStream getInputStream(UploadTask[] tasks){
+        Bitmap srcBitmap = tasks[0].imageBitmap;
+        Bitmap compressedImage = Bitmap.createScaledBitmap(srcBitmap, srcBitmap.getWidth()/2, srcBitmap.getHeight()/2,false);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        tasks[0].imageBitmap.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+        compressedImage.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
         byte[] bitmapdata = bos.toByteArray();
         ByteArrayInputStream bs = new ByteArrayInputStream(bitmapdata);
         return bs;

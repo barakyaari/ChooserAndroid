@@ -9,5 +9,5 @@ import java.io.InputStream;
  */
 
 public interface ImageUploader {
-    public String uploadImage(Bitmap toUpload);
+    String uploadImage(Bitmap toUpload);
 }

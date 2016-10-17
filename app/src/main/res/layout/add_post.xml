@@ -118,6 +118,13 @@
                 android:text="Cancel"
                 android:id="@+id/cancelButton"
                 android:textSize="15dp" />
+
+            <Button
+                android:text="Not My Post"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/notMyPostButton"
+                android:layout_weight="1" />
         </LinearLayout>
 
     </LinearLayout>

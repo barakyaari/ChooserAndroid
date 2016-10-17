@@ -21,7 +21,7 @@ import net.cloudapp.chooser.chooser.R;
 public class AddPostView extends AppCompatActivity implements View.OnClickListener {
     private static final int SELECT_PHOTO = 100;
     private int selectedImage = 0;
-    Button buttonAddPost, buttonCancel;
+    Button buttonAddPost, buttonCancel, buttonNotMyPost;
     EditText editTextTitle, editTextDescription1, editTextDescription2;
     ImageView image1, image2;
     TextView tokens;
@@ -41,6 +41,7 @@ public class AddPostView extends AppCompatActivity implements View.OnClickListen
     private void setOnClickListeners() {
         buttonAddPost.setOnClickListener(this);
         buttonCancel.setOnClickListener(this);
+        buttonNotMyPost.setOnClickListener(this);
         image1.setOnClickListener(this);
         image2.setOnClickListener(this);
         editTextDescription1.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -80,6 +81,7 @@ public class AddPostView extends AppCompatActivity implements View.OnClickListen
         editTextDescription2 = (EditText) findViewById(R.id.description2EditText);
         buttonAddPost = (Button) findViewById(R.id.postButton);
         buttonCancel = (Button) findViewById(R.id.cancelButton);
+        buttonNotMyPost = (Button) findViewById(R.id.notMyPostButton);
 
     }
 
@@ -102,6 +104,16 @@ public class AddPostView extends AppCompatActivity implements View.OnClickListen
 
         PostsUploadController postsUploadController = new PostsUploadController();
         postsUploadController.uploadPost(this, title, image1BitMap, image2BitMap, description1, description2);
+    }
+
+    private void uploadNotMyPost(){
+            String title, description1, description2;
+            title = editTextTitle.getText().toString();
+            description1 = editTextDescription1.getText().toString();
+            description2 = editTextDescription2.getText().toString();
+
+            PostsUploadController postsUploadController = new PostsUploadController();
+            postsUploadController.uploadPost(this, title, image1BitMap, image2BitMap, description1, description2, true);
     }
 
     @Override
@@ -132,6 +144,11 @@ public class AddPostView extends AppCompatActivity implements View.OnClickListen
                 break;
 
             case R.id.cancelButton:
+                finish();
+                break;
+
+            case R.id.notMyPostButton:
+                uploadNotMyPost();
                 finish();
                 break;
 

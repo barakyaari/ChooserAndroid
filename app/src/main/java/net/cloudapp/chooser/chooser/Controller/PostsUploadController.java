@@ -14,14 +14,19 @@ import static android.app.PendingIntent.getActivity;
 
 public class PostsUploadController {
 
-    public void uploadPost(Context context, String title, Bitmap image1BitMap, Bitmap image2BitMap, String description1, String description2){
+    public void uploadPost(Context context, String title, Bitmap image1BitMap, Bitmap image2BitMap, String description1, String description2) {
+        uploadPost(context, title, image1BitMap, image2BitMap, description1, description2, false);
+    }
+
+    public void uploadPost(Context context, String title, Bitmap image1BitMap, Bitmap image2BitMap, String description1, String description2, boolean notMyPost){
         String image1Id = "", image2Id = "";
         ImageUploader uploader = new ImageUploaderImpl();
         image1Id = uploader.uploadImage(image1BitMap);
         image2Id = uploader.uploadImage(image2BitMap);
+        String token = notMyPost? "NotMyPost" : SessionDetails.getInstance().getAccessToken().getToken();
         RestClient restClient = new RestClient();
         restClient.getService().addpost(
-                SessionDetails.getInstance().getAccessToken().getToken(),
+                token,
                 title,
                 image1Id,
                 image2Id,
