@@ -14,6 +14,13 @@
                     android:title="Add Poll"
                     android:icon="@drawable/ic_add_circle_outline_black_24dp"
                     app:showAsAction="always" />
+
+                <item
+                    android:id="@+id/my_posts"
+                    android:title="My Posts"
+                    android:icon="@drawable/ic_my_posts"
+                    app:showAsAction="always" />
+
                 <item
                     android:id="@+id/settings"
                     android:title="Settings"

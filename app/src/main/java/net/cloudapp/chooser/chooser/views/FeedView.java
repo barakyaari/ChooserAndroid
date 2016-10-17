@@ -151,6 +151,11 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
                 LoginManager.getInstance().logOut();
                 finish();
                 return true;
+            case R.id.my_posts:
+                i = new Intent("net.cloudapp.chooser.chooser.MyPostsView");
+                startActivity(i);
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }

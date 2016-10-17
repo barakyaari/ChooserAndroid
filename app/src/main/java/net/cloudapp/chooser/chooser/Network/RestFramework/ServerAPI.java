@@ -21,6 +21,12 @@ public interface ServerAPI {
             @Header("token") String token,
             Callback<List<Post>> callback);
 
+    @GET("/getmyposts")
+    public void getMyPosts(
+            @Header("token") String token,
+            Callback<List<Post>> callback);
+
+
     @GET("/addpost")
     public void addpost(
             @Header("token") String token,
