@@ -30,7 +30,7 @@ public class SessionDetails implements Serializable {
     }
 
     //public final String serverAddress = "http://192.168.43.2:3000";
-     public final String serverAddress = "http://10.0.2.2:3000"; // For Virtual device
+     public String serverAddress = "http://10.0.2.2:3000"; // For Virtual device
    // public final String serverAddress = "chooserserver2.herokuapp.coom:3000";
 
 
