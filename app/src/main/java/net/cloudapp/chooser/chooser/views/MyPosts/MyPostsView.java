@@ -1,12 +1,9 @@
-package net.cloudapp.chooser.chooser.views;
+package net.cloudapp.chooser.chooser.views.MyPosts;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
-/**
- * Created by t-baya on 10/10/2016.
- */
 
 public class MyPostsView extends AppCompatActivity {
     @Override
