@@ -33,7 +33,7 @@ public class PostsFeedCallback implements Callback<List<Post>> {
             else {
                 Log.d("Chooser", "Got 0 posts.");
             }
-            mFeed.refreshView();
+            mFeed.loadPosts();
 
         } else {
             Log.e("Chooser", "all posts - bad response code.");

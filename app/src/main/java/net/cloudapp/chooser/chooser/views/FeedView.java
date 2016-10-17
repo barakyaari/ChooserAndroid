@@ -1,11 +1,18 @@
 package net.cloudapp.chooser.chooser.views;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -16,6 +23,8 @@ import android.widget.TextSwitcher;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.facebook.login.LoginManager;
 
 import net.cloudapp.chooser.chooser.Common.PostRepository;
@@ -35,7 +44,9 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
     TextSwitcher textSwitcher1, textSwitcher2;
     LinearLayout feedLayout, noPostsLayout;
     String mCurrentPostId;
-    Boolean feedIsOn;
+    Boolean feedIsOn, animating;
+    Post post;
+    int votes1, votes2;
 
 
     @Override
@@ -58,29 +69,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
         tokens.setText(String.valueOf(-1));
     }
 
-    public void refreshView(){
-        Post post = PostRepository.postsFeed.poll();
-        if (post == null) {
-            Log.d("Chooser", "Posts empty...");
-            if (feedIsOn)
-                shutdownFeed();
-            return;
-        }
-
-        if (!feedIsOn)
-            turnOnFeed();
-
-        Log.i("ChooserApp", "Loading post " + post.title);
-        String url1 = CloudinaryClient.bigImageUrl(post.image1);
-        String url2 = CloudinaryClient.bigImageUrl(post.image2);
-
-        Glide.with(this).load(url1).into((ImageView) imageSwitcher1.getCurrentView());
-        Glide.with(this).load(url2).into((ImageView) imageSwitcher2.getCurrentView());
-        titleTextView.setText(post.title);
-        description1TextView.setText(post.description1);
-        description2TextView.setText(post.description2);
-        mCurrentPostId = post._id;
-    }
+//refresh view
 
     private void refreshFeedRepository() {
         PostsFetchController postsFetchController = new PostsFetchController(this);
@@ -140,6 +129,12 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
         String postId = mCurrentPostId;
         VoteController voteController = new VoteController();
         voteController.vote(postId, selected);
+
+        if (selected == 1)
+            votes1++;
+        else
+            votes2++;
+
         loadNextPost();
     }
 
@@ -159,7 +154,10 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void loadNextPost() {
-        refreshView();
+
+        //MAGIC
+
+        loadPosts();
     }
 
     @Override
@@ -189,6 +187,149 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
                 return super.onOptionsItemSelected(item);
         }
     }
+
+
+    public void refreshView(){
+        Post post = PostRepository.postsFeed.poll();
+        if (post == null) {
+            Log.d("Chooser", "Posts empty...");
+            if (feedIsOn)
+                shutdownFeed();
+            return;
+        }
+
+        if (!feedIsOn)
+            turnOnFeed();
+
+        Log.i("ChooserApp", "Loading post " + post.title);
+
+        titleTextView.setText(post.title);
+        String url1 = CloudinaryClient.bigImageUrl(post.image1);
+        Glide.with(this).load(url1).into((ImageView) imageSwitcher1.getCurrentView());
+        description1TextView.setText(post.description1);
+        votes1 = post.votes1;
+
+
+        String url2 = CloudinaryClient.bigImageUrl(post.image2);
+        Glide.with(this).load(url2).into((ImageView) imageSwitcher2.getCurrentView());
+        description2TextView.setText(post.description2);
+
+        imageSwitcher2.setImageDrawable(new BitmapDrawable(getResources(), post.image2));
+
+        votes2 = post.votes2;
+
+        mCurrentPostId = post._id;
+    }
+
+    public void loadPosts() {
+        post = PostRepository.postsFeed.poll();
+
+        setTextAnimations(); //loads post after percentage appears on screen
+        textSwitcher1.setText(String.valueOf(votes1));
+        textSwitcher2.setText(String.valueOf(votes2));
+    }
+
+
+    private void setTextAnimations() {
+        textSwitcher1.setVisibility(View.VISIBLE);
+        textSwitcher2.setVisibility(View.VISIBLE);
+        //not yet visible
+
+        //set fade in animation
+        Animation inAnimation1 = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
+        Animation inAnimation2 = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
+
+        //set fade in duration to 1 sec
+        inAnimation1.setDuration(1000);
+        inAnimation2.setDuration(1000);
+
+        inAnimation1.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {}
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                //this runs when votes are on the screen
+                if (post == null) {
+                    Log.d("Chooser", "Posts empty...");
+                    if (feedIsOn)
+                        shutdownFeed();
+                    return;
+                } else {
+                    titleTextView.setText(post.title);
+                    description1TextView.setText(post.description1);
+                    textSwitcher1.setVisibility(View.GONE);
+
+                    String url1 = CloudinaryClient.bigImageUrl(post.image1);
+                    Glide
+                            .with(getApplicationContext())
+                            .load(url1)
+                            .animate(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_in_right))
+                            .into((ImageView) imageSwitcher1.getNextView());
+
+                    imageSwitcher1.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out_left));
+
+                    imageSwitcher1.showNext();
+                    //shows new picture and texts on feed
+                }
+            }
+        });
+
+        inAnimation2.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                //to disable clicking while animating
+                animating = true;
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                description2TextView.setText(post.description2);
+                textSwitcher2.setVisibility(View.GONE);
+                String url2 = CloudinaryClient.bigImageUrl(post.image2);
+                Glide
+                        .with(getApplicationContext())
+                        .load(url2)
+                        .animate(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_in_right))
+                        .into((ImageView) imageSwitcher2.getNextView());
+                imageSwitcher2.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out_left));
+
+                imageSwitcher2.showNext();
+                animating = false;
+            }
+        });
+
+        Animation hideText = new AlphaAnimation(0.0f, 0.0f);
+        hideText.setDuration(1000);
+
+        textSwitcher1.setInAnimation(inAnimation1);
+        textSwitcher2.setInAnimation(inAnimation2);
+
+        textSwitcher1.setOutAnimation(hideText);
+        textSwitcher2.setOutAnimation(hideText);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public void onBackPressed() {

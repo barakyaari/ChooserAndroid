@@ -8,6 +8,7 @@ public class VoteCallback implements Callback<Void> {
     @Override
     public void success(Void aVoid, Response response) {
 
+
     }
 
     @Override
