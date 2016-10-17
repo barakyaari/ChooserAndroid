@@ -29,7 +29,8 @@ public class ServerAddressView extends Activity {
         serverAddressListView = (ListView) findViewById(R.id.serverAddressListView);
         String[] values = new String[] {
                 "http://192.168.14.37:3000",
-                "http://chooserserver.herokuapp.com:3000"
+                "http://chooserserver.herokuapp.com:3000",
+                "http://10.0.0.1:3000"
         };
 
         final ArrayAdapter<String> addresses = new ArrayAdapter<String>(this,

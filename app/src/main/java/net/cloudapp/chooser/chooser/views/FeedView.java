@@ -26,7 +26,6 @@ import net.cloudapp.chooser.chooser.R;
 import net.cloudapp.chooser.chooser.model.Post;
 
 public class FeedView extends AppCompatActivity implements View.OnClickListener {
-    Button buttonVote1, buttonVote2;
     ImageButton flagButton;
     TextView titleTextView, description1TextView, description2TextView, tokens;
     ImageSwitcher imageSwitcher1, imageSwitcher2;
@@ -77,8 +76,6 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
         //Set Click Listeners:
         imageSwitcher1.setOnClickListener(this);
         imageSwitcher2.setOnClickListener(this);
-        buttonVote1.setOnClickListener(this);
-        buttonVote2.setOnClickListener(this);
     }
 
     private void initializeViewElements() {
@@ -92,9 +89,6 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
         imageSwitcher2 = (ImageSwitcher) findViewById(R.id.imageSwitcher2);
         textSwitcher1 = (TextSwitcher) findViewById(R.id.percentage1);
         textSwitcher2 = (TextSwitcher) findViewById(R.id.percentage2);
-        buttonVote1 = (Button) findViewById(R.id.buttonVote1);
-        buttonVote2 = (Button) findViewById(R.id.buttonVote2);
-
     }
 
     @Override
@@ -107,11 +101,11 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
         Log.i("ChooserApp", "FeedView OnclickListener: " + v.getId());
         switch (v.getId()) {
 
-            case R.id.buttonVote1:
+            case R.id.imageSwitcher1:
                 vote(1);
                 break;
 
-            case R.id.buttonVote2:
+            case R.id.imageSwitcher2:
                 vote(2);
                 break;
         }
