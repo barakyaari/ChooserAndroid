@@ -29,11 +29,12 @@ public class PostsFeedCallback implements Callback<List<Post>> {
             if (postList.size() > 0) {
                 Log.d("Chooser", "Number of posts received: " + postList.size());
                 PostRepository.postsFeed.addAll(postList);
-                mFeed.refreshView();
             }
-            else{
+            else {
                 Log.d("Chooser", "Got 0 posts.");
             }
+            mFeed.refreshView();
+
         } else {
             Log.e("Chooser", "all posts - bad response code.");
         }

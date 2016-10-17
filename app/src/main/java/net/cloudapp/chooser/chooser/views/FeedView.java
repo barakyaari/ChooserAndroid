@@ -7,9 +7,11 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 
@@ -27,10 +29,13 @@ import net.cloudapp.chooser.chooser.model.Post;
 
 public class FeedView extends AppCompatActivity implements View.OnClickListener {
     ImageButton flagButton;
+    Button refreshButton;
     TextView titleTextView, description1TextView, description2TextView, tokens;
     ImageSwitcher imageSwitcher1, imageSwitcher2;
     TextSwitcher textSwitcher1, textSwitcher2;
+    LinearLayout feedLayout, noPostsLayout;
     String mCurrentPostId;
+    Boolean feedIsOn;
 
 
     @Override
@@ -41,9 +46,8 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
         initializeViewElements();
         initializeOnClickListeners();
         initializeControls();
-
-        PostsFetchController postsFetchController = new PostsFetchController(this);
-        postsFetchController.getPosts();
+        feedIsOn = true;
+        refreshFeedRepository();
     }
 
     private void initializeControls() {
@@ -56,10 +60,16 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
 
     public void refreshView(){
         Post post = PostRepository.postsFeed.poll();
-        if(post == null){
+        if (post == null) {
             Log.d("Chooser", "Posts empty...");
+            if (feedIsOn)
+                shutdownFeed();
             return;
         }
+
+        if (!feedIsOn)
+            turnOnFeed();
+
         Log.i("ChooserApp", "Loading post " + post.title);
         String url1 = CloudinaryClient.bigImageUrl(post.image1);
         String url2 = CloudinaryClient.bigImageUrl(post.image2);
@@ -72,14 +82,24 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
         mCurrentPostId = post._id;
     }
 
+    private void refreshFeedRepository() {
+        PostsFetchController postsFetchController = new PostsFetchController(this);
+        postsFetchController.getPosts();
+    }
+
     private void initializeOnClickListeners() {
         //Set Click Listeners:
         imageSwitcher1.setOnClickListener(this);
         imageSwitcher2.setOnClickListener(this);
+        refreshButton.setOnClickListener(this);
     }
 
     private void initializeViewElements() {
+        noPostsLayout = (LinearLayout) findViewById(R.id.noPostsLayout);
+        feedLayout = (LinearLayout) findViewById(R.id.feedLayout);
+
         flagButton = (ImageButton) findViewById(R.id.flagButton);
+        refreshButton = (Button) findViewById(R.id.refreshButton);
 
         titleTextView = (TextView) findViewById(R.id.titleTextView);
         description1TextView = (TextView) findViewById(R.id.description1TextView);
@@ -108,6 +128,10 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
             case R.id.imageSwitcher2:
                 vote(2);
                 break;
+
+            case R.id.refreshButton:
+                refreshFeedRepository();
+                break;
         }
     }
 
@@ -117,6 +141,21 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
         VoteController voteController = new VoteController();
         voteController.vote(postId, selected);
         loadNextPost();
+    }
+
+
+    private void shutdownFeed() {
+        feedLayout.setVisibility(View.INVISIBLE);
+        flagButton.setVisibility(View.INVISIBLE);
+        noPostsLayout.setVisibility(View.VISIBLE);
+        feedIsOn = false;
+    }
+
+    private void turnOnFeed() {
+        noPostsLayout.setVisibility(View.INVISIBLE);
+        feedLayout.setVisibility(View.VISIBLE);
+        flagButton.setVisibility(View.VISIBLE);
+        feedIsOn = true;
     }
 
     private void loadNextPost() {
