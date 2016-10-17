@@ -3,6 +3,7 @@ package net.cloudapp.chooser.chooser.Images;
 import android.util.Log;
 
 import com.cloudinary.Cloudinary;
+import com.cloudinary.Transformation;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +12,7 @@ import java.util.Map;
 
 public class CloudinaryClient {
     private static final String CLOUD_NAME = "chooser";
+    private static final int SMALL_IMAGE_SIZE = 100;
 
 
     public static void uploadImage(final InputStream inputStream, String imageId) {
@@ -35,5 +37,14 @@ public class CloudinaryClient {
         Cloudinary cloudinary = new Cloudinary(config);
 
         return cloudinary.url().generate(imageId);
+    }
+
+    public static String smallImageUrl(String imageId){
+        Map config = new HashMap();
+        config.put("cloud_name", CLOUD_NAME);
+
+        Cloudinary cloudinary = new Cloudinary(config);
+
+        return cloudinary.url().transformation(new Transformation().width(SMALL_IMAGE_SIZE).height(SMALL_IMAGE_SIZE).crop("thumb")).generate(imageId);
     }
 }
