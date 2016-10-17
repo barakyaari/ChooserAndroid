@@ -51,8 +51,7 @@ public class LoginView extends Activity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initializeComponents();
-        //processLoginIfTokenExists();
-
+        RegisterFacebookLogin();
         Log.d("Chooser", "Login loaded");
 
     }
@@ -62,21 +61,13 @@ public class LoginView extends Activity{
             LoginCallback callback = new LoginCallback(this);
             LoginController loginController = new LoginController(callback);
             loginController.login();
-            //loadFeed();
         }
-    }
-
-    public void endActivity(){
-        loadingDialog.hide();
-        finish();
-
     }
 
     public void initializeComponents(){
         initializeFacebookSdk();
         initializeUI();
         printAppHashId();
-        RegisterFacebookLogin();
     }
 
     private void initializeFacebookSdk() {
@@ -113,29 +104,6 @@ public class LoginView extends Activity{
         loadingDialog.setInverseBackgroundForced(false);
     }
 
-    private void serverIsDownDialog() {
-        new AlertDialog.Builder(this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Server Is Down")
-                .setMessage("The server is not responding")
-                .setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Log.e("Chooser", "Not implemented!");
-                    }
-
-                })
-                .setNegativeButton("Quit", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        LoginManager.getInstance().logOut();
-                        finish();
-                    }
-
-                })
-                .show();
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -147,18 +115,6 @@ public class LoginView extends Activity{
 
         fbLoginButton.setReadPermissions(Arrays.asList("email", "public_profile", "user_birthday"));
         fbLoginButton.registerCallback(callbackManager, new FacebookLoginCallbackImpl());
-    }
-
-    private void loadFeed() {
-        Log.d("Chooser", "Callback running");
-        loadingDialog.hide();
-        Intent i = new Intent("android.intent.action.FeedView");
-        Log.d("Chooser", "Starting main activity");
-        startActivity(i);
-    }
-
-    private void logout() {
-        //TODO: implement
     }
 
     @Override
