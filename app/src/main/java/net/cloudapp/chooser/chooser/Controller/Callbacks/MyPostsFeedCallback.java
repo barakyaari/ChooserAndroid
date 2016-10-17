@@ -3,8 +3,9 @@ package net.cloudapp.chooser.chooser.Controller.Callbacks;
 import android.util.Log;
 
 import net.cloudapp.chooser.chooser.Common.PostRepository;
-import net.cloudapp.chooser.chooser.views.FeedView;
 import net.cloudapp.chooser.chooser.model.Post;
+import net.cloudapp.chooser.chooser.views.FeedView;
+import net.cloudapp.chooser.chooser.views.MyPosts.MyPostsView;
 
 import java.util.List;
 
@@ -13,10 +14,10 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class MyPostsFeedCallback implements Callback<List<Post>> {
-    private FeedView mFeed;
+    private MyPostsView myPostsView;
 
-    public MyPostsFeedCallback(FeedView feed){
-        mFeed = feed;
+    public MyPostsFeedCallback(MyPostsView myPostsView){
+        this.myPostsView = myPostsView;
     }
 
 
@@ -28,8 +29,9 @@ public class MyPostsFeedCallback implements Callback<List<Post>> {
 
             if (postList.size() > 0) {
                 Log.d("Chooser", "Number of posts received: " + postList.size());
-                PostRepository.postsFeed.addAll(postList);
-                mFeed.refreshView();
+                PostRepository.myPosts.clear();
+                PostRepository.myPosts.addAll(postList);
+                myPostsView.refreshView();
             }
             else{
                 Log.d("Chooser", "Got 0 posts.");

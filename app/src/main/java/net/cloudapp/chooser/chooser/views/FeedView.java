@@ -152,7 +152,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
                 finish();
                 return true;
             case R.id.my_posts:
-                i = new Intent("net.cloudapp.chooser.chooser.MyPosts");
+                i = new Intent("net.cloudapp.chooser.chooser.MyPostsView");
                 startActivity(i);
                 return true;
 
