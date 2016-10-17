@@ -20,7 +20,7 @@ public class PostUploadCallback implements Callback {
     }
     @Override
     public void success(Object o, Response response) {
-        Toast.makeText(mContext, "Post uploaded!", Toast.LENGTH_SHORT);
+        Toast.makeText(mContext, "Post uploaded!", Toast.LENGTH_SHORT).show();
         Log.d("Chooser", "Post uploaded!");
     }
 

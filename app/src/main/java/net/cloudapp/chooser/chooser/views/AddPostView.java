@@ -1,5 +1,6 @@
 package net.cloudapp.chooser.chooser.views;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -23,7 +24,7 @@ public class AddPostView extends AppCompatActivity implements View.OnClickListen
     Button buttonAddPost, buttonCancel;
     EditText editTextTitle, editTextDescription1, editTextDescription2;
     ImageView image1, image2;
-    TextView tokens, promotionText;
+    TextView tokens;
     Bitmap image1BitMap, image2BitMap;
     CloudinaryClient cloudinaryClient;
 
