@@ -4,14 +4,13 @@ import com.facebook.AccessToken;
 
 import net.cloudapp.chooser.chooser.Common.SessionDetails;
 import net.cloudapp.chooser.chooser.Controller.Callbacks.PostsFeedCallback;
-import net.cloudapp.chooser.chooser.Controller.Callbacks.VoteCallback;
-import net.cloudapp.chooser.chooser.views.Feed;
+import net.cloudapp.chooser.chooser.views.FeedView;
 import net.cloudapp.chooser.chooser.Network.RestFramework.RestClient;
 
-public class PostsController {
-    private Feed mFeed;
+public class PostsFetchController {
+    private FeedView mFeed;
 
-    public PostsController(Feed feed){
+    public PostsFetchController(FeedView feed){
         mFeed = feed;
     }
 

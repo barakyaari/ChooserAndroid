@@ -152,7 +152,7 @@ public class LoginView extends Activity{
     private void loadFeed() {
         Log.d("Chooser", "Callback running");
         loadingDialog.hide();
-        Intent i = new Intent("android.intent.action.Feed");
+        Intent i = new Intent("android.intent.action.FeedView");
         Log.d("Chooser", "Starting main activity");
         startActivity(i);
     }

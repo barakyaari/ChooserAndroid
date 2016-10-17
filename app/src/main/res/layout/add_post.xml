@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:weightSum="1"
     android:background="#32405d"
-    tools:context=".views.AddPost">
+    tools:context=".views.AddPostView">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -101,47 +101,6 @@
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left|center_vertical"
-            android:weightSum="1"
-            android:layout_marginLeft="10dp">
-
-            <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:id="@+id/imageView6"
-                android:src="@mipmap/ic_token"
-                android:layout_gravity="top|right|center_horizontal"
-                android:layout_marginTop="5dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="$"
-                android:id="@+id/tokens"
-                android:layout_gravity="bottom|center_horizontal"
-                android:layout_marginBottom="3dp"
-                android:textColor="#CACACA"
-                android:layout_marginLeft="2dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Promotion Text"
-                android:id="@+id/promotionText"
-                android:layout_gravity="center"
-                android:textColor="#78c26f"
-                android:textSize="16dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="3dp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="10dp">
 
@@ -151,20 +110,6 @@
                 android:text="Post"
                 android:id="@+id/postButton"
                 android:singleLine="true"
-                android:textSize="15dp" />
-
-            <Button
-                android:layout_width="96dp"
-                android:layout_height="fill_parent"
-                android:text="notify"
-                android:id="@+id/notificationButton"
-                android:textSize="15dp" />
-
-            <Button
-                android:layout_width="95dp"
-                android:layout_height="fill_parent"
-                android:text="Promote"
-                android:id="@+id/promoteButton"
                 android:textSize="15dp" />
 
             <Button

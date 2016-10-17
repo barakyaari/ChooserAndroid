@@ -3,7 +3,7 @@ package net.cloudapp.chooser.chooser.Controller.Callbacks;
 import android.util.Log;
 
 import net.cloudapp.chooser.chooser.Common.PostRepository;
-import net.cloudapp.chooser.chooser.views.Feed;
+import net.cloudapp.chooser.chooser.views.FeedView;
 import net.cloudapp.chooser.chooser.model.Post;
 
 import java.util.List;
@@ -13,9 +13,9 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class PostsFeedCallback implements Callback<List<Post>> {
-    private Feed mFeed;
+    private FeedView mFeed;
 
-    public PostsFeedCallback(Feed feed){
+    public PostsFeedCallback(FeedView feed){
         mFeed = feed;
     }
 

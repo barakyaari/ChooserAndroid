@@ -17,7 +17,7 @@ import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
 
 import net.cloudapp.chooser.chooser.Common.PostRepository;
-import net.cloudapp.chooser.chooser.Controller.PostsController;
+import net.cloudapp.chooser.chooser.Controller.PostsFetchController;
 import net.cloudapp.chooser.chooser.Controller.VoteController;
 import net.cloudapp.chooser.chooser.Images.CloudinaryClient;
 import net.cloudapp.chooser.chooser.Animations.ImageSwitchFactory;
@@ -25,7 +25,7 @@ import net.cloudapp.chooser.chooser.Animations.TextSwitchFactory;
 import net.cloudapp.chooser.chooser.R;
 import net.cloudapp.chooser.chooser.model.Post;
 
-public class Feed extends AppCompatActivity implements View.OnClickListener {
+public class FeedView extends AppCompatActivity implements View.OnClickListener {
     Button buttonVote1, buttonVote2;
     ImageButton flagButton;
     TextView titleTextView, description1TextView, description2TextView, tokens;
@@ -37,14 +37,14 @@ public class Feed extends AppCompatActivity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("Chooser", "Feed activity loading");
+        Log.d("Chooser", "FeedView activity loading");
         setContentView(R.layout.posts_view);
         initializeViewElements();
         initializeOnClickListeners();
         initializeControls();
 
-        PostsController postsController = new PostsController(this);
-        postsController.getPosts();
+        PostsFetchController postsFetchController = new PostsFetchController(this);
+        postsFetchController.getPosts();
     }
 
     private void initializeControls() {
@@ -104,7 +104,7 @@ public class Feed extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        Log.i("ChooserApp", "Feed OnclickListener: " + v.getId());
+        Log.i("ChooserApp", "FeedView OnclickListener: " + v.getId());
         switch (v.getId()) {
 
             case R.id.buttonVote1:
@@ -140,7 +140,7 @@ public class Feed extends AppCompatActivity implements View.OnClickListener {
         Intent i;
         switch (item.getItemId()) {
             case R.id.add_poll:
-            i = new Intent("net.cloudapp.chooser.chooser.AddPost");
+            i = new Intent("net.cloudapp.chooser.chooser.AddPostView");
                 startActivity(i);
                 return true;
             case R.id.settings:

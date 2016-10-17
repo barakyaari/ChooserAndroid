@@ -21,7 +21,7 @@ public class LoginCallback implements Callback<Void> {
     @Override
     public void success(Void aVoid, Response response) {
         Log.d("Chooser", "Callback running");
-        Intent i = new Intent("android.intent.action.Feed");
+        Intent i = new Intent("android.intent.action.FeedView");
         Log.d("Chooser", "Starting main activity");
         mContext.startActivity(i);
     }

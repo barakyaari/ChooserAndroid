@@ -11,21 +11,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import net.cloudapp.chooser.chooser.Controller.PostsUploadController;
 import net.cloudapp.chooser.chooser.Images.ImagePicker;
-import net.cloudapp.chooser.chooser.Network.RestFramework.RestClient;
-import net.cloudapp.chooser.chooser.Images.ImageUploader;
-import net.cloudapp.chooser.chooser.Images.ImageUploaderImpl;
 import net.cloudapp.chooser.chooser.Media.ImageSelector;
 import net.cloudapp.chooser.chooser.Images.CloudinaryClient;
-import net.cloudapp.chooser.chooser.PostUpload.PostUploadCallback;
 import net.cloudapp.chooser.chooser.R;
-import net.cloudapp.chooser.chooser.Common.SessionDetails;
 
 
-public class AddPost extends AppCompatActivity implements View.OnClickListener {
+public class AddPostView extends AppCompatActivity implements View.OnClickListener {
     private static final int SELECT_PHOTO = 100;
     private int selectedImage = 0;
-    Button buttonAddPost, buttonCancel, buttonPromote, buttonNotify;
+    Button buttonAddPost, buttonCancel;
     EditText editTextTitle, editTextDescription1, editTextDescription2;
     ImageView image1, image2;
     TextView tokens, promotionText;
@@ -37,11 +33,48 @@ public class AddPost extends AppCompatActivity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setViewElements();
         setContentView(R.layout.add_post);
+        setViewControls();
+        setOnClickListeners();
         selector = new ImageSelector();
+        cloudinaryClient = new CloudinaryClient();
+    }
+
+    private void setOnClickListeners() {
+        buttonAddPost.setOnClickListener(this);
+        buttonCancel.setOnClickListener(this);
+        image1.setOnClickListener(this);
+        image2.setOnClickListener(this);
+        editTextDescription1.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    editTextDescription1.setText("");
+                }
+            }
+        });
+
+        editTextDescription2.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    editTextDescription2.setText("");
+                }
+            }
+        });
+
+        editTextTitle.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    editTextTitle.setText("");
+                }
+            }
+        });
+    }
+
+    private void setViewControls() {
         tokens = (TextView) findViewById(R.id.tokens);
-        promotionText = (TextView) findViewById(R.id.promotionText);
         image1 = (ImageView) findViewById(R.id.addPostImageView1);
         image2 = (ImageView) findViewById(R.id.addPostImageView2);
         editTextTitle = (EditText) findViewById(R.id.postTitleEditText);
@@ -49,21 +82,7 @@ public class AddPost extends AppCompatActivity implements View.OnClickListener {
         editTextDescription2 = (EditText) findViewById(R.id.description2EditText);
         buttonAddPost = (Button) findViewById(R.id.postButton);
         buttonCancel = (Button) findViewById(R.id.cancelButton);
-        buttonPromote = (Button) findViewById(R.id.promoteButton);
-        buttonNotify = (Button) findViewById(R.id.notificationButton);
-        cloudinaryClient = new CloudinaryClient();
 
-//        tokens.setText(String.valueOf(sessionDetails.userTokenCount));
-        promotionText.setVisibility(View.INVISIBLE);
-        buttonAddPost.setOnClickListener(this);
-        buttonCancel.setOnClickListener(this);
-        buttonPromote.setOnClickListener(this);
-        buttonNotify.setOnClickListener(this);
-        image1.setOnClickListener(this);
-        image2.setOnClickListener(this);
-    }
-
-    private void setViewElements() {
     }
 
     @Override
@@ -78,23 +97,13 @@ public class AddPost extends AppCompatActivity implements View.OnClickListener {
     }
 
     private void uploadPost() {
-        String image1Id, image2Id, title, description1, description2;
-        ImageUploader uploader = new ImageUploaderImpl();
-        image1Id = uploader.uploadImage(image1BitMap);
-        image2Id = uploader.uploadImage(image2BitMap);
+        String title, description1, description2;
         title = editTextTitle.getText().toString();
         description1 = editTextDescription1.getText().toString();
         description2 = editTextDescription2.getText().toString();
-        RestClient restClient = new RestClient();
-        restClient.getService().addpost(
-                SessionDetails.getInstance().getAccessToken().getToken(),
-                title,
-                image1Id,
-                image2Id,
-                description1,
-                description2,
-                new PostUploadCallback(this)
-        );
+
+        PostsUploadController postsUploadController = new PostsUploadController();
+        postsUploadController.uploadPost(this, title, image1BitMap, image2BitMap, description1, description2);
     }
 
     @Override
