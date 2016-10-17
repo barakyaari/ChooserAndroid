@@ -57,7 +57,7 @@ public class LoginView extends Activity{
     }
 
     private void processLoginIfTokenExists() {
-        if(AccessToken.getCurrentAccessToken() != null){
+        if (AccessToken.getCurrentAccessToken() != null){
             LoginCallback callback = new LoginCallback(this);
             LoginController loginController = new LoginController(callback);
             loginController.login();
