@@ -8,4 +8,6 @@ public class Post {
     public String description2;
     public String userId;
     public String _id;
+    public int votes1;
+    public int votes2;
 }

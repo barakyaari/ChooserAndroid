@@ -48,11 +48,11 @@ public class MyPostsAdapter extends ArrayAdapter<Post> {
         headline.setText(post.title);
 
         //Add vote and date support here:
-        vote1.setText("0");
-        vote2.setText("0");
+        vote1.setText(String.valueOf(post.votes1));
+        vote2.setText(String.valueOf(post.votes2));
         date.setText("01.01.2000");
         //change 1 to votecounts
-        updatePostBar(customView, 1, 1);
+        updatePostBar(customView, post.votes1, post.votes2);
 
         String url1 = CloudinaryClient.bigImageUrl(post.image1);
         String url2 = CloudinaryClient.bigImageUrl(post.image2);
