@@ -176,10 +176,6 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
             i = new Intent("net.cloudapp.chooser.chooser.AddPostView");
                 startActivity(i);
                 return true;
-            case R.id.settings:
-                i = new Intent("net.cloudapp.chooser.chooser.Settings");
-                startActivity(i);
-                return true;
             case R.id.logout:
                 LoginManager.getInstance().logOut();
                 finish();
