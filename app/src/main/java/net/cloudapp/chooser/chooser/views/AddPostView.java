@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import net.cloudapp.chooser.chooser.Controller.PostsUploadController;
 import net.cloudapp.chooser.chooser.Images.ImagePicker;
-import net.cloudapp.chooser.chooser.Media.ImageSelector;
 import net.cloudapp.chooser.chooser.Images.CloudinaryClient;
 import net.cloudapp.chooser.chooser.R;
 
@@ -26,7 +25,6 @@ public class AddPostView extends AppCompatActivity implements View.OnClickListen
     ImageView image1, image2;
     TextView tokens, promotionText;
     Bitmap image1BitMap, image2BitMap;
-    ImageSelector selector;
     CloudinaryClient cloudinaryClient;
 
 
@@ -36,7 +34,6 @@ public class AddPostView extends AppCompatActivity implements View.OnClickListen
         setContentView(R.layout.add_post);
         setViewControls();
         setOnClickListeners();
-        selector = new ImageSelector();
         cloudinaryClient = new CloudinaryClient();
     }
 

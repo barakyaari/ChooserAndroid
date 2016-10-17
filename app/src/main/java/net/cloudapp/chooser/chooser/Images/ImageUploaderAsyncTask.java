@@ -7,7 +7,7 @@ import android.util.Log;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-public class ImageUploaderTask extends AsyncTask<UploadTask, Void, Void>{
+public class ImageUploaderAsyncTask extends AsyncTask<UploadTask, Void, Void>{
 
     @Override
     protected Void doInBackground(UploadTask... tasks) {

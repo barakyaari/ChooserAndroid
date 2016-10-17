@@ -15,7 +15,7 @@ public class LoginController{
 
     public static void login(){
         SessionDetails.getInstance().setAccessToken(AccessToken.getCurrentAccessToken());
-        LoginAsync loginAsync = new LoginAsync(mCallback);
+        LoginAsyncTask loginAsync = new LoginAsyncTask(mCallback);
         loginAsync.execute();
     }
 

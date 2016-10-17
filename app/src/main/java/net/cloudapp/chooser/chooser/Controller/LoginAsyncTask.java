@@ -10,13 +10,9 @@ import net.cloudapp.chooser.chooser.Network.RestFramework.RestClient;
 
 import retrofit.Callback;
 
-/**
- * Created by t-baya on 10/7/2016.
- */
-
-public class LoginAsync extends AsyncTask<Void, Void, Void>{
+public class LoginAsyncTask extends AsyncTask<Void, Void, Void>{
     private Callback<Void> mCallback;
-    public LoginAsync(Callback<Void> callback){
+    public LoginAsyncTask(Callback<Void> callback){
         mCallback = callback;
     }
 
