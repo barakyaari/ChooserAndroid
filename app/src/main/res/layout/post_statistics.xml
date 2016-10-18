@@ -40,8 +40,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="0.0%"
-                android:id="@+id/percentage1"
+                android:text="0"
+                android:id="@+id/votes1"
                 android:textColor="#dddddd"
                 android:layout_gravity="bottom" />
 
@@ -49,10 +49,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="0.0%"
-                android:id="@+id/percentage2"
+                android:text="0"
+                android:id="@+id/votes2"
                 android:layout_gravity="bottom|right"
-                android:textColor="#dddddd" />
+                android:textColor="#dddddd"
+                android:singleLine="true" />
 
             <com.github.mikephil.charting.charts.HorizontalBarChart
                 android:id="@+id/stat_bar"
@@ -103,21 +104,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="notify"
-            android:id="@+id/notifyPost"
-            android:layout_gravity="right" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Promote"
-            android:id="@+id/promotePost"
-            android:layout_gravity="right" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Delete"
+            android:text="Delete post"
             android:id="@+id/deletePost"
             android:layout_marginLeft="10dp" />
     </LinearLayout>

@@ -1,5 +1,6 @@
 package net.cloudapp.chooser.chooser.views.MyPosts;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -13,7 +14,7 @@ import net.cloudapp.chooser.chooser.R;
 import net.cloudapp.chooser.chooser.views.dialogs.DeletePostDialog;
 
 
-public class MyPostsView extends AppCompatActivity implements ListView.OnItemLongClickListener {
+public class MyPostsView extends AppCompatActivity implements ListView.OnItemLongClickListener, ListView.OnItemClickListener {
     private ListView postList;
     private MyPostsAdapter myPostsAdapter;
 
@@ -24,6 +25,7 @@ public class MyPostsView extends AppCompatActivity implements ListView.OnItemLon
         postList = (ListView) findViewById(R.id.postList);
         getSupportActionBar().setTitle("My Posts");
         postList.setOnItemLongClickListener(this);
+        postList.setOnItemClickListener(this);
         MyPostsFetchController myPostsFetchController = new MyPostsFetchController(this);
         myPostsFetchController.getMyPosts();
         myPostsAdapter = new MyPostsAdapter(this, PostRepository.myPosts);
@@ -40,5 +42,13 @@ public class MyPostsView extends AppCompatActivity implements ListView.OnItemLon
         DeletePostDialog dpDialog = new DeletePostDialog(PostRepository.myPosts.get(position)._id,this);
         dpDialog.show(getFragmentManager(),"DeletePostDialog");
         return false;
+    }
+
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent i = new Intent("net.cloudapp.chooser.chooser.views.Statistics.StatisticsView");
+        i.putExtra("PostIndex", position);
+        startActivity(i);
     }
 }
