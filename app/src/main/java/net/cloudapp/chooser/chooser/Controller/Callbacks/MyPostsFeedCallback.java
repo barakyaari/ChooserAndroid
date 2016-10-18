@@ -1,14 +1,9 @@
 package net.cloudapp.chooser.chooser.Controller.Callbacks;
-
 import android.util.Log;
-
 import net.cloudapp.chooser.chooser.Common.PostRepository;
 import net.cloudapp.chooser.chooser.model.Post;
-import net.cloudapp.chooser.chooser.views.FeedView;
 import net.cloudapp.chooser.chooser.views.MyPosts.MyPostsView;
-
 import java.util.List;
-
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;

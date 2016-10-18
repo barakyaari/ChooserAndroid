@@ -16,16 +16,13 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 
+import net.cloudapp.chooser.chooser.Common.DateConverter;
 import net.cloudapp.chooser.chooser.Images.CloudinaryClient;
 import net.cloudapp.chooser.chooser.R;
 import net.cloudapp.chooser.chooser.model.Post;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 /**
  * Created by Ben on 26/06/2016.
@@ -51,13 +48,12 @@ public class MyPostsAdapter extends ArrayAdapter<Post> {
         Post post = getItem(position);
         headline.setText(post.title);
 
-        //Add vote and date support here:
         vote1.setText(String.valueOf(post.votes1));
         vote2.setText(String.valueOf(post.votes2));
 
-        String dateString = (post.utcDate == null)? "No Date" : post.utcDate;
+        String dateString = (post.utcDate == null) ? "No Date" : DateConverter.utcToShortDate(post.utcDate);
         date.setText(dateString);
-        //change 1 to votecounts
+
         updatePostBar(customView, post.votes1, post.votes2);
 
         String url1 = CloudinaryClient.smallImageUrl(post.image1);
