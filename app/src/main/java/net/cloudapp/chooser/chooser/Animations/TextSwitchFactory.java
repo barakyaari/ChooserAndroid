@@ -6,8 +6,15 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.Gravity;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageSwitcher;
 import android.widget.ViewSwitcher;
+
+import net.cloudapp.chooser.chooser.Animations.VotesAnimationListeners.Vote1AnimationListener;
+import net.cloudapp.chooser.chooser.Animations.VotesAnimationListeners.Vote2AnimationListener;
+import net.cloudapp.chooser.chooser.views.FeedView;
 
 public class TextSwitchFactory implements ViewSwitcher.ViewFactory {
     private Context mContext;
@@ -28,5 +35,22 @@ public class TextSwitchFactory implements ViewSwitcher.ViewFactory {
         text.setStrokeSize(15);
         text.setStrokeColor(Color.BLACK);
         return text;
+    }
+
+    public static Animation getInAnimation(int postNum, FeedView feed) {
+        Animation inAnimation = AnimationUtils.loadAnimation(feed, android.R.anim.fade_in);
+        inAnimation.setDuration(1000);
+
+        if (postNum == 1)
+            inAnimation.setAnimationListener(new Vote1AnimationListener(feed));
+        else
+            inAnimation.setAnimationListener(new Vote2AnimationListener(feed));
+        return inAnimation;
+    }
+
+    public static Animation getOutAnimation() {
+        Animation outAnimation = new AlphaAnimation(0.0f, 0.0f);
+        outAnimation.setDuration(1000);
+        return outAnimation;
     }
 }

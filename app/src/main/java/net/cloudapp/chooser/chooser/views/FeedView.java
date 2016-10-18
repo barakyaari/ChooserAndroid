@@ -27,6 +27,8 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.facebook.login.LoginManager;
 
+import net.cloudapp.chooser.chooser.Animations.VotesAnimationListeners.Vote1AnimationListener;
+import net.cloudapp.chooser.chooser.Animations.VotesAnimationListeners.Vote2AnimationListener;
 import net.cloudapp.chooser.chooser.Common.PostRepository;
 import net.cloudapp.chooser.chooser.Controller.PostsFetchController;
 import net.cloudapp.chooser.chooser.Controller.VoteController;
@@ -57,7 +59,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
         initializeViewElements();
         initializeOnClickListeners();
         initializeControls();
-        feedIsOn = true;
+        shutdownFeed();
         refreshFeedRepository();
     }
 
@@ -154,10 +156,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void loadNextPost() {
-
-        //MAGIC
-
-        loadPosts();
+        refreshView();
     }
 
     @Override
@@ -189,130 +188,92 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
     }
 
 
-    public void refreshView(){
-        Post post = PostRepository.postsFeed.poll();
+    public void refreshView() {
+        post = PostRepository.postsFeed.poll();
+
+        if (feedIsOn) {
+            setTextAnimations(); //loads post after votes appears on screen
+            textSwitcher1.setText(String.valueOf(votes1));
+            textSwitcher2.setText(String.valueOf(votes2));
+            return;
+        }
         if (post == null) {
+            //runs only when using 'refresh' and there are no posts or when logging in and there are no posts.
             Log.d("Chooser", "Posts empty...");
-            if (feedIsOn)
-                shutdownFeed();
             return;
         }
 
-        if (!feedIsOn)
-            turnOnFeed();
-
-        Log.i("ChooserApp", "Loading post " + post.title);
-
-        titleTextView.setText(post.title);
-        String url1 = CloudinaryClient.bigImageUrl(post.image1);
-        Glide.with(this).load(url1).into((ImageView) imageSwitcher1.getCurrentView());
-        description1TextView.setText(post.description1);
-        votes1 = post.votes1;
-
-
-        String url2 = CloudinaryClient.bigImageUrl(post.image2);
-        Glide.with(this).load(url2).into((ImageView) imageSwitcher2.getCurrentView());
-        description2TextView.setText(post.description2);
-
-        imageSwitcher2.setImageDrawable(new BitmapDrawable(getResources(), post.image2));
-
-        votes2 = post.votes2;
-
-        mCurrentPostId = post._id;
-    }
-
-    public void loadPosts() {
-        post = PostRepository.postsFeed.poll();
-
-        setTextAnimations(); //loads post after percentage appears on screen
-        textSwitcher1.setText(String.valueOf(votes1));
-        textSwitcher2.setText(String.valueOf(votes2));
+        turnOnFeed();
+        extractGeneralData();
+        extractPostData1();
+        extractPostData2();
     }
 
 
     private void setTextAnimations() {
         textSwitcher1.setVisibility(View.VISIBLE);
         textSwitcher2.setVisibility(View.VISIBLE);
-        //not yet visible
 
-        //set fade in animation
-        Animation inAnimation1 = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
-        Animation inAnimation2 = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
+        textSwitcher1.setInAnimation(TextSwitchFactory.getInAnimation(1,this));
+        textSwitcher2.setInAnimation(TextSwitchFactory.getInAnimation(2,this));
 
-        //set fade in duration to 1 sec
-        inAnimation1.setDuration(1000);
-        inAnimation2.setDuration(1000);
+        //textSwitcher1.setOutAnimation(TextSwitchFactory.getOutAnimation());
+        //textSwitcher2.setOutAnimation(TextSwitchFactory.getOutAnimation());
+    }
 
-        inAnimation1.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {}
+    public void onAnimationEnd1() {
+        textSwitcher1.setVisibility(View.GONE);
+        if (post == null) {
+            //runs only when there are no more posts to show
+            Log.d("Chooser", "Posts empty...");
+            if (feedIsOn)
+                shutdownFeed();
+            return;
+        }
+        extractGeneralData();
+        extractPostData1();
+    }
 
-            @Override
-            public void onAnimationRepeat(Animation animation) {}
+    public void onAnimationEnd2() {
+        textSwitcher2.setVisibility(View.GONE);
+        if (post == null)
+            return;
 
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                //this runs when votes are on the screen
-                if (post == null) {
-                    Log.d("Chooser", "Posts empty...");
-                    if (feedIsOn)
-                        shutdownFeed();
-                    return;
-                } else {
-                    titleTextView.setText(post.title);
-                    description1TextView.setText(post.description1);
-                    textSwitcher1.setVisibility(View.GONE);
+        extractPostData2();
+    }
 
-                    String url1 = CloudinaryClient.bigImageUrl(post.image1);
-                    Glide
-                            .with(getApplicationContext())
-                            .load(url1)
-                            .animate(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_in_right))
-                            .into((ImageView) imageSwitcher1.getNextView());
 
-                    imageSwitcher1.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out_left));
+    private void extractGeneralData() {
+        Log.i("ChooserApp", "Loading post " + post.title);
+        mCurrentPostId = post._id;
+        titleTextView.setText(post.title);
+    }
 
-                    imageSwitcher1.showNext();
-                    //shows new picture and texts on feed
-                }
-            }
-        });
+    private void extractPostData1 () {
+        String url1 = CloudinaryClient.bigImageUrl(post.image1);
+        Glide
+                .with(getApplicationContext())
+                .load(url1)
+                .animate(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_in_right))
+                .into((ImageView) imageSwitcher1.getNextView());
 
-        inAnimation2.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                //to disable clicking while animating
-                animating = true;
-            }
+        imageSwitcher1.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out_left));
+        description1TextView.setText(post.description1);
+        votes1 = post.votes1;
+        imageSwitcher1.showNext();
+    }
 
-            @Override
-            public void onAnimationRepeat(Animation animation) {}
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                description2TextView.setText(post.description2);
-                textSwitcher2.setVisibility(View.GONE);
-                String url2 = CloudinaryClient.bigImageUrl(post.image2);
-                Glide
-                        .with(getApplicationContext())
-                        .load(url2)
-                        .animate(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_in_right))
-                        .into((ImageView) imageSwitcher2.getNextView());
-                imageSwitcher2.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out_left));
-
-                imageSwitcher2.showNext();
-                animating = false;
-            }
-        });
-
-        Animation hideText = new AlphaAnimation(0.0f, 0.0f);
-        hideText.setDuration(1000);
-
-        textSwitcher1.setInAnimation(inAnimation1);
-        textSwitcher2.setInAnimation(inAnimation2);
-
-        textSwitcher1.setOutAnimation(hideText);
-        textSwitcher2.setOutAnimation(hideText);
+    private void extractPostData2 () {
+        String url2 = CloudinaryClient.bigImageUrl(post.image2);
+        Glide
+                .with(getApplicationContext())
+                .load(url2)
+                .animate(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_in_right))
+                .into((ImageView) imageSwitcher2.getNextView());
+        imageSwitcher2.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out_left));
+        description2TextView.setText(post.description2);
+        votes2 = post.votes2;
+        imageSwitcher2.showNext();
     }
 
 
