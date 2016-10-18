@@ -17,6 +17,7 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 
 import net.cloudapp.chooser.chooser.Common.DateConverter;
+import net.cloudapp.chooser.chooser.Common.StatisticsChartSetup;
 import net.cloudapp.chooser.chooser.Images.CloudinaryClient;
 import net.cloudapp.chooser.chooser.R;
 import net.cloudapp.chooser.chooser.model.Post;
@@ -67,16 +68,7 @@ public class MyPostsAdapter extends ArrayAdapter<Post> {
 
     private void updatePostBar(View view, int vote1, int vote2) {
         HorizontalBarChart horizontalBarChart = (HorizontalBarChart) view.findViewById(R.id.stat_bar);
-
-        horizontalBarChart.getXAxis().setEnabled(false);
-        horizontalBarChart.getAxisLeft().setEnabled(false);
-        horizontalBarChart.getAxisLeft().setAxisMinValue(0f);
-        horizontalBarChart.getAxisRight().setEnabled(false);
-        horizontalBarChart.setDescription("");
-        horizontalBarChart.setClickable(false);
-        horizontalBarChart.setDoubleTapToZoomEnabled(false);
-        horizontalBarChart.setPinchZoom(false);
-
+        StatisticsChartSetup.createSmallBarChart(horizontalBarChart);
 
         ArrayList<BarEntry> vals = new ArrayList<>();
         vals.add(new BarEntry(0, new float[]{vote1, vote2}));

@@ -23,6 +23,7 @@ import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 
 
 import net.cloudapp.chooser.chooser.Common.PostRepository;
+import net.cloudapp.chooser.chooser.Common.StatisticsChartSetup;
 import net.cloudapp.chooser.chooser.Images.CloudinaryClient;
 import net.cloudapp.chooser.chooser.R;
 import net.cloudapp.chooser.chooser.model.Post;
@@ -71,7 +72,7 @@ public class StatisticsView extends AppCompatActivity implements View.OnClickLis
         String url2 = CloudinaryClient.smallImageUrl(post.image2);
         Glide.with(this).load(url1).into(image1);
         Glide.with(this).load(url2).into(image2);
-        updatePostPercentage();
+        updatePostVotes();
     }
 
     @Override
@@ -85,22 +86,14 @@ public class StatisticsView extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private void updatePostPercentage() {
+    private void updatePostVotes() {
         HorizontalBarChart horizontalBarChart = (HorizontalBarChart) this.findViewById(R.id.stat_bar);
-
-        horizontalBarChart.getXAxis().setEnabled(false);
-        horizontalBarChart.getAxisLeft().setEnabled(false);
-        horizontalBarChart.getAxisLeft().setAxisMinValue(0f);
-        horizontalBarChart.getAxisRight().setEnabled(false);
-        horizontalBarChart.setDescription("");
-        horizontalBarChart.setClickable(false);
-        horizontalBarChart.setDoubleTapToZoomEnabled(false);
-        horizontalBarChart.setPinchZoom(false);
+        StatisticsChartSetup.createSmallBarChart(horizontalBarChart);
 
         ArrayList<BarEntry> vals = new ArrayList<>();
         vals.add(new BarEntry(0, new float[]{post.votes1, post.votes2}));
 
-        BarDataSet set = new BarDataSet(vals, "Percentage");
+        BarDataSet set = new BarDataSet(vals, "Votes");
         set.setBarBorderWidth(2);
         set.setBarBorderColor(Color.BLACK);
         ArrayList<IBarDataSet> dataSet = new ArrayList<>();
