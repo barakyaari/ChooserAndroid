@@ -46,7 +46,8 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
     TextSwitcher textSwitcher1, textSwitcher2;
     LinearLayout feedLayout, noPostsLayout;
     String mCurrentPostId;
-    Boolean feedIsOn, animating;
+    Boolean feedIsOn;
+    public  boolean animating1, animating2;
     Post post;
     int votes1, votes2;
 
@@ -60,6 +61,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
         initializeOnClickListeners();
         initializeControls();
         shutdownFeed();
+        setTextAnimations();
         refreshFeedRepository();
     }
 
@@ -109,6 +111,8 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
 
     @Override
     public void onClick(View v) {
+        if (animating1 || animating2)
+            return;
         Log.i("ChooserApp", "FeedView OnclickListener: " + v.getId());
         switch (v.getId()) {
 
@@ -192,7 +196,8 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
         post = PostRepository.postsFeed.poll();
 
         if (feedIsOn) {
-            setTextAnimations(); //loads post after votes appears on screen
+            textSwitcher1.setVisibility(View.VISIBLE);
+            textSwitcher2.setVisibility(View.VISIBLE);
             textSwitcher1.setText(String.valueOf(votes1));
             textSwitcher2.setText(String.valueOf(votes2));
             return;
@@ -211,14 +216,8 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
 
 
     private void setTextAnimations() {
-        textSwitcher1.setVisibility(View.VISIBLE);
-        textSwitcher2.setVisibility(View.VISIBLE);
-
-        textSwitcher1.setInAnimation(TextSwitchFactory.getInAnimation(1,this));
-        textSwitcher2.setInAnimation(TextSwitchFactory.getInAnimation(2,this));
-
-        //textSwitcher1.setOutAnimation(TextSwitchFactory.getOutAnimation());
-        //textSwitcher2.setOutAnimation(TextSwitchFactory.getOutAnimation());
+        textSwitcher1.setInAnimation(TextSwitchFactory.getAnimation(1,this));
+        textSwitcher2.setInAnimation(TextSwitchFactory.getAnimation(2,this));
     }
 
     public void onAnimationEnd1() {

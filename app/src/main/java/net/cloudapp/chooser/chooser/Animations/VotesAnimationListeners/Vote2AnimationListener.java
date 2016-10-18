@@ -8,16 +8,15 @@ import net.cloudapp.chooser.chooser.views.FeedView;
  * Created by Ben on 18/10/2016.
  */
 public class Vote2AnimationListener implements Animation.AnimationListener {
-    boolean animating;
     FeedView feed;
 
     public Vote2AnimationListener(FeedView feed) {
         this.feed = feed;
-        animating = false;
+        feed.animating2 = false;
     }
     @Override
     public void onAnimationStart(Animation animation) {
-        animating = true;
+        feed.animating2 = true;
     }
 
     @Override
@@ -26,7 +25,7 @@ public class Vote2AnimationListener implements Animation.AnimationListener {
     @Override
     public void onAnimationEnd(Animation animation) {
         feed.onAnimationEnd2();
-        animating = false;
+        feed.animating2 = false;
     }
 
 }

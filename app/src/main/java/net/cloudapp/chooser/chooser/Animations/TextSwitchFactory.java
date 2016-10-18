@@ -37,20 +37,13 @@ public class TextSwitchFactory implements ViewSwitcher.ViewFactory {
         return text;
     }
 
-    public static Animation getInAnimation(int postNum, FeedView feed) {
+    public static Animation getAnimation(int postNum, FeedView feed) {
         Animation inAnimation = AnimationUtils.loadAnimation(feed, android.R.anim.fade_in);
         inAnimation.setDuration(1000);
-
         if (postNum == 1)
             inAnimation.setAnimationListener(new Vote1AnimationListener(feed));
         else
             inAnimation.setAnimationListener(new Vote2AnimationListener(feed));
         return inAnimation;
-    }
-
-    public static Animation getOutAnimation() {
-        Animation outAnimation = new AlphaAnimation(0.0f, 0.0f);
-        outAnimation.setDuration(1000);
-        return outAnimation;
     }
 }
