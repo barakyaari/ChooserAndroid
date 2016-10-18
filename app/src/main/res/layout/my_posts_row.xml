@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:weightSum="1"
     android:baselineAligned="true"
+    android:descendantFocusability="blocksDescendants"
     android:background="#32405d">
 
     <ImageView
@@ -18,6 +19,7 @@
         android:layout_height="70dp"
         android:layout_weight="1"
         android:layout_gravity="center_horizontal"
+        android:descendantFocusability="blocksDescendants"
         android:weightSum="1">
 
         <FrameLayout

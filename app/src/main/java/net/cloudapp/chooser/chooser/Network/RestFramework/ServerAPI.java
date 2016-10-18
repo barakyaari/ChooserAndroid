@@ -43,4 +43,10 @@ public interface ServerAPI {
             @Header("postId") String postId,
             @Header("selected") int selected,
             Callback<Void> callback);
+
+    @GET("/deletepost")
+    public void deletePost(
+            @Header("token") String token,
+            @Header("postId") String postId,
+            Callback<Void> callback);
 }
