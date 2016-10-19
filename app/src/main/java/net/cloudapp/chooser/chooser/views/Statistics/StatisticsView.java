@@ -29,6 +29,7 @@ import net.cloudapp.chooser.chooser.Images.CloudinaryClient;
 import net.cloudapp.chooser.chooser.R;
 import net.cloudapp.chooser.chooser.model.Post;
 import net.cloudapp.chooser.chooser.views.Statistics.StatisticsFragments.StatisticsFragmentManager;
+import net.cloudapp.chooser.chooser.views.dialogs.DeletePostDialog;
 
 import java.util.ArrayList;
 
@@ -120,7 +121,8 @@ public class StatisticsView extends AppCompatActivity implements View.OnClickLis
 
 
     private void deletePost() {
-        //deletes post and closes statisticsview
+        DeletePostDialog dpDialog = new DeletePostDialog(post._id, this);
+        dpDialog.show(getFragmentManager(),"DeletePostDialog");
     }
 
     public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {

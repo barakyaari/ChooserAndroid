@@ -276,21 +276,6 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Override
     public void onBackPressed() {
         // prevents 'back' button from showing the login screen.

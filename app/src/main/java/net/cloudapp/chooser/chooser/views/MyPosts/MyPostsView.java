@@ -14,7 +14,7 @@ import net.cloudapp.chooser.chooser.R;
 import net.cloudapp.chooser.chooser.views.dialogs.DeletePostDialog;
 
 
-public class MyPostsView extends AppCompatActivity implements ListView.OnItemLongClickListener, ListView.OnItemClickListener {
+public class MyPostsView extends AppCompatActivity implements ListView.OnItemClickListener {
     private ListView postList;
     private MyPostsAdapter myPostsAdapter;
 
@@ -24,24 +24,20 @@ public class MyPostsView extends AppCompatActivity implements ListView.OnItemLon
         setContentView(R.layout.my_posts_view);
         postList = (ListView) findViewById(R.id.postList);
         getSupportActionBar().setTitle("My Posts");
-        postList.setOnItemLongClickListener(this);
         postList.setOnItemClickListener(this);
-        MyPostsFetchController myPostsFetchController = new MyPostsFetchController(this);
-        myPostsFetchController.getMyPosts();
+        updateView();
         myPostsAdapter = new MyPostsAdapter(this, PostRepository.myPosts);
         postList.setAdapter(myPostsAdapter);
     }
 
 
-    public void refreshView() {
-        myPostsAdapter.notifyDataSetChanged();
+    public void updateView() {
+        MyPostsFetchController myPostsFetchController = new MyPostsFetchController(this);
+        myPostsFetchController.getMyPosts();
     }
 
-    @Override
-    public boolean onItemLongClick(AdapterView parent, View view, int position, long id) {
-        DeletePostDialog dpDialog = new DeletePostDialog(PostRepository.myPosts.get(position)._id,this);
-        dpDialog.show(getFragmentManager(),"DeletePostDialog");
-        return false;
+    public void refreshView() {
+        myPostsAdapter.notifyDataSetChanged();
     }
 
 
@@ -50,5 +46,11 @@ public class MyPostsView extends AppCompatActivity implements ListView.OnItemLon
         Intent i = new Intent("net.cloudapp.chooser.chooser.views.Statistics.StatisticsView");
         i.putExtra("PostIndex", position);
         startActivity(i);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateView();
     }
 }

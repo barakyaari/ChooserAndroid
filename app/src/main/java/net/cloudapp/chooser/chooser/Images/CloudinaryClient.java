@@ -12,7 +12,9 @@ import java.util.Map;
 
 public class CloudinaryClient {
     private static final String CLOUD_NAME = "chooser";
-    private static final int SMALL_IMAGE_SIZE = 100;
+    private static final int SMALL_IMAGE_SIZE_WIDTH = 130;
+    private static final int SMALL_IMAGE_SIZE_HEIGHT = 100;
+
 
 
     public static void uploadImage(final InputStream inputStream, String imageId) {
@@ -45,6 +47,6 @@ public class CloudinaryClient {
 
         Cloudinary cloudinary = new Cloudinary(config);
 
-        return cloudinary.url().transformation(new Transformation().width(SMALL_IMAGE_SIZE).height(SMALL_IMAGE_SIZE).crop("thumb")).generate(imageId);
+        return cloudinary.url().transformation(new Transformation().width(SMALL_IMAGE_SIZE_WIDTH).height(SMALL_IMAGE_SIZE_HEIGHT).crop("thumb")).generate(imageId);
     }
 }

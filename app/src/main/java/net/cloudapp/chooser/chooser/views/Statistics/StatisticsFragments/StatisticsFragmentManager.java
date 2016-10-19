@@ -1,13 +1,11 @@
 package net.cloudapp.chooser.chooser.views.Statistics.StatisticsFragments;
 
-import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import net.cloudapp.chooser.chooser.Common.PostRepository;
-import net.cloudapp.chooser.chooser.Common.StatisticsChartSetup;
 import net.cloudapp.chooser.chooser.Controller.PostStatisticsFetchController;
 import net.cloudapp.chooser.chooser.R;
 import net.cloudapp.chooser.chooser.model.PostStatistics;

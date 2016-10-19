@@ -2,11 +2,9 @@ package net.cloudapp.chooser.chooser.views.Statistics.StatisticsFragments;
 
 import android.graphics.Color;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.HorizontalBarChart;
-import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;

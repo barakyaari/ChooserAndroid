@@ -9,6 +9,7 @@ import android.util.Log;
 
 import net.cloudapp.chooser.chooser.Controller.DeletePostController;
 import net.cloudapp.chooser.chooser.views.MyPosts.MyPostsView;
+import net.cloudapp.chooser.chooser.views.Statistics.StatisticsView;
 
 
 /**
@@ -16,11 +17,11 @@ import net.cloudapp.chooser.chooser.views.MyPosts.MyPostsView;
  */
 public class DeletePostDialog extends DialogFragment implements DialogInterface.OnClickListener {
     String post_id;
-    MyPostsView myPostsView;
+    StatisticsView statisticsView;
 
-    public DeletePostDialog(String post_id, MyPostsView view) {
+    public DeletePostDialog(String post_id, StatisticsView view) {
         this.post_id = post_id;
-        myPostsView = view;
+        statisticsView = view;
     }
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -38,7 +39,7 @@ public class DeletePostDialog extends DialogFragment implements DialogInterface.
             case DialogInterface.BUTTON_POSITIVE:
                 Log.d("Chooser", "Deletes post with id: " + post_id);
                 DeletePostController dpController = new DeletePostController();
-                dpController.deletePost(post_id, myPostsView);
+                dpController.deletePost(post_id, statisticsView);
                 break;
 
             case DialogInterface.BUTTON_NEGATIVE:
