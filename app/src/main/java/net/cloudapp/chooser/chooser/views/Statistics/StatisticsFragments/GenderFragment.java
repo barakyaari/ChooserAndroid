@@ -9,10 +9,9 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 
-import net.cloudapp.chooser.chooser.Common.PostRepository;
 import net.cloudapp.chooser.chooser.Common.StatisticsChartSetup;
 import net.cloudapp.chooser.chooser.R;
-import net.cloudapp.chooser.chooser.model.Post;
+import net.cloudapp.chooser.chooser.model.PostStatistics;
 
 import java.util.ArrayList;
 
@@ -21,6 +20,7 @@ import java.util.ArrayList;
  */
 public class GenderFragment {
     private View view;
+    private PostStatistics postStatistics;
     private HorizontalBarChart genderBarChart, femaleBarChart, maleBarChart;
     private TextView  genDist1, genDist2, genF1, genF2, genM1, genM2;
 
@@ -67,5 +67,11 @@ public class GenderFragment {
         dataText2.setText(String.valueOf(data2));
     }
 
+    private int getTotalFemaleVotes() {
+        return postStatistics.femaleVotes1 + postStatistics.femaleVotes2;
+    }
 
+    private int getTotalMaleVotes() {
+        return postStatistics.maleVotes1 + postStatistics.maleVotes2;
+    }
 }

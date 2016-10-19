@@ -28,7 +28,7 @@ public abstract class StatisticsChartSetup {
         }
     }
 
-    public static void createPieChart(PieChart pieChart) {
+    public static void createAgePieChart(PieChart pieChart) {
         pieChart.setUsePercentValues(true);
         pieChart.setDescription("");
         pieChart.setDragDecelerationFrictionCoef(0.95f);

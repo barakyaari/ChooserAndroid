@@ -50,7 +50,7 @@ public class StatisticsFragmentManager extends Fragment {
                 break;
             case 3:
                 view = inflater.inflate(R.layout.frag_stat_age, container, false);
-                ageFragment = new AgeFragment(view);
+                ageFragment = new AgeFragment(view, this);
                 break;
         }
         return view;
