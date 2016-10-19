@@ -45,7 +45,15 @@ public class GenderFragment {
     }
 
 
-    public void updateGenderBarData (HorizontalBarChart horizontalBarChart, int color1, int color2, float data1, float data2, TextView dataText1, TextView dataText2) {
+    public void refreshGenderFragment(PostStatistics postStatistics) {
+        this.postStatistics = postStatistics;
+        updateGenderBarData(genderBarChart, StatisticsChartSetup.ChartColors.GENDER_DIST1.val, StatisticsChartSetup.ChartColors.GENDER_DIST2.val, getTotalFemaleVotes(),getTotalMaleVotes(),genDist1,genDist2);
+        updateGenderBarData(femaleBarChart, StatisticsChartSetup.ChartColors.GENDER_FVOTES1.val, StatisticsChartSetup.ChartColors.GENDER_FVOTES2.val, postStatistics.femaleVotes1,postStatistics.femaleVotes2,genF1,genF2);
+        updateGenderBarData(maleBarChart, StatisticsChartSetup.ChartColors.GENDER_MVOTES1.val, StatisticsChartSetup.ChartColors.GENDER_MVOTES2.val, postStatistics.maleVotes1,postStatistics.maleVotes2,genM1,genM2);
+    }
+
+
+    private void updateGenderBarData (HorizontalBarChart horizontalBarChart, int color1, int color2, float data1, float data2, TextView dataText1, TextView dataText2) {
         ArrayList<BarEntry> vals = new ArrayList<>();
         vals.add(new BarEntry(0, new float[]{data1, data2}));
 
@@ -64,7 +72,15 @@ public class GenderFragment {
         horizontalBarChart.notifyDataSetChanged();
         horizontalBarChart.invalidate();
 
-        dataText1.setText(String.valueOf(data1));
-        dataText2.setText(String.valueOf(data2));
+        dataText1.setText(String.valueOf(((int)data1)));
+        dataText2.setText(String.valueOf((int)data2));
+    }
+
+    private int getTotalFemaleVotes() {
+        return postStatistics.femaleVotes1+postStatistics.femaleVotes2;
+    }
+
+    private int getTotalMaleVotes() {
+        return postStatistics.maleVotes1+postStatistics.maleVotes2;
     }
 }

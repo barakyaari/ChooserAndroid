@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import net.cloudapp.chooser.chooser.Common.PostRepository;
+import net.cloudapp.chooser.chooser.Common.StatisticsChartSetup;
 import net.cloudapp.chooser.chooser.Controller.PostStatisticsFetchController;
 import net.cloudapp.chooser.chooser.R;
 import net.cloudapp.chooser.chooser.model.PostStatistics;
@@ -77,9 +78,7 @@ public class StatisticsFragmentManager extends Fragment {
                 mainFragment.refreshGeneralBarData();
                 break;
             case 2:
-                //updateGenderBarData(genderBarChart, ChartColors.GENDER_DIST1.val, ChartColors.GENDER_DIST2.val, postStatistics.getTotalFemaleVotes(),postStatistics.getTotalMaleVotes(),genDist1,genDist2);
-                //updateGenderBarData(femaleBarChart, ChartColors.GENDER_FVOTES1.val,ChartColors.GENDER_FVOTES2.val, postStatistics.femaleVotes1,postStatistics.femaleVotes2,genF1,genF2);
-                //updateGenderBarData(maleBarChart, ChartColors.GENDER_MVOTES1.val,ChartColors.GENDER_MVOTES2.val, postStatistics.maleVotes1,postStatistics.maleVotes2,genM1,genM2);
+                genderFragment.refreshGenderFragment(postStatistics);
                 break;
             case 3:
                 //updateAgePieData();
