@@ -13,7 +13,7 @@ import net.cloudapp.chooser.chooser.R;
 /**
  * Created by Ben on 19/10/2016.
  */
-    public abstract class AgeFragmentIntervalDialog extends DialogFragment {
+    public abstract class AgeFragmentDialog extends DialogFragment {
         private TextView seekBarValue, headline;
         private SeekBar seekBar;
         private int minVal;
@@ -21,7 +21,7 @@ import net.cloudapp.chooser.chooser.R;
         private int progress;
         private String headlineText;
 
-        public AgeFragmentIntervalDialog(String headlineText, int minVal, int maxVal, int initialValue) {
+        public AgeFragmentDialog(String headlineText, int minVal, int maxVal, int initialValue) {
             this.headlineText = headlineText;
             this.minVal = minVal;
             this.maxVal = maxVal;

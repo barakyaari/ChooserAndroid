@@ -15,9 +15,6 @@ import net.cloudapp.chooser.chooser.model.PostStatistics;
 
 import java.util.ArrayList;
 
-/**
- * Created by Ben on 18/10/2016.
- */
 public class GenderFragment {
     private View view;
     private PostStatistics postStatistics;
@@ -57,7 +54,6 @@ public class GenderFragment {
         ArrayList<BarEntry> vals = new ArrayList<>();
         vals.add(new BarEntry(0, new float[]{data1, data2}));
 
-
         BarDataSet set = new BarDataSet(vals, "");
         ArrayList<IBarDataSet> dataSet = new ArrayList<>();
         set.setColors(new int[]{color1, color2});
@@ -72,7 +68,7 @@ public class GenderFragment {
         horizontalBarChart.notifyDataSetChanged();
         horizontalBarChart.invalidate();
 
-        dataText1.setText(String.valueOf(((int)data1)));
+        dataText1.setText(String.valueOf((int)data1));
         dataText2.setText(String.valueOf((int)data2));
     }
 

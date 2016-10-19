@@ -81,8 +81,7 @@ public class StatisticsFragmentManager extends Fragment {
                 genderFragment.refreshGenderFragment(postStatistics);
                 break;
             case 3:
-                //updateAgePieData();
-                //updateAgeBarData();
+                ageFragment.refreshAgeFragment(postStatistics);
                 break;
         }
     }

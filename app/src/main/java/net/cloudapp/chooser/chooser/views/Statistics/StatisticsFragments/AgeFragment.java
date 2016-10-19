@@ -1,6 +1,5 @@
 package net.cloudapp.chooser.chooser.views.Statistics.StatisticsFragments;
 
-import android.app.Fragment;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.Button;
@@ -17,18 +16,15 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 
-import net.cloudapp.chooser.chooser.Common.PostRepository;
 import net.cloudapp.chooser.chooser.Common.StatisticsChartSetup;
 import net.cloudapp.chooser.chooser.R;
 import net.cloudapp.chooser.chooser.model.PostStatistics;
-import net.cloudapp.chooser.chooser.views.dialogs.AgeFragmentIntervalDialog;
+import net.cloudapp.chooser.chooser.views.dialogs.AgeFragmentDialog;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-/**
- * Created by Ben on 18/10/2016.
- */
+
 public class AgeFragment implements View.OnClickListener{
     private View view;
     private android.support.v4.app.Fragment parentFragment;
@@ -43,14 +39,18 @@ public class AgeFragment implements View.OnClickListener{
 
     public AgeFragment (View view, android.support.v4.app.Fragment parentFragment) {
         this.view = view;
-
+        this.parentFragment = parentFragment;
         createAgeFragment();
     }
 
-    private void createAgeFragment() {
+    private void addDefaultValues () {
         ageIntervals = 5;
         fromAgeGroup = 0;
         toAgeGroup = 21;
+    }
+
+    private void createAgeFragment() {
+        addDefaultValues();
         agePieChart = (PieChart) view.findViewById(R.id.pieChart);
         ageBarChart = (HorizontalBarChart) view.findViewById(R.id.barChart);
         StatisticsChartSetup.createAgePieChart(agePieChart);
@@ -72,7 +72,11 @@ public class AgeFragment implements View.OnClickListener{
         toAgeButton.setOnClickListener(this);
     }
 
-
+    public void refreshAgeFragment(PostStatistics postStatistics) {
+        this.postStatistics = postStatistics;
+        updateAgePieData();
+        updateAgeBarData();
+    }
 
 
     private void updateAgePieData () {
@@ -100,7 +104,7 @@ public class AgeFragment implements View.OnClickListener{
         agePieChart.invalidate();
     }
 
-    public void updateAgeBarData() {
+    private void updateAgeBarData() {
         int data1 = getAgeRangeVotes(1);
         int data2 = getAgeRangeVotes(2);
         ArrayList<BarEntry> vals = new ArrayList<>();
@@ -163,10 +167,10 @@ public class AgeFragment implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        AgeFragmentIntervalDialog seekBarDialog;
+        AgeFragmentDialog seekBarDialog;
         switch (v.getId()) {
             case R.id.changeIntervalButton:
-                seekBarDialog = new AgeFragmentIntervalDialog("Choose Age Intervals",3,25, ageIntervals) {
+                seekBarDialog = new AgeFragmentDialog("Choose Age Intervals",3,25, ageIntervals) {
                     @Override
                     public void onEndOfSeekBarTracking(int progress) {
                         ageIntervals = progress;
@@ -177,7 +181,7 @@ public class AgeFragment implements View.OnClickListener{
                 break;
 
             case R.id.fromAgeButton:
-                 seekBarDialog = new AgeFragmentIntervalDialog("From Age",0,toAgeGroup-1, fromAgeGroup) {
+                 seekBarDialog = new AgeFragmentDialog("From Age",0,toAgeGroup-1, fromAgeGroup) {
                     @Override
                     public void onEndOfSeekBarTracking(int progress) {
                         fromAgeGroup = progress;
@@ -189,7 +193,7 @@ public class AgeFragment implements View.OnClickListener{
                 break;
 
             case R.id.toAgeButton:
-                seekBarDialog = new AgeFragmentIntervalDialog("To Age",fromAgeGroup+1,Math.max(postStatistics.ageVotes1.size(),postStatistics.ageVotes2.size())-1, toAgeGroup) {
+                seekBarDialog = new AgeFragmentDialog("To Age",fromAgeGroup+1,Math.max(postStatistics.ageVotes1.size(),postStatistics.ageVotes2.size())-1, toAgeGroup) {
                     @Override
                     public void onEndOfSeekBarTracking(int progress) {
                         toAgeGroup = progress;
