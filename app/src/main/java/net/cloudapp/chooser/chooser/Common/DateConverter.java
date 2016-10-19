@@ -1,7 +1,10 @@
 package net.cloudapp.chooser.chooser.Common;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 /**
  * Created by Ben on 18/10/2016.
@@ -9,19 +12,33 @@ import java.util.GregorianCalendar;
 public abstract class DateConverter {
 
     public static GregorianCalendar utcToCalendar (String utcDate) {
-        int year = Integer.valueOf(utcDate.substring(0,4));
-        int month = Integer.valueOf(utcDate.substring(5,7));
-        int day = Integer.valueOf(utcDate.substring(8,10));
-        int hour = Integer.valueOf(utcDate.substring(11,13));
-        int minute = Integer.valueOf(utcDate.substring(14,16));
-        int second = Integer.valueOf(utcDate.substring(17,19));
-        return new GregorianCalendar(year,month,day,hour,minute,second);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        GregorianCalendar gc = new GregorianCalendar();
+        try {
+            gc.setTime(sdf.parse(utcDate));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return gc;
+    }
+
+    public static GregorianCalendar applyTimeZone (GregorianCalendar calendar) {
+        Calendar cal = Calendar.getInstance();
+        TimeZone tz = cal.getTimeZone();
+        calendar.setTimeZone(tz);
+        return calendar;
     }
 
     public static String utcToShortDate (String utcDate) {
         // returns: dd.mm.yyyy
-        GregorianCalendar date = utcToCalendar(utcDate);
+        GregorianCalendar date = applyTimeZone(utcToCalendar(utcDate));
         return date.get(Calendar.DAY_OF_MONTH) + "." +date.get(Calendar.MONTH) + "." + date.get(Calendar.YEAR);
+    }
+
+
+    public static String timeDiffFromNow (GregorianCalendar earlyDate) {
+        //Compares UTC timezone!
+        return timeDiff(earlyDate,(GregorianCalendar) GregorianCalendar.getInstance(TimeZone.getTimeZone("UTC")));
     }
 
     private static String timeDiff (GregorianCalendar earlyDate, GregorianCalendar laterDate) {

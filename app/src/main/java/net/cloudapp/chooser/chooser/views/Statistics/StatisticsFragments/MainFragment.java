@@ -15,6 +15,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
+import net.cloudapp.chooser.chooser.Common.DateConverter;
 import net.cloudapp.chooser.chooser.Common.PostRepository;
 import net.cloudapp.chooser.chooser.Common.StatisticsChartSetup;
 import net.cloudapp.chooser.chooser.R;
@@ -47,12 +48,11 @@ public class MainFragment {
         promotionStatus.setVisibility(View.INVISIBLE);
     }
 
-/*
-    public void updateGeneralBarData () {
+
+    public void refreshGeneralBarData () {
         ArrayList<BarEntry> vals = new ArrayList<>();
         vals.add(new BarEntry(1f, post.votes1));
         vals.add(new BarEntry(2.2f, post.votes2));
-
 
         BarDataSet set = new BarDataSet(vals, "General Info");
         ArrayList<IBarDataSet> dataSet = new ArrayList<>();
@@ -73,16 +73,15 @@ public class MainFragment {
         generalBarChart.invalidate();
 
         totalVotes.setText("Total Votes: " + (post.votes1 + post.votes2));
-        postDate.setText("Posted: " + postedTime(post.date, sessionDetails.currentServerTime) + " ago");
-
-        if (post.promotionExpiration.compareTo(sessionDetails.currentServerTime) > 0)
-            promotionStatus.setText("Promotion Time Left: " + postedTime(sessionDetails.currentServerTime, post.promotionExpiration));
+        postDate.setText("Posted: " + DateConverter.timeDiffFromNow(DateConverter.utcToCalendar(post.utcDate)) + " ago");
+/*
+        if (post.promotionExpiration.compareTo(System.currentTimeMillis()) > 0)
+            promotionStatus.setText("Promotion Time Left: " + postedTime(System.currentTimeMillis(), post.promotionExpiration));
         else
             promotionStatus.setText("Promotion Expired!");
 
         if (post.date != post.promotionExpiration)
             promotionStatus.setVisibility(View.VISIBLE);
+*/
     }
-
-    */
 }

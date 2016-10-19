@@ -49,6 +49,7 @@ public class GenderFragment {
         ArrayList<BarEntry> vals = new ArrayList<>();
         vals.add(new BarEntry(0, new float[]{data1, data2}));
 
+
         BarDataSet set = new BarDataSet(vals, "");
         ArrayList<IBarDataSet> dataSet = new ArrayList<>();
         set.setColors(new int[]{color1, color2});
@@ -65,13 +66,5 @@ public class GenderFragment {
 
         dataText1.setText(String.valueOf(data1));
         dataText2.setText(String.valueOf(data2));
-    }
-
-    private int getTotalFemaleVotes() {
-        return postStatistics.femaleVotes1 + postStatistics.femaleVotes2;
-    }
-
-    private int getTotalMaleVotes() {
-        return postStatistics.maleVotes1 + postStatistics.maleVotes2;
     }
 }

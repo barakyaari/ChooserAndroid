@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -36,7 +37,6 @@ public class StatisticsView extends AppCompatActivity implements View.OnClickLis
     private int postIndex;
     private Post post;
     private Button deletePost;
-    private StatisticsFragmentManager currentFrag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +56,8 @@ public class StatisticsView extends AppCompatActivity implements View.OnClickLis
         deletePost.setOnClickListener(this);
         viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager(), this));
         tabLayout.setupWithViewPager(viewPager);
+        Log.d("Chooser", "Statistics view loaded");
+
     }
 
     private void updatePostHeadline() {
@@ -136,8 +138,7 @@ public class StatisticsView extends AppCompatActivity implements View.OnClickLis
 
         @Override
         public android.support.v4.app.Fragment getItem(int position) {
-            currentFrag = StatisticsFragmentManager.newInstance(++position, postIndex);
-            return currentFrag;
+            return StatisticsFragmentManager.newInstance(++position, postIndex);
         }
 
         @Override
@@ -147,7 +148,6 @@ public class StatisticsView extends AppCompatActivity implements View.OnClickLis
 
         @Override
         public int getItemPosition(Object object) {
-            StatisticsFragmentManager fragment = (StatisticsFragmentManager) object;
             return super.getItemPosition(object);
         }
     }
