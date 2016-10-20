@@ -3,7 +3,6 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#32405d"
     android:weightSum="1">
 
     <FrameLayout
@@ -11,15 +10,15 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:layout_width="98dp"
+            android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:text="Log In"
             android:id="@+id/textView4"
             android:layout_gravity="center_horizontal"
-            android:textSize="35sp"
-            android:layout_marginTop="10dp"
+            android:textSize="40dp"
+            android:layout_marginTop="20dp"
             android:textStyle="bold"
-            android:textColor="#cccccc" />
+            android:textColor="@color/colorPrimary" />
 
         <com.facebook.login.widget.LoginButton
             xmlns:facebook="http://schemas.android.com/apk/res-auto"

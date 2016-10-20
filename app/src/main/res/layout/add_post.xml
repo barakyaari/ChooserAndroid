@@ -4,7 +4,6 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="1"
-    android:background="#32405d"
     tools:context=".views.AddPostView">
 
     <LinearLayout
@@ -18,7 +17,9 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Post Title:"
             android:id="@+id/textView"
-            android:textColor="#cacaca" />
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            android:layout_marginLeft="10dp" />
 
         <EditText
             android:layout_width="match_parent"
@@ -42,7 +43,9 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Option 1:"
             android:id="@+id/textView2"
-            android:textColor="#cacaca" />
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            android:layout_marginLeft="10dp" />
 
         <EditText
             android:layout_width="wrap_content"
@@ -74,7 +77,10 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Option 2:"
             android:id="@+id/textView3"
-            android:textColor="#cacaca" />
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            android:layout_marginLeft="10dp"
+            android:textIsSelectable="true" />
 
         <EditText
             android:layout_width="wrap_content"

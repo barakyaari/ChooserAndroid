@@ -5,7 +5,6 @@
     android:orientation="vertical"
     android:id="@+id/content"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="#32405d"
     android:weightSum="0">
 
     <FrameLayout
@@ -28,7 +27,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:textColor="#cacaca"
+                android:textColor="@color/colorPrimary"
                 android:textSize="30dp"
                 android:textStyle="bold"
                 android:layout_weight="1"
@@ -72,10 +71,11 @@
                 android:id="@+id/description1TextView"
                 android:textStyle="bold"
                 android:textSize="20dp"
-                android:textColor="#cacaca"
+                android:textColor="@color/colorPrimary"
                 android:layout_weight="1"
                 android:layout_gravity="left"
-                android:layout_marginLeft="10dp" />
+                android:layout_marginLeft="10dp"
+                android:phoneNumber="true" />
 
             <FrameLayout
                     android:layout_width="match_parent"
@@ -108,7 +108,7 @@
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:id="@+id/description2TextView"
                 android:layout_gravity="left"
-                android:textColor="#cacaca"
+                android:textColor="@color/colorPrimary"
                 android:textStyle="bold"
                 android:textSize="20dp"
                 android:layout_weight="1"
@@ -130,7 +130,7 @@
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="No more posts to show!"
                 android:id="@+id/textView5"
-                android:textColor="#cacaca"
+                android:textColor="@color/colorPrimary"
                 android:textSize="30dp"
                 android:layout_gravity="center" />
 
@@ -140,7 +140,8 @@
                 android:text="refresh"
                 android:id="@+id/refreshButton"
                 android:layout_gravity="bottom|center_horizontal"
-                android:layout_margin="20dp" />
+                android:layout_margin="20dp"
+                android:textColor="@color/colorPrimary" />
         </LinearLayout>
 
     </FrameLayout>
