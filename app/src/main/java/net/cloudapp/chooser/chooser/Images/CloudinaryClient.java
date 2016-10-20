@@ -17,20 +17,25 @@ public class CloudinaryClient {
 
 
 
-    public static void uploadImage(final InputStream inputStream, String imageId) {
+    public static String uploadImage(final InputStream inputStream) {
         Log.d("Chooser", "Cloudinary uploading image");
         Map config = new HashMap();
         config.put("cloud_name", CLOUD_NAME);
         config.put("api_key", "291124344125714");
         config.put("api_secret", "arRkoKCCGBPwnxXmMkZXi9q9TrU");
-        config.put("public_id",imageId);
+        // config.put("public_id",imageId);
         // my new line
         Cloudinary cloudinary = new Cloudinary(config);
+        Map result;
         try {
-            cloudinary.uploader().upload(inputStream, config);
+            result = cloudinary.uploader().upload(inputStream, config);
+            Log.d("Chooser", "Image uploaded");
+            return (String)result.get("public_id");
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
     public static String bigImageUrl(String imageId){
         Map config = new HashMap();

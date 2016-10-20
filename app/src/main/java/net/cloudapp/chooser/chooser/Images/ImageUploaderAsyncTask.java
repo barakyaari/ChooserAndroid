@@ -15,7 +15,7 @@ public class ImageUploaderAsyncTask extends AsyncTask<UploadTask, Void, Void>{
 
         ByteArrayInputStream bs = getInputStream(tasks);
         String imageId = tasks[0].imageId;
-        CloudinaryClient.uploadImage(bs, imageId);
+        CloudinaryClient.uploadImage(bs);
         Log.d("Chooser", "Cloudinary uploaded image.");
         return null;
     }
