@@ -28,7 +28,7 @@ public class PostUploaderAsyncTask extends AsyncTask<PostUploadTask, Void, Void>
         String image1Id = "", image2Id = "";
         String title = postUploadtask.title;
         String description1 = postUploadtask.description1;
-        String description2 = postUploadtask.description1;
+        String description2 = postUploadtask.description2;
         ImageUploader uploader = new ImageUploaderImpl();
         image1Id = uploader.uploadImage(postUploadtask.image1Bitmap);
         image2Id = uploader.uploadImage(postUploadtask.image2Bitmap);
