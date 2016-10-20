@@ -71,8 +71,8 @@ public class StatisticsView extends AppCompatActivity implements View.OnClickLis
         votes1.setText(String.valueOf(post.votes1));
         votes2.setText(String.valueOf(post.votes2));
         headline.setText(post.title);
-        String url1 = CloudinaryClient.smallImageUrl(post.image1);
-        String url2 = CloudinaryClient.smallImageUrl(post.image2);
+        String url1 = CloudinaryClient.smallImageUrl(post.image1,true);
+        String url2 = CloudinaryClient.smallImageUrl(post.image2,true);
         Glide.with(this).load(url1).into(image1);
         Glide.with(this).load(url2).into(image2);
         updatePostVotes();

@@ -57,8 +57,8 @@ public class MyPostsAdapter extends ArrayAdapter<Post> {
 
         updatePostBar(customView, post.votes1, post.votes2);
 
-        String url1 = CloudinaryClient.smallImageUrl(post.image1);
-        String url2 = CloudinaryClient.smallImageUrl(post.image2);
+        String url1 = CloudinaryClient.smallImageUrl(post.image1,true);
+        String url2 = CloudinaryClient.smallImageUrl(post.image2,true);
         Glide.with(getContext()).load(url1).into(image1);
         Glide.with(getContext()).load(url2).into(image2);
 

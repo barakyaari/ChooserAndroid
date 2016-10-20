@@ -249,7 +249,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void extractPostData1 () {
-        String url1 = CloudinaryClient.bigImageUrl(post.image1);
+        String url1 = CloudinaryClient.bigImageUrl(post.image1,true);
         Glide
                 .with(getApplicationContext())
                 .load(url1)
@@ -263,7 +263,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void extractPostData2 () {
-        String url2 = CloudinaryClient.bigImageUrl(post.image2);
+        String url2 = CloudinaryClient.bigImageUrl(post.image2,true);
         Glide
                 .with(getApplicationContext())
                 .load(url2)
