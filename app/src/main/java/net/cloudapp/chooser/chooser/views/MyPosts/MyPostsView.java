@@ -3,6 +3,7 @@ package net.cloudapp.chooser.chooser.views.MyPosts;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -24,6 +25,8 @@ public class MyPostsView extends AppCompatActivity implements ListView.OnItemCli
         setContentView(R.layout.my_posts_view);
         postList = (ListView) findViewById(R.id.postList);
         getSupportActionBar().setTitle("My Posts");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         postList.setOnItemClickListener(this);
         updateView();
         myPostsAdapter = new MyPostsAdapter(this, PostRepository.myPosts);
@@ -52,5 +55,11 @@ public class MyPostsView extends AppCompatActivity implements ListView.OnItemCli
     protected void onResume() {
         super.onResume();
         updateView();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        onBackPressed();
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -37,6 +37,7 @@ public class AddPostView extends AppCompatActivity implements View.OnClickListen
         setViewControls();
         setOnClickListeners();
         cloudinaryClient = new CloudinaryClient();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void setOnClickListeners() {
@@ -88,13 +89,8 @@ public class AddPostView extends AppCompatActivity implements View.OnClickListen
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        onBackPressed();
+        return super.onOptionsItemSelected(item);
     }
 
     private void uploadPost() {
@@ -134,6 +130,7 @@ public class AddPostView extends AppCompatActivity implements View.OnClickListen
             }
         }
     }
+
 
     @Override
     public void onClick(View v) {

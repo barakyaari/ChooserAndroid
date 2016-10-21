@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 
+import com.bumptech.glide.GenericRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -253,7 +254,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
         Glide
                 .with(getApplicationContext())
                 .load(url1)
-                .animate(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_in_right))
+                .animate(R.anim.slide_in_right)
                 .into((ImageView) imageSwitcher1.getNextView());
 
         imageSwitcher1.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out_left));
@@ -267,7 +268,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
         Glide
                 .with(getApplicationContext())
                 .load(url2)
-                .animate(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_in_right))
+                .animate(R.anim.slide_in_right)
                 .into((ImageView) imageSwitcher2.getNextView());
         imageSwitcher2.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out_left));
         description2TextView.setText(post.description2);

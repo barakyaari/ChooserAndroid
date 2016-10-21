@@ -14,8 +14,8 @@ public class CloudinaryClient {
     private static final String CLOUD_NAME = "chooser";
     private static final int SMALL_IMAGE_SIZE_WIDTH = 133;
     private static final int SMALL_IMAGE_SIZE_HEIGHT = 100;
-    private static final int BIG_IMAGE_BORDER_RADIUS = 10;
-    private static final int SMALL_IMAGE_BORDER_RADIUS = 5;
+    private static final int BIG_IMAGE_BORDER_RADIUS = 7;
+    private static final int SMALL_IMAGE_BORDER_RADIUS = 3;
     private static final String BORDER_COLOR = "solid_black";
     private static final String BIG_IMAGE_BORDER_THICKNESS = "3px";
     private static final String SMALL_IMAGE_BORDER_THICKNESS = "2px";
