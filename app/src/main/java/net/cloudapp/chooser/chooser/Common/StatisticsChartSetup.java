@@ -1,39 +1,33 @@
 package net.cloudapp.chooser.chooser.Common;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+
+import net.cloudapp.chooser.chooser.R;
+
+import java.util.ArrayList;
+
 
 /**
  * Created by Ben on 19/10/2016.
  */
 public abstract class StatisticsChartSetup {
 
-    public enum ChartColors {
-        FRAME(Color.rgb(30,30,30)),
-        MAIN1(Color.BLACK),
-        MAIN2(Color.LTGRAY),
-        GENDER_DIST1(Color.rgb(224,119,203)),
-        GENDER_DIST2(Color.rgb(119,153,224)),
-        GENDER_FVOTES1(Color.rgb(74,0,59)),
-        GENDER_FVOTES2(Color.rgb(227,191,220)),
-        GENDER_MVOTES1(Color.rgb(0,23,74)),
-        GENDER_MVOTES2(Color.rgb(173,190,224));
-
-        public final int val;
-        private ChartColors(int val) {
-            this.val = val;
-        }
-    }
-
-    public static void createAgePieChart(PieChart pieChart) {
+    public static void createAgePieChart(PieChart pieChart, Context context) {
         pieChart.setUsePercentValues(true);
         pieChart.setDescription("");
         pieChart.setDragDecelerationFrictionCoef(0.95f);
         pieChart.setDrawHoleEnabled(true);
-        pieChart.setHoleColor(Color.rgb(50,64,93));
+        pieChart.setHoleColor(ContextCompat.getColor(context,R.color.appBackground));
         pieChart.setTransparentCircleColor(Color.rgb(50,64,93));
         pieChart.setCenterTextColor(Color.LTGRAY);
         pieChart.setTransparentCircleAlpha(110);
@@ -58,6 +52,7 @@ public abstract class StatisticsChartSetup {
         horizontalBarChart.getAxisRight().setEnabled(false);
         horizontalBarChart.setDescription("");
         horizontalBarChart.setClickable(false);
+        horizontalBarChart.setTouchEnabled(false);
         horizontalBarChart.setDoubleTapToZoomEnabled(false);
         horizontalBarChart.setPinchZoom(false);
         horizontalBarChart.animateY(650);
@@ -71,7 +66,29 @@ public abstract class StatisticsChartSetup {
         horizontalBarChart.getAxisRight().setEnabled(false);
         horizontalBarChart.setDescription("");
         horizontalBarChart.setClickable(false);
+        horizontalBarChart.setTouchEnabled(false);
         horizontalBarChart.setDoubleTapToZoomEnabled(false);
         horizontalBarChart.setPinchZoom(false);
+    }
+
+    public static void updateSmallBarChart (HorizontalBarChart horizontalBarChart, int vote1, int vote2, Context context) {
+        StatisticsChartSetup.createSmallBarChart(horizontalBarChart);
+
+        ArrayList<BarEntry> vals = new ArrayList<>();
+        vals.add(new BarEntry(0, new float[]{vote1, vote2}));
+
+        BarDataSet set = new BarDataSet(vals, "");
+        set.setBarBorderWidth(2);
+        set.setBarBorderColor(Color.BLACK);
+        ArrayList<IBarDataSet> dataSet = new ArrayList<>();
+
+        set.setColors(new int[]{ContextCompat.getColor(context,R.color.bar1), ContextCompat.getColor(context,R.color.bar2)});
+        dataSet.add(set);
+
+        BarData data = new BarData(dataSet);
+        data.setDrawValues(false);
+
+        horizontalBarChart.setData(data);
+        horizontalBarChart.invalidate();
     }
 }

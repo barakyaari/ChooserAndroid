@@ -1,7 +1,6 @@
 package net.cloudapp.chooser.chooser.views.MyPosts;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +10,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 
 import net.cloudapp.chooser.chooser.Common.DateConverter;
 import net.cloudapp.chooser.chooser.Common.StatisticsChartSetup;
@@ -22,7 +17,6 @@ import net.cloudapp.chooser.chooser.Images.CloudinaryClient;
 import net.cloudapp.chooser.chooser.R;
 import net.cloudapp.chooser.chooser.model.Post;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,6 +42,8 @@ public class MyPostsAdapter extends ArrayAdapter<Post> {
 
         Post post = getItem(position);
         headline.setText(post.title);
+        if (post.title.length() > 20)
+            headline.setTextSize(10);
 
         vote1.setText(String.valueOf(post.votes1));
         vote2.setText(String.valueOf(post.votes2));
@@ -55,7 +51,8 @@ public class MyPostsAdapter extends ArrayAdapter<Post> {
         String dateString = (post.utcDate == null) ? "No Date" : DateConverter.utcToShortDate(post.utcDate);
         date.setText(dateString);
 
-        updatePostBar(customView, post.votes1, post.votes2);
+        HorizontalBarChart horizontalBarChart = (HorizontalBarChart) customView.findViewById(R.id.stat_bar);
+        StatisticsChartSetup.updateSmallBarChart(horizontalBarChart, post.votes1, post.votes2, getContext());
 
         String url1 = CloudinaryClient.smallImageUrl(post.image1,true);
         String url2 = CloudinaryClient.smallImageUrl(post.image2,true);
@@ -66,25 +63,5 @@ public class MyPostsAdapter extends ArrayAdapter<Post> {
     }
 
 
-    private void updatePostBar(View view, int vote1, int vote2) {
-        HorizontalBarChart horizontalBarChart = (HorizontalBarChart) view.findViewById(R.id.stat_bar);
-        StatisticsChartSetup.createSmallBarChart(horizontalBarChart);
-
-        ArrayList<BarEntry> vals = new ArrayList<>();
-        vals.add(new BarEntry(0, new float[]{vote1, vote2}));
-
-        BarDataSet set = new BarDataSet(vals, "");
-        set.setBarBorderWidth(2);
-        set.setBarBorderColor(Color.BLACK);
-        ArrayList<IBarDataSet> dataSet = new ArrayList<>();
-        set.setColors(new int[]{Color.CYAN, Color.LTGRAY});
-        dataSet.add(set);
-
-        BarData data = new BarData(dataSet);
-        data.setDrawValues(false);
-
-        horizontalBarChart.setData(data);
-        horizontalBarChart.invalidate();
-    }
 
 }

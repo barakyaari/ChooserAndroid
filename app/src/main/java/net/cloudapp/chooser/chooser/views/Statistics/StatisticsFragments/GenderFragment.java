@@ -1,5 +1,8 @@
 package net.cloudapp.chooser.chooser.views.Statistics.StatisticsFragments;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.TextView;
 
@@ -44,9 +47,10 @@ public class GenderFragment {
 
     public void refreshGenderFragment(PostStatistics postStatistics) {
         this.postStatistics = postStatistics;
-        updateGenderBarData(genderBarChart, StatisticsChartSetup.ChartColors.GENDER_DIST1.val, StatisticsChartSetup.ChartColors.GENDER_DIST2.val, getTotalFemaleVotes(),getTotalMaleVotes(),genDist1,genDist2);
-        updateGenderBarData(femaleBarChart, StatisticsChartSetup.ChartColors.GENDER_FVOTES1.val, StatisticsChartSetup.ChartColors.GENDER_FVOTES2.val, postStatistics.femaleVotes1,postStatistics.femaleVotes2,genF1,genF2);
-        updateGenderBarData(maleBarChart, StatisticsChartSetup.ChartColors.GENDER_MVOTES1.val, StatisticsChartSetup.ChartColors.GENDER_MVOTES2.val, postStatistics.maleVotes1,postStatistics.maleVotes2,genM1,genM2);
+        Context context = view.getContext();
+        updateGenderBarData(genderBarChart, ContextCompat.getColor(context,R.color.genderBarFemale), ContextCompat.getColor(context,R.color.genderBarMale), getTotalFemaleVotes(),getTotalMaleVotes(),genDist1,genDist2);
+        updateGenderBarData(femaleBarChart, ContextCompat.getColor(context,R.color.bar1), ContextCompat.getColor(context,R.color.bar2), postStatistics.femaleVotes1,postStatistics.femaleVotes2,genF1,genF2);
+        updateGenderBarData(maleBarChart, ContextCompat.getColor(context,R.color.bar1), ContextCompat.getColor(context,R.color.bar2), postStatistics.maleVotes1,postStatistics.maleVotes2,genM1,genM2);
     }
 
 
@@ -58,7 +62,7 @@ public class GenderFragment {
         ArrayList<IBarDataSet> dataSet = new ArrayList<>();
         set.setColors(new int[]{color1, color2});
         set.setBarBorderWidth(2);
-        set.setBarBorderColor(StatisticsChartSetup.ChartColors.FRAME.val);
+        set.setBarBorderColor(Color.BLACK);
         dataSet.add(set);
 
         BarData data = new BarData(dataSet);

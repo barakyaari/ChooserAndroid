@@ -16,7 +16,8 @@
             android:text="Voters Age Distribution"
             android:id="@+id/textView10"
             android:textColor="#CACACA"
-            android:textSize="20dp" />
+            android:textSize="20dp"
+            android:layout_marginLeft="10dp" />
 
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/pieChart"
@@ -86,7 +87,8 @@
                     android:text="Show votes in age group"
                     android:id="@+id/textView11"
                     android:textColor="#CACACA"
-                    android:textSize="18dp" />
+                    android:textSize="18dp"
+                    android:layout_marginLeft="10dp" />
 
                 <Button
                     android:layout_width="40dp"

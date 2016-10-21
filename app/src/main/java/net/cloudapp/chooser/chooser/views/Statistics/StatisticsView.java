@@ -1,7 +1,6 @@
 package net.cloudapp.chooser.chooser.views.Statistics;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
@@ -17,10 +16,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 
 
 import net.cloudapp.chooser.chooser.Common.PostRepository;
@@ -31,7 +26,6 @@ import net.cloudapp.chooser.chooser.model.Post;
 import net.cloudapp.chooser.chooser.views.Statistics.StatisticsFragments.StatisticsFragmentManager;
 import net.cloudapp.chooser.chooser.views.dialogs.DeletePostDialog;
 
-import java.util.ArrayList;
 
 public class StatisticsView extends AppCompatActivity implements View.OnClickListener {
     ViewPager viewPager;
@@ -71,11 +65,14 @@ public class StatisticsView extends AppCompatActivity implements View.OnClickLis
         votes1.setText(String.valueOf(post.votes1));
         votes2.setText(String.valueOf(post.votes2));
         headline.setText(post.title);
+        if (post.title.length() > 20)
+            headline.setTextSize(10);
         String url1 = CloudinaryClient.smallImageUrl(post.image1,true);
         String url2 = CloudinaryClient.smallImageUrl(post.image2,true);
         Glide.with(this).load(url1).into(image1);
         Glide.with(this).load(url2).into(image2);
-        updatePostVotes();
+        HorizontalBarChart horizontalBarChart = (HorizontalBarChart) this.findViewById(R.id.stat_bar);
+        StatisticsChartSetup.updateSmallBarChart(horizontalBarChart, post.votes1, post.votes2, this);
     }
 
     @Override
@@ -89,26 +86,6 @@ public class StatisticsView extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private void updatePostVotes() {
-        HorizontalBarChart horizontalBarChart = (HorizontalBarChart) this.findViewById(R.id.stat_bar);
-        StatisticsChartSetup.createSmallBarChart(horizontalBarChart);
-
-        ArrayList<BarEntry> vals = new ArrayList<>();
-        vals.add(new BarEntry(0, new float[]{post.votes1, post.votes2}));
-
-        BarDataSet set = new BarDataSet(vals, "Votes");
-        set.setBarBorderWidth(2);
-        set.setBarBorderColor(Color.BLACK);
-        ArrayList<IBarDataSet> dataSet = new ArrayList<>();
-        set.setColors(new int[]{Color.CYAN, Color.LTGRAY});
-        dataSet.add(set);
-
-        BarData data = new BarData(dataSet);
-        data.setDrawValues(false);
-
-        horizontalBarChart.setData(data);
-        horizontalBarChart.invalidate();
-    }
 
     @Override
     public void onClick(View v) {

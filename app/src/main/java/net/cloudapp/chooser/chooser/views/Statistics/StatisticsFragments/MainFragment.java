@@ -1,6 +1,8 @@
 package net.cloudapp.chooser.chooser.views.Statistics.StatisticsFragments;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.TextView;
 
@@ -54,8 +56,10 @@ public class MainFragment {
 
         BarDataSet set = new BarDataSet(vals, "General Info");
         ArrayList<IBarDataSet> dataSet = new ArrayList<>();
-        set.setColors(new int[]{StatisticsChartSetup.ChartColors.MAIN1.val, StatisticsChartSetup.ChartColors.MAIN2.val});
+        set.setColors(new int[]{ContextCompat.getColor(view.getContext(),R.color.bar1), ContextCompat.getColor(view.getContext(),R.color.bar2)});
         set.setValueTextColor(Color.LTGRAY);
+        set.setBarBorderWidth(2);
+        set.setBarBorderColor(Color.BLACK);
         dataSet.add(set);
 
         BarData data = new BarData(dataSet);

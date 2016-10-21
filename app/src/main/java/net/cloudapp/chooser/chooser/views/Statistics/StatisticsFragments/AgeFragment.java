@@ -1,6 +1,8 @@
 package net.cloudapp.chooser.chooser.views.Statistics.StatisticsFragments;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -53,7 +55,7 @@ public class AgeFragment implements View.OnClickListener{
         addDefaultValues();
         agePieChart = (PieChart) view.findViewById(R.id.pieChart);
         ageBarChart = (HorizontalBarChart) view.findViewById(R.id.barChart);
-        StatisticsChartSetup.createAgePieChart(agePieChart);
+        StatisticsChartSetup.createAgePieChart(agePieChart,view.getContext());
         StatisticsChartSetup.createBarChart(ageBarChart);
         ageBarChart.setFitBars(true);
 
@@ -112,11 +114,10 @@ public class AgeFragment implements View.OnClickListener{
 
         BarDataSet set = new BarDataSet(vals, "");
         ArrayList<IBarDataSet> dataSet = new ArrayList<>();
-        set.setColors(new int[]{StatisticsChartSetup.ChartColors.MAIN1.val, StatisticsChartSetup.ChartColors.MAIN2.val});
+        set.setColors(new int[]{ContextCompat.getColor(view.getContext(),R.color.bar1), ContextCompat.getColor(view.getContext(),R.color.bar2)});
         set.setBarBorderWidth(2);
-        set.setBarBorderColor(StatisticsChartSetup.ChartColors.FRAME.val);
+        set.setBarBorderColor(Color.BLACK);
         dataSet.add(set);
-
         BarData data = new BarData(dataSet);
         data.setDrawValues(false);
 

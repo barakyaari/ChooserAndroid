@@ -84,7 +84,9 @@
             android:layout_height="wrap_content"
             app:tabMaxWidth="0dp"
             app:tabGravity="fill"
-            app:tabMode="fixed" />
+            app:tabMode="fixed"
+            app:tabSelectedTextColor="#FFFFFF"
+            app:tabTextColor="#9c9c9c"/>
 
         <android.support.v4.view.ViewPager
             android:id="@+id/viewpager"
