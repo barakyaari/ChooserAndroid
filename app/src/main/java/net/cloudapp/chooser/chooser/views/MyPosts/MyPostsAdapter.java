@@ -44,6 +44,11 @@ public class MyPostsAdapter extends ArrayAdapter<Post> {
         headline.setText(post.title);
         if (post.title.length() > 20)
             headline.setTextSize(10);
+        if (post.votes1 > 99 || post.votes2 > 99) {
+            vote1.setTextSize(10);
+            vote2.setTextSize(10);
+        }
+
 
         vote1.setText(String.valueOf(post.votes1));
         vote2.setText(String.valueOf(post.votes2));

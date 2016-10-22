@@ -32,7 +32,7 @@ public abstract class DateConverter {
     public static String utcToShortDate (String utcDate) {
         // returns: dd.mm.yyyy
         GregorianCalendar date = applyTimeZone(utcToCalendar(utcDate));
-        return date.get(Calendar.DAY_OF_MONTH) + "." +date.get(Calendar.MONTH) + "." + date.get(Calendar.YEAR);
+        return date.get(Calendar.DAY_OF_MONTH) + "." + (date.get(Calendar.MONTH)+1) + "." + date.get(Calendar.YEAR);
     }
 
 

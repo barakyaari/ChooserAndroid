@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -56,11 +57,13 @@ public class StatisticsView extends AppCompatActivity implements View.OnClickLis
     }
 
     private void updatePostHeadline() {
-        TextView votes1 = (TextView) findViewById(R.id.votes1);
-        TextView votes2 = (TextView) findViewById(R.id.votes2);
-        TextView headline = (TextView) findViewById(R.id.headline);
-        ImageView image1 = (ImageView) findViewById(R.id.imageView1);
-        ImageView image2 = (ImageView) findViewById(R.id.imageView2);
+        LinearLayout postRowData = (LinearLayout) findViewById(R.id.postRowData);
+        TextView votes1 = (TextView) postRowData.findViewById(R.id.vote1);
+        TextView votes2 = (TextView) postRowData.findViewById(R.id.vote2);
+        TextView headline = (TextView) postRowData.findViewById(R.id.headline);
+        ImageView image1 = (ImageView) postRowData.findViewById(R.id.imageView1);
+        ImageView image2 = (ImageView) postRowData.findViewById(R.id.imageView2);
+        postRowData.findViewById(R.id.date).setVisibility(View.GONE);
 
         votes1.setText(String.valueOf(post.votes1));
         votes2.setText(String.valueOf(post.votes2));
