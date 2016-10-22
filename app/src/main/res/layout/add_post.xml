@@ -30,6 +30,13 @@
 
     </LinearLayout>
 
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="140dp"
+        android:id="@+id/addPostImageView1"
+        android:src="@mipmap/upload_option_1"
+        android:layout_gravity="center" />
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -56,14 +63,14 @@
             android:textColor="#cacaca" />
     </LinearLayout>
 
+
     <ImageView
         android:layout_width="200dp"
         android:layout_height="140dp"
-        android:id="@+id/addPostImageView1"
-        android:src="@mipmap/ic_image_upload"
-        android:paddingBottom="10dp"
-        android:layout_gravity="center" />
-
+        android:id="@+id/addPostImageView2"
+        android:src="@mipmap/upload_option_2"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -90,13 +97,6 @@
             android:text="Option2..."
             android:textColor="#cacaca" />
     </LinearLayout>
-
-    <ImageView
-        android:layout_width="200dp"
-        android:layout_height="140dp"
-        android:id="@+id/addPostImageView2"
-        android:src="@mipmap/ic_image_upload"
-        android:layout_gravity="center" />
 
     <LinearLayout
         android:orientation="vertical"
