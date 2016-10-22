@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
 
+import net.cloudapp.chooser.chooser.Common.LoadingDialogs;
 import net.cloudapp.chooser.chooser.Common.PostRepository;
 import net.cloudapp.chooser.chooser.Controller.PostsFetchController;
 import net.cloudapp.chooser.chooser.Controller.VoteController;
@@ -45,6 +46,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("Chooser", "FeedView activity loading");
+        LoadingDialogs.addLoadingDialog(this,"feed","Loading new posts\nPlease wait");
         setContentView(R.layout.posts_view);
         initializeViewElements();
         initializeOnClickListeners();
@@ -65,6 +67,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
 //refresh view
 
     private void refreshFeedRepository() {
+        LoadingDialogs.show("feed");
         PostsFetchController postsFetchController = new PostsFetchController(this);
         postsFetchController.getPosts();
     }

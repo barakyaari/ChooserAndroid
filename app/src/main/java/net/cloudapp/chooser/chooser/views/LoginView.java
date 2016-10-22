@@ -23,12 +23,14 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import net.cloudapp.chooser.chooser.Common.LoadingDialogs;
 import net.cloudapp.chooser.chooser.Controller.Callbacks.FacebookLoginCallbackImpl;
 import net.cloudapp.chooser.chooser.Controller.Callbacks.LoginCallback;
 import net.cloudapp.chooser.chooser.Controller.LoginController;
 import net.cloudapp.chooser.chooser.Network.RestFramework.RestClient;
 import net.cloudapp.chooser.chooser.Common.SessionDetails;
 import net.cloudapp.chooser.chooser.R;
+import net.cloudapp.chooser.chooser.views.dialogs.LoadingDialog;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -43,19 +45,20 @@ import retrofit.client.Response;
 public class LoginView extends Activity{
     LoginButton fbLoginButton;
     CallbackManager callbackManager;
-    ProgressDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initializeComponents();
         RegisterFacebookLogin();
+        LoadingDialogs.addLoadingDialog(this, "login", "Logging in...\nPlease Wait");
         Log.d("Chooser", "Login loaded");
 
     }
 
     private void processLoginIfTokenExists() {
         if (AccessToken.getCurrentAccessToken() != null){
+            LoadingDialogs.show("login");
             LoginCallback callback = new LoginCallback(this);
             LoginController loginController = new LoginController(callback);
             loginController.login();
@@ -80,7 +83,6 @@ public class LoginView extends Activity{
     }
 
     private void printAppHashId() {
-        createLoadingDialog();
         try {
             PackageInfo info = getPackageManager().getPackageInfo(
                     "net.cloudapp.chooser.chooser",
@@ -93,13 +95,6 @@ public class LoginView extends Activity{
         } catch (PackageManager.NameNotFoundException e) {
         } catch (NoSuchAlgorithmException e) {
         }
-    }
-
-    public void createLoadingDialog() {
-        loadingDialog = new ProgressDialog(this);
-        loadingDialog.setMessage("Connecting to Server...\nPlease Wait");
-        loadingDialog.setCancelable(false);
-        loadingDialog.setInverseBackgroundForced(false);
     }
 
     @Override

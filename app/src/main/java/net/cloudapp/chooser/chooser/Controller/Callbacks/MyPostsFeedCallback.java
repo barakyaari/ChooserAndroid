@@ -1,5 +1,7 @@
 package net.cloudapp.chooser.chooser.Controller.Callbacks;
 import android.util.Log;
+
+import net.cloudapp.chooser.chooser.Common.LoadingDialogs;
 import net.cloudapp.chooser.chooser.Common.PostRepository;
 import net.cloudapp.chooser.chooser.model.Post;
 import net.cloudapp.chooser.chooser.views.MyPosts.MyPostsView;
@@ -42,5 +44,6 @@ public class MyPostsFeedCallback implements Callback<List<Post>> {
     @Override
     public void failure(RetrofitError error) {
         error.printStackTrace();
+
     }
 }

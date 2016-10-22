@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import net.cloudapp.chooser.chooser.Common.LoadingDialogs;
 import net.cloudapp.chooser.chooser.Common.PostRepository;
 import net.cloudapp.chooser.chooser.Controller.DeletePostController;
 import net.cloudapp.chooser.chooser.Controller.MyPostsFetchController;
@@ -28,9 +29,9 @@ public class MyPostsView extends AppCompatActivity implements ListView.OnItemCli
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         postList.setOnItemClickListener(this);
-        updateView();
         myPostsAdapter = new MyPostsAdapter(this, PostRepository.myPosts);
         postList.setAdapter(myPostsAdapter);
+        updateView();
     }
 
 
@@ -54,8 +55,8 @@ public class MyPostsView extends AppCompatActivity implements ListView.OnItemCli
     @Override
     protected void onResume() {
         super.onResume();
-        updateView();
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
