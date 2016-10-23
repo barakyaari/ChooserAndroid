@@ -56,7 +56,7 @@ public class LoginView extends Activity{
 
     }
 
-    private void processLoginIfTokenExists() {
+    public void processLoginIfTokenExists() {
         if (AccessToken.getCurrentAccessToken() != null){
             LoadingDialogs.show("login");
             LoginCallback callback = new LoginCallback(this);

@@ -120,9 +120,9 @@ public abstract class StatisticsChartSetup {
         if (showDate) {
             String dateString = (post.utcDate == null) ? "No Date" : DateConverter.utcToShortDate(post.utcDate);
             date.setText(dateString);
-        } else {
+        } else
             date.setVisibility(View.GONE);
-        }
+
         HorizontalBarChart horizontalBarChart = (HorizontalBarChart) view.findViewById(R.id.stat_bar);
         updateSmallBarChart(horizontalBarChart, post.votes1, post.votes2, context);
 

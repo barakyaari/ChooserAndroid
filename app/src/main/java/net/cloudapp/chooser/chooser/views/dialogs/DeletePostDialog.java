@@ -26,7 +26,9 @@ public class DeletePostDialog extends DialogFragment implements DialogInterface.
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Delete Post");
         builder.setMessage("Are you sure you want to delete this post?");
+        builder.setIcon(android.R.drawable.ic_dialog_alert);
         builder.setPositiveButton("Yes", this);
         builder.setNegativeButton("No", this);
         Log.d("Chooser", "Delete post dialog loaded");

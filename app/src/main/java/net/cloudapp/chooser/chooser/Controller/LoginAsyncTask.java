@@ -1,6 +1,5 @@
 package net.cloudapp.chooser.chooser.Controller;
 
-import android.content.pm.PackageInstaller;
 import android.os.AsyncTask;
 
 import com.facebook.AccessToken;

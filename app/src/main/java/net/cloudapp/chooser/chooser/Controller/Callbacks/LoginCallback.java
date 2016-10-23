@@ -1,23 +1,21 @@
 package net.cloudapp.chooser.chooser.Controller.Callbacks;
 
-import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
 import net.cloudapp.chooser.chooser.Common.LoadingDialogs;
 import net.cloudapp.chooser.chooser.views.LoginView;
-import net.cloudapp.chooser.chooser.views.dialogs.LoadingDialog;
+import net.cloudapp.chooser.chooser.views.dialogs.ServerIsDownDialog;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-import static android.support.v4.app.ActivityCompat.startActivity;
 
 public class LoginCallback implements Callback<Void> {
-    private Context mContext;
-    public LoginCallback(Context context){
-        mContext = context;
+    private LoginView loginView;
+    public LoginCallback(LoginView loginView){
+        this.loginView = loginView;
     }
     @Override
     public void success(Void aVoid, Response response) {
@@ -25,11 +23,20 @@ public class LoginCallback implements Callback<Void> {
         Intent i = new Intent("android.intent.action.FeedView");
         Log.d("Chooser", "Starting main activity");
         LoadingDialogs.deleteLoadingDialog("login");
-        mContext.startActivity(i);
+        loginView.startActivity(i);
     }
 
     @Override
     public void failure(RetrofitError error) {
-        LoadingDialogs.deleteLoadingDialog("login");
+        ServerIsDownDialog downDialog = new ServerIsDownDialog() {
+            @Override
+            public void onRetry() {
+                loginView.processLoginIfTokenExists();
+            }
+        };
+
+
+        LoadingDialogs.hide("login");
+        downDialog.show(loginView.getFragmentManager(),"Server Is Down Dialog");
     }
 }

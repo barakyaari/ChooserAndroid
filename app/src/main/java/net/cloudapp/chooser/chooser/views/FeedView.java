@@ -46,14 +46,13 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("Chooser", "FeedView activity loading");
-        LoadingDialogs.addLoadingDialog(this,"feed","Loading new posts\nPlease wait");
+        LoadingDialogs.addLoadingDialog(this,"feed","Searching for posts\nPlease wait");
         setContentView(R.layout.posts_view);
         initializeViewElements();
         initializeOnClickListeners();
         initializeControls();
         shutdownFeed();
         setTextAnimations();
-        refreshFeedRepository();
     }
 
     private void initializeControls() {
@@ -99,6 +98,8 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
     @Override
     protected void onResume() {
         super.onResume();
+        if (!feedIsOn)
+            refreshFeedRepository();
     }
 
     @Override
