@@ -29,41 +29,10 @@ public class MyPostsAdapter extends ArrayAdapter<Post> {
     }
 
 
-
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         View customView = inflater.inflate(R.layout.my_posts_row,parent,false);
-        TextView date = (TextView) customView.findViewById(R.id.date);
-        TextView vote1 = (TextView) customView.findViewById(R.id.vote1);
-        TextView vote2 = (TextView) customView.findViewById(R.id.vote2);
-        TextView headline = (TextView) customView.findViewById(R.id.headline);
-        ImageView image1 = (ImageView) customView.findViewById(R.id.imageView1);
-        ImageView image2 = (ImageView) customView.findViewById(R.id.imageView2);
-
-        Post post = getItem(position);
-        headline.setText(post.title);
-        if (post.title.length() > 20)
-            headline.setTextSize(10);
-        if (post.votes1 > 99 || post.votes2 > 99) {
-            vote1.setTextSize(10);
-            vote2.setTextSize(10);
-        }
-
-
-        vote1.setText(String.valueOf(post.votes1));
-        vote2.setText(String.valueOf(post.votes2));
-
-        String dateString = (post.utcDate == null) ? "No Date" : DateConverter.utcToShortDate(post.utcDate);
-        date.setText(dateString);
-
-        HorizontalBarChart horizontalBarChart = (HorizontalBarChart) customView.findViewById(R.id.stat_bar);
-        StatisticsChartSetup.updateSmallBarChart(horizontalBarChart, post.votes1, post.votes2, getContext());
-
-        String url1 = CloudinaryClient.smallImageUrl(post.image1,true);
-        String url2 = CloudinaryClient.smallImageUrl(post.image2,true);
-        Glide.with(getContext()).load(url1).into(image1);
-        Glide.with(getContext()).load(url2).into(image2);
-
+        StatisticsChartSetup.fillPostItem(customView,getItem(position),getContext(),true);
         return customView;
     }
 

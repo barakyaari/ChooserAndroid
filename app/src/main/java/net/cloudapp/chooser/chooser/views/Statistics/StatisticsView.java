@@ -45,7 +45,7 @@ public class StatisticsView extends AppCompatActivity implements View.OnClickLis
             finish();
 
         post = PostRepository.myPosts.get(postIndex);
-        updatePostHeadline();
+        StatisticsChartSetup.fillPostItem(findViewById(R.id.postRowData), post, this, false);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         deletePost = (Button) findViewById(R.id.deletePost);
@@ -54,28 +54,6 @@ public class StatisticsView extends AppCompatActivity implements View.OnClickLis
         tabLayout.setupWithViewPager(viewPager);
         Log.d("Chooser", "Statistics view loaded");
 
-    }
-
-    private void updatePostHeadline() {
-        LinearLayout postRowData = (LinearLayout) findViewById(R.id.postRowData);
-        TextView votes1 = (TextView) postRowData.findViewById(R.id.vote1);
-        TextView votes2 = (TextView) postRowData.findViewById(R.id.vote2);
-        TextView headline = (TextView) postRowData.findViewById(R.id.headline);
-        ImageView image1 = (ImageView) postRowData.findViewById(R.id.imageView1);
-        ImageView image2 = (ImageView) postRowData.findViewById(R.id.imageView2);
-        postRowData.findViewById(R.id.date).setVisibility(View.GONE);
-
-        votes1.setText(String.valueOf(post.votes1));
-        votes2.setText(String.valueOf(post.votes2));
-        headline.setText(post.title);
-        if (post.title.length() > 20)
-            headline.setTextSize(10);
-        String url1 = CloudinaryClient.smallImageUrl(post.image1,true);
-        String url2 = CloudinaryClient.smallImageUrl(post.image2,true);
-        Glide.with(this).load(url1).into(image1);
-        Glide.with(this).load(url2).into(image2);
-        HorizontalBarChart horizontalBarChart = (HorizontalBarChart) this.findViewById(R.id.stat_bar);
-        StatisticsChartSetup.updateSmallBarChart(horizontalBarChart, post.votes1, post.votes2, this);
     }
 
     @Override
