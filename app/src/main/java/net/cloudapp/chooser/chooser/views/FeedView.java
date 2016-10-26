@@ -28,7 +28,7 @@ import net.cloudapp.chooser.chooser.Animations.TextSwitchFactory;
 import net.cloudapp.chooser.chooser.R;
 import net.cloudapp.chooser.chooser.model.Post;
 
-public class FeedView extends AppCompatActivity implements View.OnClickListener {
+public class FeedView extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
     ImageButton flagButton;
     Button refreshButton;
     TextView titleTextView, description1TextView, description2TextView, tokens;
@@ -50,6 +50,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
         setContentView(R.layout.posts_view);
         initializeViewElements();
         initializeOnClickListeners();
+        initializeOnLongClickListeners();
         initializeControls();
         shutdownFeed();
         setTextAnimations();
@@ -76,6 +77,11 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
         imageSwitcher1.setOnClickListener(this);
         imageSwitcher2.setOnClickListener(this);
         refreshButton.setOnClickListener(this);
+    }
+
+    private void initializeOnLongClickListeners() {
+        imageSwitcher1.setOnLongClickListener(this);
+        imageSwitcher2.setOnLongClickListener(this);
     }
 
     private void initializeViewElements() {
@@ -121,6 +127,33 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
                 refreshFeedRepository();
                 break;
         }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        if (animating1 || animating2)
+            return false;
+        Log.i("ChooserApp", "FeedView OnLongClickListener: " + v.getId());
+        switch (v.getId()) {
+            case R.id.imageSwitcher1:
+                showFullScreen(1);
+                break;
+
+            case R.id.imageSwitcher2:
+                showFullScreen(2);
+                break;
+        }
+        return false;
+    }
+
+    private void showFullScreen(int selection) {
+        Intent i;
+        i = new Intent("net.cloudapp.chooser.chooser.ImageFullscreen");
+        if (selection == 1)
+            i.putExtra("image",post.image1);
+        else
+            i.putExtra("image",post.image2);
+        startActivity(i);
     }
 
     private void vote(int selected) {
@@ -274,4 +307,5 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener 
         // prevents 'back' button from showing the login screen.
         moveTaskToBack(true);
     }
+
 }

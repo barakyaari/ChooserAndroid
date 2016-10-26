@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+
+
 public class CloudinaryClient {
     private static final String CLOUD_NAME = "chooser";
     private static final int SMALL_IMAGE_SIZE_WIDTH = 133;
@@ -19,9 +21,6 @@ public class CloudinaryClient {
     private static final String BORDER_COLOR = "solid_black";
     private static final String BIG_IMAGE_BORDER_THICKNESS = "3px";
     private static final String SMALL_IMAGE_BORDER_THICKNESS = "2px";
-
-
-
 
 
     public static String uploadImage(final InputStream inputStream) {

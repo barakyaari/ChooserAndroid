@@ -81,6 +81,16 @@
         </activity>
 
         <activity
+            android:name=".Images.ImageFullscreen"
+            android:label="@string/app_name"
+            android:theme="@style/ChooserMainTheme" >
+            <intent-filter>
+                <action android:name="net.cloudapp.chooser.chooser.ImageFullscreen" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name=".views.Statistics.StatisticsView"
             android:label="@string/app_name"
             android:screenOrientation="portrait"

@@ -1,6 +1,7 @@
 package net.cloudapp.chooser.chooser.views.Statistics;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
@@ -33,6 +34,8 @@ public class StatisticsView extends AppCompatActivity implements View.OnClickLis
     private int postIndex;
     private Post post;
     private Button deletePost;
+    private View postItem;
+    private ImageView image1,image2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +48,7 @@ public class StatisticsView extends AppCompatActivity implements View.OnClickLis
             finish();
 
         post = PostRepository.myPosts.get(postIndex);
-        StatisticsChartSetup.fillPostItem(findViewById(R.id.postRowData), post, this, false);
+        initializePostItem();
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         deletePost = (Button) findViewById(R.id.deletePost);
@@ -56,12 +59,22 @@ public class StatisticsView extends AppCompatActivity implements View.OnClickLis
 
     }
 
+    private void initializePostItem() {
+        postItem = findViewById(R.id.postRowData);
+        image1 = (ImageView) postItem.findViewById(R.id.imageView1);
+        image2 = (ImageView) postItem.findViewById(R.id.imageView2);
+
+        image1.setOnClickListener(this);
+        image2.setOnClickListener(this);
+        StatisticsChartSetup.fillPostItem(postItem, post, this, false);
+    }
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         onBackPressed();
         return super.onOptionsItemSelected(item);
     }
-
 
     @Override
     public void onClick(View v) {
@@ -69,9 +82,24 @@ public class StatisticsView extends AppCompatActivity implements View.OnClickLis
             case R.id.deletePost:
                 deletePost();
                 break;
+            case R.id.imageView1:
+                showFullScreen(1);
+                break;
+            case R.id.imageView2:
+                showFullScreen(2);
+                break;
         }
     }
 
+    private void showFullScreen(int selection) {
+        Intent i;
+        i = new Intent("net.cloudapp.chooser.chooser.ImageFullscreen");
+        if (selection == 1)
+            i.putExtra("image",post.image1);
+        else
+            i.putExtra("image",post.image2);
+        startActivity(i);
+    }
 
     private void deletePost() {
         DeletePostDialog dpDialog = new DeletePostDialog(post._id, this);

@@ -107,7 +107,7 @@ public abstract class StatisticsChartSetup {
         ImageView image2 = (ImageView) view.findViewById(R.id.imageView2);
 
         headline.setText(post.title);
-        if (post.title.length() > 20)
+        if (post.title.length() > 30)
             headline.setTextSize(10);
         if (post.votes1 > 9999 || post.votes2 > 9999) {
             vote1.setTextSize(12);

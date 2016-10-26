@@ -56,4 +56,7 @@ dependencies {
 
     // Image Picker
     compile 'com.github.ParkSangGwon:TedPicker:v1.0.10'
+
+    // Image Fullscreen
+    compile 'com.github.chrisbanes:PhotoView:1.3.0'
 }
