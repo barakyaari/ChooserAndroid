@@ -7,6 +7,6 @@ public class PostStatistics {
     public int maleVotes2;
     public int femaleVotes1;
     public int femaleVotes2;
-    public ArrayList<Integer> ageVotes1;
-    public ArrayList<Integer> ageVotes2;
+    public ArrayList<Integer> ageVotes1 = new ArrayList<Integer>();
+    public ArrayList<Integer> ageVotes2 = new ArrayList<Integer>();
 }

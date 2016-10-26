@@ -1,5 +1,7 @@
 package net.cloudapp.chooser.chooser.Controller;
 
+import android.util.Log;
+
 import com.facebook.AccessToken;
 
 import net.cloudapp.chooser.chooser.Common.SessionDetails;
@@ -16,19 +18,20 @@ import java.util.Arrays;
  */
 public class PostStatisticsFetchController {
 
-    private StatisticsFragmentManager sfm;
+    private StatisticsFragmentManager mStatisticsFragmentManager;
     private String post_id;
 
     public PostStatisticsFetchController(StatisticsFragmentManager sfm, String post_id){
-        this.sfm = sfm;
+        this.mStatisticsFragmentManager = sfm;
         this.post_id = post_id;
     }
 
     public void getPostStatistics(){
         AccessToken token = SessionDetails.getInstance().getAccessToken();
         RestClient restClient = new RestClient();
-        PostStatisticsCallback callback = new PostStatisticsCallback(sfm);
+        PostStatisticsCallback callback = new PostStatisticsCallback(mStatisticsFragmentManager);
         restClient.getService().getStatistics(token.getToken(), post_id, callback);
+        Log.d("Chooser", "Got post statistics");
     }
 
 
@@ -49,8 +52,6 @@ public class PostStatisticsFetchController {
 
         postStatistics.ageVotes1 = ageVote1;
         postStatistics.ageVotes2 = ageVote2;
-        sfm.setPostStatistics(postStatistics);
-        sfm.refreshFragments();
     }
 
 

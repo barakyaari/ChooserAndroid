@@ -63,7 +63,7 @@ public class StatisticsFragmentManager extends Fragment {
 
     public void updateFragments() {
         PostStatisticsFetchController postStatisticsFetchController = new PostStatisticsFetchController(this, post_id);
-        postStatisticsFetchController.getTempPostStatistics();
+        postStatisticsFetchController.getPostStatistics();
     }
 
     public void setPostStatistics (PostStatistics postStatistics) {
