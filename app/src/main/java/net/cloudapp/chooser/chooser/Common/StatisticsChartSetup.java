@@ -113,6 +113,10 @@ public abstract class StatisticsChartSetup {
             vote1.setTextSize(12);
             vote2.setTextSize(12);
         }
+        if (post.votes1 > 99999 || post.votes2 > 99999) {
+            vote1.setTextSize(10);
+            vote2.setTextSize(10);
+        }
 
         vote1.setText(String.valueOf(post.votes1));
         vote2.setText(String.valueOf(post.votes2));

@@ -32,13 +32,14 @@
 
         <com.github.mikephil.charting.charts.HorizontalBarChart
             android:id="@+id/stat_bar"
-            android:layout_width="200dp"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginLeft="8dp"
+            android:layout_marginLeft="19dp"
             android:clickable="true"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="3dp" />
+            android:layout_marginBottom="3dp"
+            android:layout_marginRight="13dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -53,7 +54,7 @@
             android:textSize="12dp" />
 
         <FrameLayout
-            android:layout_width="36dp"
+            android:layout_width="35dp"
             android:layout_height="wrap_content"
             android:layout_gravity="right|center_vertical"
             android:layout_marginTop="6dp">
@@ -71,7 +72,7 @@
         </FrameLayout>
 
         <FrameLayout
-            android:layout_width="41dp"
+            android:layout_width="35dp"
             android:layout_height="wrap_content"
             android:layout_gravity="left|center_vertical"
             android:layout_marginTop="6dp">
