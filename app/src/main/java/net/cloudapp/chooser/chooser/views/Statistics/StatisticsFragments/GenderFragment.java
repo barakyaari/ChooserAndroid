@@ -20,9 +20,7 @@ import net.cloudapp.chooser.chooser.model.PostStatistics;
 import java.util.ArrayList;
 
 public class GenderFragment {
-    private View view;
-    private HorizontalBarChart femaleBarChart, maleBarChart;
-    private TextView genF1, genF2, genM1, genM2;
+    private View view, femaleStat, maleStat;
 
     public GenderFragment (View view) {
         this.view = view;
@@ -30,42 +28,38 @@ public class GenderFragment {
     }
 
     private void createGenderFragment() {
-        View femaleStat = view.findViewById(R.id.femaleStatisticsItem);
-        View maleStat = view.findViewById(R.id.maleStatisticsItem);
-        femaleBarChart = (HorizontalBarChart) femaleStat.findViewById(R.id.barChart);
-        maleBarChart = (HorizontalBarChart) maleStat.findViewById(R.id.barChart);
-        StatisticsChartSetup.createBarChart(femaleBarChart);
-        StatisticsChartSetup.createBarChart(maleBarChart);
-        genF1 = (TextView) femaleStat.findViewById(R.id.vote1);
-        genF2 = (TextView) femaleStat.findViewById(R.id.vote2);
-        genM1 = (TextView) maleStat.findViewById(R.id.vote1);
-        genM2 = (TextView) maleStat.findViewById(R.id.vote2);
-        ((ImageView) femaleStat.findViewById(R.id.statIcon)).setImageResource(R.drawable.ic_female);
-        ((ImageView) maleStat.findViewById(R.id.statIcon)).setImageResource(R.drawable.ic_male);
-        TextView femaleHeadline = (TextView) femaleStat.findViewById(R.id.headline);
-        TextView maleHeadline = (TextView) maleStat.findViewById(R.id.headline);
-
-        femaleHeadline.setTextColor(ContextCompat.getColor(view.getContext(),R.color.genderBarFemale));
-        femaleHeadline.setText("Female Votes");
-        maleHeadline.setTextColor(ContextCompat.getColor(view.getContext(),R.color.genderBarMale));
-        maleHeadline.setText("Male Votes");
-
+        femaleStat = view.findViewById(R.id.femaleStatisticsItem);
+        maleStat = view.findViewById(R.id.maleStatisticsItem);
+        initializeGenderItem(femaleStat,"Female Votes", R.color.genderBarFemale,R.drawable.ic_female);
+        initializeGenderItem(maleStat,"Male Votes", R.color.genderBarMale,R.drawable.ic_male);
     }
 
+    private void initializeGenderItem(View view, String headline, int headlineColor, int drawable) {
+        StatisticsChartSetup.createBarChart((HorizontalBarChart) view.findViewById(R.id.barChart));
+        TextView viewHeadline = (TextView) view.findViewById(R.id.headline);
+        viewHeadline.setText(headline);
+        viewHeadline.setTextColor(ContextCompat.getColor(view.getContext(),headlineColor));
+        ImageView icon = (ImageView) view.findViewById(R.id.statIcon);
+        icon.setImageResource(drawable);
+    }
 
 
     public void refreshGenderFragment(PostStatistics postStatistics) {
-        updateGenderBarData(femaleBarChart, postStatistics.femaleVotes1, postStatistics.femaleVotes2,genF1,genF2);
-        updateGenderBarData(maleBarChart, postStatistics.maleVotes1, postStatistics.maleVotes2,genM1,genM2);
+        updateGenderBarData(femaleStat, postStatistics.femaleVotes1, postStatistics.femaleVotes2);
+        updateGenderBarData(maleStat, postStatistics.maleVotes1, postStatistics.maleVotes2);
     }
 
 
-    private void updateGenderBarData (HorizontalBarChart horizontalBarChart, float data1, float data2, TextView dataText1, TextView dataText2) {
+    private void updateGenderBarData (View view, float data1, float data2) {
+        TextView vote1 = (TextView) view.findViewById(R.id.vote1);
+        TextView vote2 = (TextView) view.findViewById(R.id.vote2);
+        HorizontalBarChart horizontalBarChart = (HorizontalBarChart) view.findViewById(R.id.barChart);
 
         int color1 = ContextCompat.getColor(view.getContext(),R.color.bar1);
         int color2 = ContextCompat.getColor(view.getContext(),R.color.bar2);
-        dataText1.setTextColor(color1);
-        dataText2.setTextColor(color2);
+
+        vote1.setTextColor(color1);
+        vote2.setTextColor(color2);
 
         ArrayList<BarEntry> vals = new ArrayList<>();
         vals.add(new BarEntry(0, new float[]{data1, data2}));
@@ -84,8 +78,8 @@ public class GenderFragment {
         horizontalBarChart.notifyDataSetChanged();
         horizontalBarChart.invalidate();
 
-        dataText1.setText(String.valueOf((int)data1));
-        dataText2.setText(String.valueOf((int)data2));
+        vote1.setText(String.valueOf((int)data1));
+        vote2.setText(String.valueOf((int)data2));
     }
 
 }

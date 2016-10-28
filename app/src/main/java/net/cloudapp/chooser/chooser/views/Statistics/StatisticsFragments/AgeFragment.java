@@ -64,7 +64,7 @@ public class AgeFragment {
     }
 
 
-    private void updateAgeBarData(int ageStart, int ageEnd, View view ) {
+    private void updateAgeBarData(int ageStart, int ageEnd, View view) {
         TextView vote1 = (TextView) view.findViewById(R.id.vote1);
         TextView vote2 = (TextView) view.findViewById(R.id.vote2);
 
