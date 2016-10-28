@@ -2,8 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:weightSum="1">
+    android:layout_height="match_parent">
 
     <include layout="@layout/my_posts_row"
         android:id="@+id/postRowData" />
@@ -11,9 +10,9 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="380dp"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_weight="0.51">
+        android:elevation="0dp">
 
         <android.support.design.widget.TabLayout
             android:id="@+id/sliding_tabs"
@@ -28,23 +27,25 @@
         <android.support.v4.view.ViewPager
             android:id="@+id/viewpager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.68" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center">
-
-        <Button
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Delete post"
-            android:id="@+id/deletePost"
-            android:layout_marginLeft="10dp" />
+            android:layout_weight="1" >
+
+        </android.support.v4.view.ViewPager>
+
+        <FrameLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Delete post"
+                android:id="@+id/deletePost"
+                android:layout_marginLeft="10dp"
+                android:layout_gravity="center" />
+        </FrameLayout>
+
     </LinearLayout>
 
 </LinearLayout>
