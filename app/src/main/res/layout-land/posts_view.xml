@@ -165,8 +165,7 @@
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:id="@+id/flagButton"
-                android:src="@drawable/ic_flag_black_24dp" />
+                android:id="@+id/flagButton" />
 
             <Button
                 android:layout_width="wrap_content"

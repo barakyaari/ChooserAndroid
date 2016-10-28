@@ -26,33 +26,11 @@ public class PostStatisticsFetchController {
         this.post_id = post_id;
     }
 
-    public void getPostStatistics(){
+    public void getPostStatistics() {
         AccessToken token = SessionDetails.getInstance().getAccessToken();
         RestClient restClient = new RestClient();
         PostStatisticsCallback callback = new PostStatisticsCallback(mStatisticsFragmentManager);
         restClient.getService().getStatistics(token.getToken(), post_id, callback);
         Log.d("Chooser", "Got post statistics");
     }
-
-
-    public void getTempPostStatistics() {
-        PostStatistics postStatistics = new PostStatistics();
-        postStatistics.femaleVotes1 = 53;
-        postStatistics.femaleVotes2 = 37;
-
-        postStatistics.maleVotes1 = 39;
-        postStatistics.maleVotes2 = 48;
-        //Vote1 = 96
-        //Vote2 = 81
-        Integer[] array = {0,0,0,0,0,0,0,0,0,0,0,0,5,7,8,2,4,8,10,7,15,10,7,5,0,3,2,0,1,0,2,0};
-        Integer[] array2 = {0,0,0,0,0,0,0,0,0,0,0,1,2,5,9,4,2,6,6,5,9,10,11,4,3,1,0,0,2,0,0,0,1};
-
-        ArrayList<Integer> ageVote1 = new ArrayList<>(Arrays.asList(array));
-        ArrayList<Integer> ageVote2 = new ArrayList<>(Arrays.asList(array2));
-
-        postStatistics.ageVotes1 = ageVote1;
-        postStatistics.ageVotes2 = ageVote2;
-    }
-
-
 }

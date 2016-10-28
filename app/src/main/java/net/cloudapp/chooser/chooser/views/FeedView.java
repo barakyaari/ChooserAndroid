@@ -20,7 +20,9 @@ import com.facebook.login.LoginManager;
 
 import net.cloudapp.chooser.chooser.Common.LoadingDialogs;
 import net.cloudapp.chooser.chooser.Common.PostRepository;
+import net.cloudapp.chooser.chooser.Controller.Callbacks.ReportCallback;
 import net.cloudapp.chooser.chooser.Controller.PostsFetchController;
+import net.cloudapp.chooser.chooser.Controller.ReportController;
 import net.cloudapp.chooser.chooser.Controller.VoteController;
 import net.cloudapp.chooser.chooser.Images.CloudinaryClient;
 import net.cloudapp.chooser.chooser.Animations.ImageSwitchFactory;
@@ -29,10 +31,10 @@ import net.cloudapp.chooser.chooser.R;
 import net.cloudapp.chooser.chooser.model.Post;
 
 public class FeedView extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
-    ImageButton flagButton;
     Button refreshButton;
     TextView titleTextView, description1TextView, description2TextView, tokens;
     ImageSwitcher imageSwitcher1, imageSwitcher2;
+    ImageView flagButton;
     TextSwitcher textSwitcher1, textSwitcher2;
     LinearLayout feedLayout, noPostsLayout;
     String mCurrentPostId;
@@ -77,6 +79,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
         imageSwitcher1.setOnClickListener(this);
         imageSwitcher2.setOnClickListener(this);
         refreshButton.setOnClickListener(this);
+        flagButton.setOnClickListener(this);
     }
 
     private void initializeOnLongClickListeners() {
@@ -88,7 +91,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
         noPostsLayout = (LinearLayout) findViewById(R.id.noPostsLayout);
         feedLayout = (LinearLayout) findViewById(R.id.feedLayout);
 
-        flagButton = (ImageButton) findViewById(R.id.flagButton);
+        flagButton = (ImageView) findViewById(R.id.flagButton);
         refreshButton = (Button) findViewById(R.id.refreshButton);
 
         titleTextView = (TextView) findViewById(R.id.titleTextView);
@@ -126,8 +129,13 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
             case R.id.refreshButton:
                 refreshFeedRepository();
                 break;
+
+            case R.id.flagButton:
+                reportPost();
+                break;
         }
     }
+
 
     @Override
     public boolean onLongClick(View v) {
@@ -158,15 +166,22 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
 
     private void vote(int selected) {
         Log.d("Chooser", "Vote selection: " + selected);
-        String postId = mCurrentPostId;
         VoteController voteController = new VoteController();
-        voteController.vote(postId, selected);
+        voteController.vote(mCurrentPostId, selected);
 
         if (selected == 1)
             votes1++;
         else
             votes2++;
 
+        loadNextPost();
+    }
+
+    private void reportPost() {
+        Log.d("Chooser", "Report post requested");
+        feedIsOn = false;
+        ReportController reportController = new ReportController();
+        reportController.report(mCurrentPostId);
         loadNextPost();
     }
 
@@ -183,10 +198,6 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
         feedLayout.setVisibility(View.VISIBLE);
         flagButton.setVisibility(View.VISIBLE);
         feedIsOn = true;
-    }
-
-    private void loadNextPost() {
-        refreshView();
     }
 
     @Override
@@ -218,7 +229,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
     }
 
 
-    public void refreshView() {
+    public void loadNextPost() {
         post = PostRepository.postsFeed.poll();
 
         if (feedIsOn) {
