@@ -28,28 +28,6 @@ import java.util.ArrayList;
  */
 public abstract class StatisticsChartSetup {
 
-    public static void createAgePieChart(PieChart pieChart, Context context) {
-        pieChart.setUsePercentValues(true);
-        pieChart.setDescription("");
-        pieChart.setDragDecelerationFrictionCoef(0.95f);
-        pieChart.setDrawHoleEnabled(true);
-        pieChart.setHoleColor(ContextCompat.getColor(context,R.color.appBackground));
-        pieChart.setTransparentCircleColor(Color.rgb(50,64,93));
-        pieChart.setCenterTextColor(Color.LTGRAY);
-        pieChart.setTransparentCircleAlpha(110);
-        pieChart.setHoleRadius(45f);
-        pieChart.setTransparentCircleRadius(50f);
-        pieChart.setDrawCenterText(true);
-        pieChart.setCenterText("Age\nDistribution");
-        pieChart.getLegend().setEnabled(false);
-        pieChart.setRotationAngle(0);
-        pieChart.setRotationEnabled(true);
-        pieChart.setHighlightPerTapEnabled(true);
-        pieChart.setClickable(false);
-        pieChart.animateY(650, Easing.EasingOption.EaseInOutQuad);
-        pieChart.setEntryLabelColor(Color.BLACK);
-        pieChart.setEntryLabelTextSize(12f);
-    }
 
     public static void createBarChart(HorizontalBarChart horizontalBarChart) {
         horizontalBarChart.getXAxis().setEnabled(false);

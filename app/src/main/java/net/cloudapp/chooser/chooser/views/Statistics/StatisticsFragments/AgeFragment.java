@@ -1,152 +1,110 @@
 package net.cloudapp.chooser.chooser.views.Statistics.StatisticsFragments;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
+import android.util.TypedValue;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.HorizontalBarChart;
-import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 
 import net.cloudapp.chooser.chooser.Common.StatisticsChartSetup;
 import net.cloudapp.chooser.chooser.R;
 import net.cloudapp.chooser.chooser.model.PostStatistics;
-import net.cloudapp.chooser.chooser.views.dialogs.AgeFragmentDialog;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 
-public class AgeFragment implements View.OnClickListener{
-    private View view;
-    private android.support.v4.app.Fragment parentFragment;
+public class AgeFragment {
+    private View kidStatItem, teenStatItem, youngStatItem, manStatItem, oldStatItem;
     private PostStatistics postStatistics;
+    private final int kid_start = 0;
+    private final int teen_start = 14;
+    private final int young_start = 21;
+    private final int man_start = 31;
+    private final int old_start = 61;
 
-    private HorizontalBarChart ageBarChart;
-    private PieChart agePieChart;
-    private TextView ageData1, ageData2;
-    private Button ageIntervalButton, fromAgeButton, toAgeButton;
-    public int ageIntervals, fromAgeGroup, toAgeGroup;
 
-
-    public AgeFragment (View view, android.support.v4.app.Fragment parentFragment) {
-        this.view = view;
-        this.parentFragment = parentFragment;
-        createAgeFragment();
+    public AgeFragment (View view) {
+        kidStatItem = view.findViewById(R.id.kidStatisticsItem);
+        teenStatItem = view.findViewById(R.id.teenStatisticsItem);
+        youngStatItem = view.findViewById(R.id.youngManStatisticsItem);
+        manStatItem = view.findViewById(R.id.manStatisticsItem);
+        oldStatItem = view.findViewById(R.id.oldStatisticsItem);
+        initializeAgeItem(kidStatItem, "Kids 0-13 Votes", R.drawable.ic_age_teen);
+        initializeAgeItem(teenStatItem, "Teens 14-20 Votes", R.drawable.ic_age_teen);
+        initializeAgeItem(youngStatItem, "Young Men 21-30 Votes", R.drawable.ic_age_young);
+        initializeAgeItem(manStatItem, "Men 31-60 Votes", R.drawable.ic_age_man);
+        initializeAgeItem(oldStatItem, "Elderly 61+ Votes",R.drawable.ic_age_old);
     }
 
-    private void addDefaultValues () {
-        ageIntervals = 5;
-        fromAgeGroup = 0;
-        toAgeGroup = 21;
+    private void initializeAgeItem(View view, String headline, int drawable) {
+        StatisticsChartSetup.createBarChart((HorizontalBarChart) view.findViewById(R.id.barChart));
+        ((TextView) view.findViewById(R.id.headline)).setText(headline);
+        ImageView icon = (ImageView) view.findViewById(R.id.statIcon);
+        icon.setImageResource(drawable);
     }
 
-    private void createAgeFragment() {
-        addDefaultValues();
-        agePieChart = (PieChart) view.findViewById(R.id.pieChart);
-        ageBarChart = (HorizontalBarChart) view.findViewById(R.id.barChart);
-        StatisticsChartSetup.createAgePieChart(agePieChart,view.getContext());
-        StatisticsChartSetup.createBarChart(ageBarChart);
-        ageBarChart.setFitBars(true);
 
-        ageData1 = (TextView) view.findViewById(R.id.ageData1);
-        ageData2 = (TextView) view.findViewById(R.id.ageData2);
-        ageIntervalButton = (Button) view.findViewById(R.id.changeIntervalButton);
-        fromAgeButton = (Button) view.findViewById(R.id.fromAgeButton);
-        toAgeButton = (Button) view.findViewById(R.id.toAgeButton);
-
-        ageIntervalButton.setOnClickListener(this);
-
-        fromAgeButton.setOnClickListener(this);
-        toAgeButton.setText(String.valueOf(toAgeGroup));
-        fromAgeButton.setText(String.valueOf(fromAgeGroup));
-
-        toAgeButton.setOnClickListener(this);
-    }
 
     public void refreshAgeFragment(PostStatistics postStatistics) {
         this.postStatistics = postStatistics;
-        updateAgePieData();
-        updateAgeBarData();
+        updateAgeBarData(kid_start, teen_start-1, kidStatItem);
+        updateAgeBarData(teen_start, young_start-1, teenStatItem);
+        updateAgeBarData(young_start, man_start-1, youngStatItem);
+        updateAgeBarData(man_start, old_start-1, manStatItem);
+        updateAgeBarData(old_start,200, oldStatItem);
     }
 
 
-    private void updateAgePieData () {
-        ArrayList<PieEntry> entries = new ArrayList<>();
-        ArrayList<Integer> values = getTotalAgeRangeVotes();
-        for (int i = 0; i < values.size(); i++) {
-            int val = values.get(i);
-            if (val != 0)
-                entries.add(new PieEntry(val, (i * ageIntervals) + "-" + ((i + 1) * ageIntervals - 1)));
-        }
+    private void updateAgeBarData(int ageStart, int ageEnd, View view ) {
+        TextView vote1 = (TextView) view.findViewById(R.id.vote1);
+        TextView vote2 = (TextView) view.findViewById(R.id.vote2);
 
-        PieDataSet dataSet = new PieDataSet(entries, "test chart");
-        dataSet.setSliceSpace(3f);
-        dataSet.setSelectionShift(5f);
-        dataSet.setColor(Color.LTGRAY);
+        int color1 = ContextCompat.getColor(view.getContext(),R.color.bar1);
+        int color2 = ContextCompat.getColor(view.getContext(),R.color.bar2);
+        vote1.setTextColor(color1);
+        vote2.setTextColor(color2);
 
-        PieData data = new PieData(dataSet);
-        data.setValueFormatter(new PercentFormatter());
-        data.setValueTextSize(11f);
-        data.setValueTextColor(Color.BLACK);
-        agePieChart.setData(data);
+        HorizontalBarChart chart = (HorizontalBarChart) view.findViewById(R.id.barChart);
 
+        int data1 = getAgeRangeVotes(1, ageStart, ageEnd);
+        int data2 = getAgeRangeVotes(2, ageStart, ageEnd);
 
-        agePieChart.notifyDataSetChanged();
-        agePieChart.invalidate();
-    }
+        if (data1+data2 != 0)
+            view.setVisibility(View.VISIBLE);
 
-    private void updateAgeBarData() {
-        int data1 = getAgeRangeVotes(1);
-        int data2 = getAgeRangeVotes(2);
         ArrayList<BarEntry> vals = new ArrayList<>();
         vals.add(new BarEntry(0, new float[]{data1, data2}));
 
         BarDataSet set = new BarDataSet(vals, "");
         ArrayList<IBarDataSet> dataSet = new ArrayList<>();
-        set.setColors(new int[]{ContextCompat.getColor(view.getContext(),R.color.bar1), ContextCompat.getColor(view.getContext(),R.color.bar2)});
+        set.setColors(new int[]{color1, color2});
         set.setBarBorderWidth(2);
         set.setBarBorderColor(Color.BLACK);
         dataSet.add(set);
         BarData data = new BarData(dataSet);
         data.setDrawValues(false);
 
-        ageBarChart.setData(data);
-        ageBarChart.notifyDataSetChanged();
-        ageBarChart.invalidate();
+        chart.setData(data);
+        chart.notifyDataSetChanged();
+        chart.invalidate();
 
-        ageData1.setText(String.valueOf(data1));
-        ageData2.setText(String.valueOf(data2));
+        vote1.setText(String.valueOf(data1));
+        vote2.setText(String.valueOf(data2));
+
     }
 
 
-    private ArrayList<Integer> getTotalAgeRangeVotes() {
-        int ageCap = Math.max(postStatistics.ageVotes1.size(),postStatistics.ageVotes2.size());
-
-        ArrayList<Integer> voteArray = new ArrayList<>(Collections.nCopies(1 + ageCap/ageIntervals, 0));
-
-        for (int i = 0; i < ageCap; i++) {
-            int currInterval = i/ageIntervals;
-            if (i < postStatistics.ageVotes1.size())
-                voteArray.set(currInterval, voteArray.get(currInterval) + postStatistics.ageVotes1.get(i));
-            if (i < postStatistics.ageVotes2.size())
-                voteArray.set(currInterval, voteArray.get(currInterval) + postStatistics.ageVotes2.get(i));
-        }
-        return voteArray;
-    }
-
-    private int getAgeRangeVotes(int voteNum) {
-        //start inclusive, end inclusive
+    private int getAgeRangeVotes(int voteNum, int fromAge, int toAge) {
+        //fromAge inclusive, toAge inclusive
         int count = 0;
         ArrayList<Integer> arrayCount;
         if (voteNum == 1)
@@ -156,54 +114,11 @@ public class AgeFragment implements View.OnClickListener{
         else return 0;
 
         int arraySize = arrayCount.size();
-        if (fromAgeGroup > arraySize)
+        if (fromAge > arraySize)
             return 0;
 
-        for (int i = fromAgeGroup; i < Math.min(toAgeGroup+1,arraySize); i++)
+        for (int i = fromAge; i < Math.min(toAge+1,arraySize); i++)
             count += arrayCount.get(i);
-
-
         return count;
-    }
-
-    @Override
-    public void onClick(View v) {
-        AgeFragmentDialog seekBarDialog;
-        switch (v.getId()) {
-            case R.id.changeIntervalButton:
-                seekBarDialog = new AgeFragmentDialog("Choose Age Intervals",3,25, ageIntervals) {
-                    @Override
-                    public void onEndOfSeekBarTracking(int progress) {
-                        ageIntervals = progress;
-                        updateAgePieData();
-                    }
-                };
-                seekBarDialog.show(parentFragment.getActivity().getFragmentManager(), "Seek Bar Dialog");
-                break;
-
-            case R.id.fromAgeButton:
-                 seekBarDialog = new AgeFragmentDialog("From Age",0,toAgeGroup-1, fromAgeGroup) {
-                    @Override
-                    public void onEndOfSeekBarTracking(int progress) {
-                        fromAgeGroup = progress;
-                        updateAgeBarData();
-                        fromAgeButton.setText(String.valueOf(progress));
-                    }
-                };
-                seekBarDialog.show(parentFragment.getActivity().getFragmentManager(), "Seek Bar Dialog");
-                break;
-
-            case R.id.toAgeButton:
-                seekBarDialog = new AgeFragmentDialog("To Age",fromAgeGroup+1,Math.max(postStatistics.ageVotes1.size(),postStatistics.ageVotes2.size())-1, toAgeGroup) {
-                    @Override
-                    public void onEndOfSeekBarTracking(int progress) {
-                        toAgeGroup = progress;
-                        updateAgeBarData();
-                        toAgeButton.setText(String.valueOf(progress));
-                    }
-                };
-                seekBarDialog.show(parentFragment.getActivity().getFragmentManager(), "Seek Bar Dialog");
-                break;
-        }
     }
 }

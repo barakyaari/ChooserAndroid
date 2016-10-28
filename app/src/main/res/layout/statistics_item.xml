@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="7dp"
+    android:layout_marginLeft="7dp">
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="94dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Headline"
+            android:id="@+id/headline"
+            android:textColor="#cacaca" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="top|bottom">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="60dp"
+                android:id="@+id/statIcon"
+                android:layout_gravity="left|bottom"
+                android:src="@drawable/abc_ab_share_pack_mtrl_alpha"
+                android:layout_marginBottom="15dp" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <FrameLayout
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left|bottom"
+                    android:layout_marginBottom="30dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="0"
+                        android:id="@+id/vote1"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="#cacaca"
+                        android:textIsSelectable="true"
+                        android:textStyle="bold" />
+
+                </FrameLayout>
+
+                <com.github.mikephil.charting.charts.HorizontalBarChart
+                    android:id="@+id/barChart"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="15dp" />
+
+                <FrameLayout
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|right"
+                    android:layout_marginBottom="30dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="0"
+                        android:id="@+id/vote2"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="#cacaca"
+                        android:textStyle="bold" />
+                </FrameLayout>
+
+            </FrameLayout>
+
+        </LinearLayout>
+    </FrameLayout>
+
+</FrameLayout>

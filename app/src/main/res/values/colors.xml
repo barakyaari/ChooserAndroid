@@ -4,8 +4,8 @@
     <color name="colorPrimaryDark">#32405d</color>
     <color name="colorAccent">#FF4081</color>
     <color name="appBackground">#404040</color>
-    <color name="bar1">#FFDE4545</color>
-    <color name="bar2">#4580de</color>
+    <color name="bar1">#ffa639</color>
+    <color name="bar2">#4ec4ff</color>
     <color name="genderBarFemale">#e077cb</color>
     <color name="genderBarMale">#7799e0</color>
 </resources>

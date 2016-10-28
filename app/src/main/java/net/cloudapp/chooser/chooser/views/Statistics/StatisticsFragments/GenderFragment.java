@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.HorizontalBarChart;
@@ -20,9 +21,8 @@ import java.util.ArrayList;
 
 public class GenderFragment {
     private View view;
-    private PostStatistics postStatistics;
-    private HorizontalBarChart genderBarChart, femaleBarChart, maleBarChart;
-    private TextView  genDist1, genDist2, genF1, genF2, genM1, genM2;
+    private HorizontalBarChart femaleBarChart, maleBarChart;
+    private TextView genF1, genF2, genM1, genM2;
 
     public GenderFragment (View view) {
         this.view = view;
@@ -30,31 +30,43 @@ public class GenderFragment {
     }
 
     private void createGenderFragment() {
-        genderBarChart = (HorizontalBarChart) view.findViewById(R.id.percentBar);
-        femaleBarChart = (HorizontalBarChart) view.findViewById(R.id.femaleBar);
-        maleBarChart = (HorizontalBarChart) view.findViewById(R.id.maleBar);
-        StatisticsChartSetup.createBarChart(genderBarChart);
+        View femaleStat = view.findViewById(R.id.femaleStatisticsItem);
+        View maleStat = view.findViewById(R.id.maleStatisticsItem);
+        femaleBarChart = (HorizontalBarChart) femaleStat.findViewById(R.id.barChart);
+        maleBarChart = (HorizontalBarChart) maleStat.findViewById(R.id.barChart);
         StatisticsChartSetup.createBarChart(femaleBarChart);
         StatisticsChartSetup.createBarChart(maleBarChart);
-        genDist1 = (TextView) view.findViewById(R.id.dist_data1);
-        genDist2 = (TextView) view.findViewById(R.id.dist_data2);
-        genF1 = (TextView) view.findViewById(R.id.female_data1);
-        genF2 = (TextView) view.findViewById(R.id.female_data2);
-        genM1 = (TextView) view.findViewById(R.id.male_data1);
-        genM2 = (TextView) view.findViewById(R.id.male_data2);
+        genF1 = (TextView) femaleStat.findViewById(R.id.vote1);
+        genF2 = (TextView) femaleStat.findViewById(R.id.vote2);
+        genM1 = (TextView) maleStat.findViewById(R.id.vote1);
+        genM2 = (TextView) maleStat.findViewById(R.id.vote2);
+        ((ImageView) femaleStat.findViewById(R.id.statIcon)).setImageResource(R.drawable.ic_female);
+        ((ImageView) maleStat.findViewById(R.id.statIcon)).setImageResource(R.drawable.ic_male);
+        TextView femaleHeadline = (TextView) femaleStat.findViewById(R.id.headline);
+        TextView maleHeadline = (TextView) maleStat.findViewById(R.id.headline);
+
+        femaleHeadline.setTextColor(ContextCompat.getColor(view.getContext(),R.color.genderBarFemale));
+        femaleHeadline.setText("Female Votes");
+        maleHeadline.setTextColor(ContextCompat.getColor(view.getContext(),R.color.genderBarMale));
+        maleHeadline.setText("Male Votes");
+
     }
+
 
 
     public void refreshGenderFragment(PostStatistics postStatistics) {
-        this.postStatistics = postStatistics;
-        Context context = view.getContext();
-        updateGenderBarData(genderBarChart, ContextCompat.getColor(context,R.color.genderBarFemale), ContextCompat.getColor(context,R.color.genderBarMale), getTotalFemaleVotes(),getTotalMaleVotes(),genDist1,genDist2);
-        updateGenderBarData(femaleBarChart, ContextCompat.getColor(context,R.color.bar1), ContextCompat.getColor(context,R.color.bar2), postStatistics.femaleVotes1,postStatistics.femaleVotes2,genF1,genF2);
-        updateGenderBarData(maleBarChart, ContextCompat.getColor(context,R.color.bar1), ContextCompat.getColor(context,R.color.bar2), postStatistics.maleVotes1,postStatistics.maleVotes2,genM1,genM2);
+        updateGenderBarData(femaleBarChart, postStatistics.femaleVotes1, postStatistics.femaleVotes2,genF1,genF2);
+        updateGenderBarData(maleBarChart, postStatistics.maleVotes1, postStatistics.maleVotes2,genM1,genM2);
     }
 
 
-    private void updateGenderBarData (HorizontalBarChart horizontalBarChart, int color1, int color2, float data1, float data2, TextView dataText1, TextView dataText2) {
+    private void updateGenderBarData (HorizontalBarChart horizontalBarChart, float data1, float data2, TextView dataText1, TextView dataText2) {
+
+        int color1 = ContextCompat.getColor(view.getContext(),R.color.bar1);
+        int color2 = ContextCompat.getColor(view.getContext(),R.color.bar2);
+        dataText1.setTextColor(color1);
+        dataText2.setTextColor(color2);
+
         ArrayList<BarEntry> vals = new ArrayList<>();
         vals.add(new BarEntry(0, new float[]{data1, data2}));
 
@@ -76,11 +88,4 @@ public class GenderFragment {
         dataText2.setText(String.valueOf((int)data2));
     }
 
-    private int getTotalFemaleVotes() {
-        return postStatistics.femaleVotes1+postStatistics.femaleVotes2;
-    }
-
-    private int getTotalMaleVotes() {
-        return postStatistics.maleVotes1+postStatistics.maleVotes2;
-    }
 }
