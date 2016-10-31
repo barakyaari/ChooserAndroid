@@ -43,7 +43,7 @@ public abstract class StatisticsChartSetup {
         horizontalBarChart.getLegend().setEnabled(false);
     }
 
-    public static void createSmallBarChart (HorizontalBarChart horizontalBarChart) {
+    private static void createSmallBarChart (HorizontalBarChart horizontalBarChart) {
         horizontalBarChart.getXAxis().setEnabled(false);
         horizontalBarChart.getAxisLeft().setEnabled(false);
         horizontalBarChart.getAxisLeft().setAxisMinValue(0f);
@@ -55,7 +55,7 @@ public abstract class StatisticsChartSetup {
         horizontalBarChart.setPinchZoom(false);
     }
 
-    public static void updateSmallBarChart (HorizontalBarChart horizontalBarChart, int vote1, int vote2, Context context) {
+    private static void updateSmallBarChart (HorizontalBarChart horizontalBarChart, int vote1, int vote2, Context context) {
         StatisticsChartSetup.createSmallBarChart(horizontalBarChart);
 
         ArrayList<BarEntry> vals = new ArrayList<>();
@@ -85,19 +85,12 @@ public abstract class StatisticsChartSetup {
         ImageView image2 = (ImageView) view.findViewById(R.id.imageView2);
 
         headline.setText(post.title);
+
         if (post.title.length() > 30)
             headline.setTextSize(10);
-        if (post.votes1 > 9999 || post.votes2 > 9999) {
-            vote1.setTextSize(12);
-            vote2.setTextSize(12);
-        }
-        if (post.votes1 > 99999 || post.votes2 > 99999) {
-            vote1.setTextSize(10);
-            vote2.setTextSize(10);
-        }
 
-        vote1.setText(String.valueOf(post.votes1));
-        vote2.setText(String.valueOf(post.votes2));
+        vote1.setText(String.valueOf(getPercentage(post.votes1, post.votes2, 1) + "%"));
+        vote2.setText(String.valueOf(getPercentage(post.votes1, post.votes2, 2) + "%"));
 
         if (showDate) {
             String dateString = (post.utcDate == null) ? "No Date" : DateConverter.utcToShortDate(post.utcDate);
@@ -112,5 +105,21 @@ public abstract class StatisticsChartSetup {
         String url2 = CloudinaryClient.smallImageUrl(post.image2,true);
         Glide.with(context).load(url1).into(image1);
         Glide.with(context).load(url2).into(image2);
+    }
+
+
+
+    private static int getPercentage(int votes1, int votes2, int choice) {
+        double sum = votes1 + votes2;
+        int per_votes1 = (int)Math.round(votes1*100/sum);
+        if (sum == 0)
+            return 0;
+        switch (choice) {
+            case 1:
+                return per_votes1;
+            case 2:
+                return 100-per_votes1;
+        }
+        return -1;
     }
 }
