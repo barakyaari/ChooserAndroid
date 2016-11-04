@@ -136,7 +136,6 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
         }
     }
 
-
     @Override
     public boolean onLongClick(View v) {
         if (animating1 || animating2)
@@ -184,7 +183,6 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
         reportController.report(mCurrentPostId);
         loadNextPost();
     }
-
 
     private void shutdownFeed() {
         feedLayout.setVisibility(View.INVISIBLE);

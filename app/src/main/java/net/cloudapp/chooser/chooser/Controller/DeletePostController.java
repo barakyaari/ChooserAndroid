@@ -17,4 +17,3 @@ public class DeletePostController {
         restClient.getService().deletePost(token.getToken(), postId, new DeletePostCallback(view));
     }
 }
-
