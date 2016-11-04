@@ -19,9 +19,6 @@ import net.cloudapp.chooser.chooser.model.Post;
 
 import java.util.List;
 
-/**
- * Created by Ben on 26/06/2016.
- */
 public class MyPostsAdapter extends ArrayAdapter<Post> {
 
     public MyPostsAdapter(Context context, List<Post> myPosts) {
