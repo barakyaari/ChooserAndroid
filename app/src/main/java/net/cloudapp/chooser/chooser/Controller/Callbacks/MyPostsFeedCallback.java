@@ -22,17 +22,11 @@ public class MyPostsFeedCallback implements Callback<List<Post>> {
     public void success(List<Post> postList, Response response) {
         int code = response.getStatus();
         if (code == 200) {
-            Log.d("Chooser", "get posts result code is OK.");
+            Log.d("Chooser", "Number of posts received: " + postList.size());
 
-            if (postList.size() > 0) {
-                Log.d("Chooser", "Number of posts received: " + postList.size());
-                PostRepository.myPosts.clear();
-                PostRepository.myPosts.addAll(postList);
-                myPostsView.refreshView();
-            }
-            else{
-                Log.d("Chooser", "Got 0 posts.");
-            }
+            PostRepository.myPosts.clear();
+            PostRepository.myPosts.addAll(postList);
+            myPostsView.refreshView();
         } else {
             Log.e("Chooser", "all posts - bad response code.");
         }

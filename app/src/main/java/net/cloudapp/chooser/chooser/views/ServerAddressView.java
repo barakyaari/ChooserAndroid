@@ -29,6 +29,8 @@ public class ServerAddressView extends Activity {
         serverAddressListView = (ListView) findViewById(R.id.serverAddressListView);
         String[] values = new String[] {
                 "http://chooserserver.herokuapp.com",
+                "http://10.0.0.18:3000",
+                "http://10.100.102.4:3000",
                 "http://192.168.14.104:3000",
                 "http://10.0.0.1:3000",
                 "http://192.168.43.2:3000"
@@ -44,7 +46,7 @@ public class ServerAddressView extends Activity {
         serverAddressListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SessionDetails.getInstance().serverAddress = addresses.getItem(position).toString();
+                SessionDetails.getInstance().serverAddress = addresses.getItem(position);
                 Intent i = new Intent("android.intent.action.LoginView");
                 Log.d("Chooser", "Starting login activity");
                 startActivity(i);
