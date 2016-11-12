@@ -32,19 +32,24 @@
 
         </android.support.v4.view.ViewPager>
 
-        <FrameLayout
+        <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:gravity="center">
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Delete post"
-                android:id="@+id/deletePost"
-                android:layout_marginLeft="10dp"
-                android:layout_gravity="center" />
-        </FrameLayout>
+                android:text="@string/delete_post_button_label"
+                android:id="@+id/deletePost" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/promote_button_label"
+                android:id="@+id/promotePostButton" />
+        </LinearLayout>
 
     </LinearLayout>
 

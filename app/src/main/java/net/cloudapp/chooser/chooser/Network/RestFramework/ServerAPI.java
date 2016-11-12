@@ -1,8 +1,12 @@
 package net.cloudapp.chooser.chooser.Network.RestFramework;
 
+import com.google.gson.JsonObject;
+
 import net.cloudapp.chooser.chooser.Controller.Callbacks.VoteCallback;
 import net.cloudapp.chooser.chooser.model.Post;
 import net.cloudapp.chooser.chooser.model.PostStatistics;
+
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -27,6 +31,16 @@ public interface ServerAPI {
             @Header("token") String token,
             Callback<List<Post>> callback);
 
+    @GET("/getNumTokens")
+    public void getNumTokens(
+            @Header("token") String token,
+            Callback<String> callback);
+
+    @GET("/promotePost")
+    public void promotePost(
+            @Header("token") String token,
+            @Header("postId") String postId,
+            Callback<JsonObject> callback);
 
     @GET("/addpost")
     public void addpost(

@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -20,9 +19,9 @@ import com.facebook.login.LoginManager;
 
 import net.cloudapp.chooser.chooser.Common.LoadingDialogs;
 import net.cloudapp.chooser.chooser.Common.PostRepository;
-import net.cloudapp.chooser.chooser.Controller.Callbacks.ReportCallback;
 import net.cloudapp.chooser.chooser.Controller.PostsFetchController;
 import net.cloudapp.chooser.chooser.Controller.ReportController;
+import net.cloudapp.chooser.chooser.Controller.PromotionController;
 import net.cloudapp.chooser.chooser.Controller.VoteController;
 import net.cloudapp.chooser.chooser.Images.CloudinaryClient;
 import net.cloudapp.chooser.chooser.Animations.ImageSwitchFactory;
@@ -63,10 +62,13 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
         imageSwitcher2.setFactory(new ImageSwitchFactory(this));
         textSwitcher1.setFactory(new TextSwitchFactory(this));
         textSwitcher2.setFactory(new TextSwitchFactory(this));
-        tokens.setText(String.valueOf(-1));
     }
 
 //refresh view
+
+    public void setTokens(String value) {
+        tokens.setText(value);
+    }
 
     private void refreshFeedRepository() {
         LoadingDialogs.show("feed");
@@ -107,8 +109,11 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
     @Override
     protected void onResume() {
         super.onResume();
+
         if (!feedIsOn)
             refreshFeedRepository();
+
+        getTokens();
     }
 
     @Override
@@ -163,6 +168,10 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
         startActivity(i);
     }
 
+    private void getTokens() {
+        PromotionController.getInstance().getTokens(this);
+    }
+
     private void vote(int selected) {
         Log.d("Chooser", "Vote selection: " + selected);
         VoteController voteController = new VoteController();
@@ -170,7 +179,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
 
         if (selected == 1)
             votes1++;
-        else
+        else if (selected == 2)
             votes2++;
 
         loadNextPost();

@@ -21,12 +21,15 @@ import com.github.mikephil.charting.charts.HorizontalBarChart;
 
 
 import net.cloudapp.chooser.chooser.Common.PostRepository;
+import net.cloudapp.chooser.chooser.Common.SessionDetails;
 import net.cloudapp.chooser.chooser.Common.StatisticsChartSetup;
+import net.cloudapp.chooser.chooser.Controller.PromotionController;
 import net.cloudapp.chooser.chooser.Images.CloudinaryClient;
 import net.cloudapp.chooser.chooser.R;
 import net.cloudapp.chooser.chooser.model.Post;
 import net.cloudapp.chooser.chooser.views.Statistics.StatisticsFragments.StatisticsFragmentManager;
 import net.cloudapp.chooser.chooser.views.dialogs.DeletePostDialog;
+import net.cloudapp.chooser.chooser.views.dialogs.PromotePostDialog;
 
 
 public class StatisticsView extends AppCompatActivity implements View.OnClickListener {
@@ -34,6 +37,7 @@ public class StatisticsView extends AppCompatActivity implements View.OnClickLis
     private int postIndex;
     private Post post;
     private Button deletePost;
+    private Button promotePost;
     private View postItem;
     private ImageView image1,image2;
 
@@ -51,8 +55,6 @@ public class StatisticsView extends AppCompatActivity implements View.OnClickLis
         initializePostItem();
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
-        deletePost = (Button) findViewById(R.id.deletePost);
-        deletePost.setOnClickListener(this);
         viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager(), this));
         tabLayout.setupWithViewPager(viewPager);
         Log.d("Chooser", "Statistics view loaded");
@@ -63,10 +65,23 @@ public class StatisticsView extends AppCompatActivity implements View.OnClickLis
         postItem = findViewById(R.id.postRowData);
         image1 = (ImageView) postItem.findViewById(R.id.imageView1);
         image2 = (ImageView) postItem.findViewById(R.id.imageView2);
+        deletePost = (Button) findViewById(R.id.deletePost);
+        promotePost = (Button) findViewById(R.id.promotePostButton);
 
         image1.setOnClickListener(this);
         image2.setOnClickListener(this);
+        deletePost.setOnClickListener(this);
+        promotePost.setOnClickListener(this);
         StatisticsChartSetup.fillPostItem(postItem, post, this, false);
+
+        refreshPromoteButton();
+    }
+
+    public void refreshPromoteButton() {
+        int numOfTokens = SessionDetails.getInstance().numOfTokens;
+        int cost = PromotionController.PROMOTION_COST;
+
+        promotePost.setEnabled(numOfTokens >= cost);
     }
 
 
@@ -79,6 +94,9 @@ public class StatisticsView extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.promotePostButton:
+                promotePost();
+                break;
             case R.id.deletePost:
                 deletePost();
                 break;
@@ -99,6 +117,11 @@ public class StatisticsView extends AppCompatActivity implements View.OnClickLis
         else
             i.putExtra("image",post.image2);
         startActivity(i);
+    }
+
+    private void promotePost() {
+        PromotePostDialog ppDialog = new PromotePostDialog(post._id, this);
+        ppDialog.show(getFragmentManager(), "PromotePostDialog");
     }
 
     private void deletePost() {
