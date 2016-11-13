@@ -21,7 +21,6 @@ public class FacebookLoginCallbackImpl implements FacebookCallback<LoginResult> 
         SessionDetails sessionDetails = SessionDetails.getInstance();
         final AccessToken accessToken = loginResult.getAccessToken();
         sessionDetails.setAccessToken(accessToken);
-        LoginController.login();
     }
 
     @Override
