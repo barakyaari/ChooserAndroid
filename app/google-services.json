@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "927304353561",
-    "firebase_url": "https://chooser-1470473351468.firebaseio.com",
-    "project_id": "chooser-1470473351468",
-    "storage_bucket": "chooser-1470473351468.appspot.com"
+    "project_number": "775464112963",
+    "firebase_url": "https://chooser-c9c75.firebaseio.com",
+    "project_id": "chooser-c9c75",
+    "storage_bucket": "chooser-c9c75.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:927304353561:android:fe349a2c67f3c1a0",
+        "mobilesdk_app_id": "1:775464112963:android:fe349a2c67f3c1a0",
         "android_client_info": {
-          "package_name": "com.chooser.chooserandroid"
+          "package_name": "net.cloudapp.chooser.chooser"
         }
       },
       "oauth_client": [
         {
-          "client_id": "927304353561-uah0ck22lv5p5im09nr87uod2gefr5mo.apps.googleusercontent.com",
+          "client_id": "775464112963-82q1r19g64sevujnla7mb1rs71c3p5i3.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCmIAWMFTKrRyPzy8ErhQOFrGICv80o41g"
+          "current_key": "AIzaSyAbTU9ZIhSxDQ401vM1oFXUvOHTZIkPX20"
         }
       ],
       "services": {
