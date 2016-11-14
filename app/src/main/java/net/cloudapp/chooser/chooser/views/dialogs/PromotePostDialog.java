@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.widget.Button;
 
+import net.cloudapp.chooser.chooser.Controller.Callbacks.PromoteCallback;
 import net.cloudapp.chooser.chooser.Controller.PromotionController;
 import net.cloudapp.chooser.chooser.views.Statistics.StatisticsView;
 
@@ -29,7 +30,7 @@ public class PromotePostDialog extends DialogFragment implements DialogInterface
 
         builder.setTitle("Promote Post");
         builder.setMessage("Are you sure you want to promote this post for "
-                + PromotionController.PROMOTION_COST + " tokens?");
+                + PromoteCallback.PROMOTION_COST + " tokens?");
         builder.setIcon(android.R.drawable.ic_dialog_alert);
         builder.setPositiveButton("Yes", this);
         builder.setNegativeButton("No", this);
@@ -41,7 +42,8 @@ public class PromotePostDialog extends DialogFragment implements DialogInterface
     public void onClick(DialogInterface dialogInterface, int which) {
         switch (which) {
             case DialogInterface.BUTTON_POSITIVE:
-                PromotionController.getInstance().promote(postId, view);
+                PromotionController promotionController = new PromotionController();
+                promotionController.promote(postId, view);
                 break;
 
             case DialogInterface.BUTTON_NEGATIVE:

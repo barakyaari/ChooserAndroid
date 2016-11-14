@@ -23,6 +23,7 @@ import com.github.mikephil.charting.charts.HorizontalBarChart;
 import net.cloudapp.chooser.chooser.Common.PostRepository;
 import net.cloudapp.chooser.chooser.Common.SessionDetails;
 import net.cloudapp.chooser.chooser.Common.StatisticsChartSetup;
+import net.cloudapp.chooser.chooser.Controller.Callbacks.PromoteCallback;
 import net.cloudapp.chooser.chooser.Controller.PromotionController;
 import net.cloudapp.chooser.chooser.Images.CloudinaryClient;
 import net.cloudapp.chooser.chooser.R;
@@ -79,7 +80,7 @@ public class StatisticsView extends AppCompatActivity implements View.OnClickLis
 
     public void refreshPromoteButton() {
         int numOfTokens = SessionDetails.getInstance().numOfTokens;
-        int cost = PromotionController.PROMOTION_COST;
+        int cost = PromoteCallback.PROMOTION_COST;
 
         promotePost.setEnabled(numOfTokens >= cost);
     }

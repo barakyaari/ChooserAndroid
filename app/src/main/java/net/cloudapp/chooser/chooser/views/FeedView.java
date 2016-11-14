@@ -20,6 +20,8 @@ import com.facebook.login.LoginManager;
 import net.cloudapp.chooser.chooser.Common.LoadingDialogs;
 import net.cloudapp.chooser.chooser.Common.PostRepository;
 import net.cloudapp.chooser.chooser.Common.SessionDetails;
+import net.cloudapp.chooser.chooser.Controller.Callbacks.GetTokensCallback;
+import net.cloudapp.chooser.chooser.Controller.GetTokensController;
 import net.cloudapp.chooser.chooser.Controller.PostsFetchController;
 import net.cloudapp.chooser.chooser.Controller.ReportController;
 import net.cloudapp.chooser.chooser.Controller.PromotionController;
@@ -172,7 +174,8 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
     }
 
     private void getTokens() {
-        PromotionController.getInstance().getTokens(this);
+        GetTokensController tokensController = new GetTokensController();
+        tokensController.getTokens(this);
     }
 
     private void vote(int selected) {
