@@ -19,6 +19,7 @@ import com.facebook.login.LoginManager;
 
 import net.cloudapp.chooser.chooser.Common.LoadingDialogs;
 import net.cloudapp.chooser.chooser.Common.PostRepository;
+import net.cloudapp.chooser.chooser.Common.SessionDetails;
 import net.cloudapp.chooser.chooser.Controller.PostsFetchController;
 import net.cloudapp.chooser.chooser.Controller.ReportController;
 import net.cloudapp.chooser.chooser.Controller.PromotionController;
@@ -64,10 +65,12 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
         textSwitcher2.setFactory(new TextSwitchFactory(this));
     }
 
-//refresh view
+    public void updateTokens() {
+        tokens.setText(String.valueOf(SessionDetails.getInstance().numOfTokens));
+    }
 
-    public void setTokens(String value) {
-        tokens.setText(value);
+    public void addToken() {
+        SessionDetails.getInstance().numOfTokens++;
     }
 
     private void refreshFeedRepository() {
@@ -176,12 +179,11 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
         Log.d("Chooser", "Vote selection: " + selected);
         VoteController voteController = new VoteController();
         voteController.vote(mCurrentPostId, selected);
-
+        addToken();
         if (selected == 1)
             votes1++;
         else if (selected == 2)
             votes2++;
-
         loadNextPost();
     }
 
@@ -290,6 +292,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
         Log.i("ChooserApp", "Loading post " + post.title);
         mCurrentPostId = post._id;
         titleTextView.setText(post.title);
+        updateTokens();
     }
 
     private void extractPostData1 () {

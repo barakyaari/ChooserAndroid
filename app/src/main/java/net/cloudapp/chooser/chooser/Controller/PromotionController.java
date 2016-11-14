@@ -79,11 +79,11 @@ public class PromotionController {
             int code = response.getStatus();
             if (code == 200) {
                 Log.d("Chooser", "Get num of tokens");
-                SessionDetails.getInstance().numOfTokens = Integer.parseInt(numOfTokens);
-                mFeed.setTokens(numOfTokens);
+                int tokens = Integer.parseInt(numOfTokens);
+                SessionDetails.getInstance().numOfTokens = tokens;
+                mFeed.updateTokens();
             } else {
                 Log.e("Chooser", "Error getting num of tokens.");
-                mFeed.setTokens("-1");
             }
         }
 
