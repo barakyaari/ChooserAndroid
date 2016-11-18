@@ -22,7 +22,7 @@ public class LoginCallback implements Callback<Void> {
         Log.d("Chooser", "Callback running");
         Intent i = new Intent("android.intent.action.FeedView");
         Log.d("Chooser", "Starting main activity");
-        LoadingDialogs.deleteLoadingDialog("login");
+        LoadingDialogs.hide("login");
         loginView.startActivity(i);
     }
 

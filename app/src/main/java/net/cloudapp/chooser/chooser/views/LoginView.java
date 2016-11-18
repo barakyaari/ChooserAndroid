@@ -14,6 +14,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -42,7 +43,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class LoginView extends Activity{
+public class LoginView extends Activity {
     LoginButton fbLoginButton;
     CallbackManager callbackManager;
 
@@ -53,7 +54,6 @@ public class LoginView extends Activity{
         RegisterFacebookLogin();
         LoadingDialogs.addLoadingDialog(this, "login", "Logging in...\nPlease Wait");
         Log.d("Chooser", "Login loaded");
-
     }
 
     public void processLoginIfTokenExists() {
@@ -69,6 +69,12 @@ public class LoginView extends Activity{
         initializeFacebookSdk();
         initializeUI();
         printAppHashId();
+        new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
+                processLoginIfTokenExists();
+            }
+        };
     }
 
     private void initializeFacebookSdk() {
@@ -100,7 +106,6 @@ public class LoginView extends Activity{
     @Override
     protected void onResume() {
         super.onResume();
-        processLoginIfTokenExists();
     }
 
     private void RegisterFacebookLogin() {
