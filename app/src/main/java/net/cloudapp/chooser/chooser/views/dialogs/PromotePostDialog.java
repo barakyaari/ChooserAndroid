@@ -42,7 +42,12 @@ public class PromotePostDialog extends DialogFragment implements DialogInterface
     public void onClick(DialogInterface dialogInterface, int which) {
         switch (which) {
             case DialogInterface.BUTTON_POSITIVE:
-                PromotionController promotionController = new PromotionController();
+                PromotionController promotionController = new PromotionController() {
+                    @Override
+                    public void doInSuccess() {
+                        view.refreshPromoteButton();
+                    }
+                };
                 promotionController.promote(postId, view);
                 break;
 

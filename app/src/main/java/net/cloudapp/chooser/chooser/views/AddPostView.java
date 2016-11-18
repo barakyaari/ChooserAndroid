@@ -7,11 +7,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.cloudapp.chooser.chooser.Common.SessionDetails;
+import net.cloudapp.chooser.chooser.Controller.Callbacks.PromoteCallback;
 import net.cloudapp.chooser.chooser.Controller.PostsUploadController;
 import net.cloudapp.chooser.chooser.Images.ImagePicker;
 import net.cloudapp.chooser.chooser.Images.CloudinaryClient;
@@ -21,11 +25,13 @@ import net.cloudapp.chooser.chooser.R;
 public class AddPostView extends AppCompatActivity implements View.OnClickListener {
     private static final int SELECT_PHOTO = 100;
     private int selectedImage = 0;
+    CheckBox promotionCheckbox;
     Button buttonAddPost, buttonCancel, buttonNotMyPost;
     EditText editTextTitle, editTextDescription1, editTextDescription2;
     ImageView image1, image2;
     TextView tokens;
     Bitmap image1BitMap, image2BitMap;
+    public boolean promote;
     CloudinaryClient cloudinaryClient;
 
 
@@ -37,6 +43,8 @@ public class AddPostView extends AppCompatActivity implements View.OnClickListen
         setOnClickListeners();
         cloudinaryClient = new CloudinaryClient();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        updateTokens();
+        promote = false;
     }
 
     private void setOnClickListeners() {
@@ -45,6 +53,7 @@ public class AddPostView extends AppCompatActivity implements View.OnClickListen
         buttonNotMyPost.setOnClickListener(this);
         image1.setOnClickListener(this);
         image2.setOnClickListener(this);
+        promotionCheckbox.setOnClickListener(this);
         editTextDescription1.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -71,6 +80,7 @@ public class AddPostView extends AppCompatActivity implements View.OnClickListen
                 }
             }
         });
+
     }
 
     private void setViewControls() {
@@ -83,7 +93,7 @@ public class AddPostView extends AppCompatActivity implements View.OnClickListen
         buttonAddPost = (Button) findViewById(R.id.postButton);
         buttonCancel = (Button) findViewById(R.id.cancelButton);
         buttonNotMyPost = (Button) findViewById(R.id.notMyPostButton);
-
+        promotionCheckbox = (CheckBox) findViewById(R.id.checkBox);
     }
 
     @Override
@@ -130,6 +140,23 @@ public class AddPostView extends AppCompatActivity implements View.OnClickListen
         }
     }
 
+    private void updateTokens() {
+        tokens.setText(String.valueOf(SessionDetails.getInstance().numOfTokens));
+    }
+
+    private void deductPromotionFee() {
+        tokens.setText(String.valueOf(SessionDetails.getInstance().numOfTokens-PromoteCallback.PROMOTION_COST));
+    }
+
+    public boolean checkPromotionEligibility() {
+        if (PromoteCallback.PROMOTION_COST > SessionDetails.getInstance().numOfTokens) {
+            Toast.makeText(this, "Not enough tokens to promote post! (Minimum: " + PromoteCallback.PROMOTION_COST + ")", Toast.LENGTH_LONG).show();
+            promotionCheckbox.setChecked(false);
+            return false;
+        }
+    return true;
+    }
+
 
     @Override
     public void onClick(View v) {
@@ -167,6 +194,14 @@ public class AddPostView extends AppCompatActivity implements View.OnClickListen
                 selectedImage = 2;
                 chooseImageIntent = ImagePicker.getPickImageIntent(this);
                 startActivityForResult(chooseImageIntent, SELECT_PHOTO);
+                break;
+
+            case R.id.checkBox:
+                promote = ((CheckBox) v).isChecked() && checkPromotionEligibility();
+                if (promote)
+                    deductPromotionFee();
+                else
+                    updateTokens();
                 break;
         }
     }

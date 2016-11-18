@@ -7,12 +7,9 @@ import android.widget.Toast;
 
 import net.cloudapp.chooser.chooser.Controller.Callbacks.PostUploadCallback;
 import net.cloudapp.chooser.chooser.Images.ImageUploader;
-import net.cloudapp.chooser.chooser.Images.ImageUploaderAsyncTask;
 import net.cloudapp.chooser.chooser.Images.ImageUploaderImpl;
-import net.cloudapp.chooser.chooser.Images.UploadTask;
 import net.cloudapp.chooser.chooser.Network.RestFramework.RestClient;
 
-import bolts.Task;
 
 public class PostUploaderAsyncTask extends AsyncTask<PostUploadTask, Void, Void> {
     private Context mContext;

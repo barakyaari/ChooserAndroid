@@ -50,7 +50,7 @@ public interface ServerAPI {
             @Header("image2") String image2,
             @Header("description1") String description1,
             @Header("description2") String description2,
-            Callback<Void> callback);
+            Callback<String> callback);
 
     @GET("/vote")
     public void vote(

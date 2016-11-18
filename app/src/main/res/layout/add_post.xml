@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -101,17 +102,26 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="100dp">
+        android:layout_height="100dp"
+        android:paddingRight="3dp"
+        android:paddingLeft="3dp">
+
+        <CheckBox
+            android:text="Promote this post"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/checkBox"
+            android:textColor="#32CD32"
+            android:buttonTint="#CACACA" />
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp">
+            android:layout_gravity="center">
 
             <Button
-                android:layout_width="90dp"
+                android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:text="Post"
                 android:id="@+id/postButton"
@@ -119,7 +129,7 @@
                 android:textSize="15dp" />
 
             <Button
-                android:layout_width="90dp"
+                android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:text="Cancel"
                 android:id="@+id/cancelButton"
@@ -130,7 +140,41 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/notMyPostButton"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:textSize="12sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/linearLayout"
+                android:paddingTop="5dp">
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:id="@+id/imageView5"
+                    android:src="@mipmap/ic_token"
+                    android:layout_gravity="top|right"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="$"
+                    android:id="@+id/tokens"
+                    android:layout_alignBottom="@+id/imageView5"
+                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="bottom"
+                    android:textSize="20sp"
+                    android:paddingBottom="5dp"
+                    android:textColor="#FCE55B"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>

@@ -4,13 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 import net.cloudapp.chooser.chooser.Common.SessionDetails;
-import net.cloudapp.chooser.chooser.Images.CloudinaryClient;
-import net.cloudapp.chooser.chooser.Images.ImageUploader;
-import net.cloudapp.chooser.chooser.Images.ImageUploaderImpl;
-import net.cloudapp.chooser.chooser.Network.RestFramework.RestClient;
-import net.cloudapp.chooser.chooser.Controller.Callbacks.PostUploadCallback;
-
-import static android.app.PendingIntent.getActivity;
 
 public class PostsUploadController {
 
