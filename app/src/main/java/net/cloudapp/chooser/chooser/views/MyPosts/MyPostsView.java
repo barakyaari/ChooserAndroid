@@ -6,18 +6,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
-import net.cloudapp.chooser.chooser.Common.LoadingDialogs;
 import net.cloudapp.chooser.chooser.Common.PostRepository;
-import net.cloudapp.chooser.chooser.Controller.DeletePostController;
 import net.cloudapp.chooser.chooser.Controller.MyPostsFetchController;
 import net.cloudapp.chooser.chooser.R;
-import net.cloudapp.chooser.chooser.views.dialogs.DeletePostDialog;
 
 
 public class MyPostsView extends AppCompatActivity implements ListView.OnItemClickListener {
     private ListView postList;
+    private LinearLayout noPostsLayout;
     private MyPostsAdapter myPostsAdapter;
 
     @Override
@@ -25,13 +25,13 @@ public class MyPostsView extends AppCompatActivity implements ListView.OnItemCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_posts_view);
         postList = (ListView) findViewById(R.id.postList);
+        noPostsLayout = (LinearLayout) findViewById(R.id.noPostsLayout);
         getSupportActionBar().setTitle("My Posts");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         postList.setOnItemClickListener(this);
         myPostsAdapter = new MyPostsAdapter(this, PostRepository.myPosts);
         postList.setAdapter(myPostsAdapter);
-        updateView();
     }
 
 
@@ -41,6 +41,15 @@ public class MyPostsView extends AppCompatActivity implements ListView.OnItemCli
     }
 
     public void refreshView() {
+        if (PostRepository.myPosts.isEmpty()) {
+            postList.setVisibility(View.GONE);
+            noPostsLayout.setVisibility(View.VISIBLE);
+            return;
+        }
+        if (postList.getVisibility() == View.GONE) {
+            postList.setVisibility(View.VISIBLE);
+            noPostsLayout.setVisibility(View.GONE);
+        }
         myPostsAdapter.notifyDataSetChanged();
     }
 
@@ -55,6 +64,7 @@ public class MyPostsView extends AppCompatActivity implements ListView.OnItemCli
     @Override
     protected void onResume() {
         super.onResume();
+        updateView();
     }
 
 
@@ -63,4 +73,5 @@ public class MyPostsView extends AppCompatActivity implements ListView.OnItemCli
         onBackPressed();
         return super.onOptionsItemSelected(item);
     }
+
 }

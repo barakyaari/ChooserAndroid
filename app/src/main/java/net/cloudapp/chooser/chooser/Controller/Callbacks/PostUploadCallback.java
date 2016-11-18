@@ -1,11 +1,13 @@
 package net.cloudapp.chooser.chooser.Controller.Callbacks;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
 import net.cloudapp.chooser.chooser.Controller.PromotionController;
 import net.cloudapp.chooser.chooser.views.AddPostView;
+import net.cloudapp.chooser.chooser.views.MyPosts.MyPostsView;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;

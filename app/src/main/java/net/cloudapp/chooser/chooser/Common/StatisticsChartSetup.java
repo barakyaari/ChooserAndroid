@@ -118,7 +118,7 @@ public abstract class StatisticsChartSetup {
 
         headline.setText(post.title);
 
-        if (post.title.length() > 30)
+        if (post.title.length() > 32)
             headline.setTextSize(10);
 
         vote1.setText(String.valueOf(getPercentage(post.votes1, post.votes2, 1) + "%"));

@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/postTitleEditText"
             android:layout_gravity="right"
-            android:maxLength="40"
+            android:maxLength="34"
             android:textColor="#cacaca" />
 
     </LinearLayout>
