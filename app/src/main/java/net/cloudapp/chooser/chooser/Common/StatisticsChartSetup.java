@@ -76,6 +76,40 @@ public abstract class StatisticsChartSetup {
         horizontalBarChart.invalidate();
     }
 
+    public static void updateBarData (View view, int data1, int data2) {
+        TextView vote1 = (TextView) view.findViewById(R.id.vote1);
+        TextView vote2 = (TextView) view.findViewById(R.id.vote2);
+        vote1.setText(String.valueOf(data1));
+        vote2.setText(String.valueOf(data2));
+        HorizontalBarChart horizontalBarChart = (HorizontalBarChart) view.findViewById(R.id.barChart);
+        int color1 = ContextCompat.getColor(view.getContext(),R.color.bar1);
+        int color2 = ContextCompat.getColor(view.getContext(),R.color.bar2);
+        vote1.setTextColor(color1);
+        vote2.setTextColor(color2);
+
+        if (data1 + data2 == 0) {
+            color1 = ContextCompat.getColor(view.getContext(),R.color.appBackground);
+            data1 = 1;
+        }
+
+        ArrayList<BarEntry> vals = new ArrayList<>();
+        vals.add(new BarEntry(0, new float[]{data1, data2}));
+
+        BarDataSet set = new BarDataSet(vals, "");
+        ArrayList<IBarDataSet> dataSet = new ArrayList<>();
+        set.setColors(new int[]{color1, color2});
+        set.setBarBorderWidth(2);
+        set.setBarBorderColor(Color.BLACK);
+        dataSet.add(set);
+
+        BarData data = new BarData(dataSet);
+        data.setDrawValues(false);
+
+        horizontalBarChart.setData(data);
+        horizontalBarChart.notifyDataSetChanged();
+        horizontalBarChart.invalidate();
+    }
+
     public static void fillPostItem (View view, Post post, Context context, boolean showDate) {
         TextView date = (TextView) view.findViewById(R.id.date);
         TextView vote1 = (TextView) view.findViewById(R.id.vote1);

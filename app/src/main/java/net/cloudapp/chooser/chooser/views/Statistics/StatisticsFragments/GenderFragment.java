@@ -44,42 +44,9 @@ public class GenderFragment {
     }
 
 
-    public void refreshGenderFragment(PostStatistics postStatistics) {
-        updateGenderBarData(femaleStat, postStatistics.femaleVotes1, postStatistics.femaleVotes2);
-        updateGenderBarData(maleStat, postStatistics.maleVotes1, postStatistics.maleVotes2);
-    }
-
-
-    private void updateGenderBarData (View view, float data1, float data2) {
-        TextView vote1 = (TextView) view.findViewById(R.id.vote1);
-        TextView vote2 = (TextView) view.findViewById(R.id.vote2);
-        HorizontalBarChart horizontalBarChart = (HorizontalBarChart) view.findViewById(R.id.barChart);
-
-        int color1 = ContextCompat.getColor(view.getContext(),R.color.bar1);
-        int color2 = ContextCompat.getColor(view.getContext(),R.color.bar2);
-
-        vote1.setTextColor(color1);
-        vote2.setTextColor(color2);
-
-        ArrayList<BarEntry> vals = new ArrayList<>();
-        vals.add(new BarEntry(0, new float[]{data1, data2}));
-
-        BarDataSet set = new BarDataSet(vals, "");
-        ArrayList<IBarDataSet> dataSet = new ArrayList<>();
-        set.setColors(new int[]{color1, color2});
-        set.setBarBorderWidth(2);
-        set.setBarBorderColor(Color.BLACK);
-        dataSet.add(set);
-
-        BarData data = new BarData(dataSet);
-        data.setDrawValues(false);
-
-        horizontalBarChart.setData(data);
-        horizontalBarChart.notifyDataSetChanged();
-        horizontalBarChart.invalidate();
-
-        vote1.setText(String.valueOf((int)data1));
-        vote2.setText(String.valueOf((int)data2));
+    void refreshGenderFragment(PostStatistics postStatistics) {
+        StatisticsChartSetup.updateBarData(femaleStat, postStatistics.femaleVotes1, postStatistics.femaleVotes2);
+        StatisticsChartSetup.updateBarData(maleStat, postStatistics.maleVotes1, postStatistics.maleVotes2);
     }
 
 }

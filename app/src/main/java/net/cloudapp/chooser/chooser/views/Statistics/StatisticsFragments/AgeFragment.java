@@ -2,7 +2,6 @@ package net.cloudapp.chooser.chooser.views.Statistics.StatisticsFragments;
 
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,12 +16,10 @@ import net.cloudapp.chooser.chooser.Common.StatisticsChartSetup;
 import net.cloudapp.chooser.chooser.R;
 import net.cloudapp.chooser.chooser.model.PostStatistics;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 
-public class AgeFragment {
+class AgeFragment {
     private View kidStatItem, teenStatItem, youngStatItem, manStatItem, oldStatItem;
     private PostStatistics postStatistics;
     private final int kid_start = 0;
@@ -32,17 +29,17 @@ public class AgeFragment {
     private final int old_start = 61;
 
 
-    public AgeFragment (View view) {
+     AgeFragment (View view) {
         kidStatItem = view.findViewById(R.id.kidStatisticsItem);
         teenStatItem = view.findViewById(R.id.teenStatisticsItem);
         youngStatItem = view.findViewById(R.id.youngManStatisticsItem);
         manStatItem = view.findViewById(R.id.manStatisticsItem);
         oldStatItem = view.findViewById(R.id.oldStatisticsItem);
-        initializeAgeItem(kidStatItem, "Kids 0-13 Votes", R.drawable.ic_age_teen);
-        initializeAgeItem(teenStatItem, "Teens 14-20 Votes", R.drawable.ic_age_teen);
-        initializeAgeItem(youngStatItem, "Young Men 21-30 Votes", R.drawable.ic_age_young);
-        initializeAgeItem(manStatItem, "Men 31-60 Votes", R.drawable.ic_age_man);
-        initializeAgeItem(oldStatItem, "Elderly 61+ Votes",R.drawable.ic_age_old);
+        initializeAgeItem(kidStatItem, "Kids "+ kid_start + "-" + (teen_start-1) +" Votes", R.drawable.ic_age_teen);
+        initializeAgeItem(teenStatItem, "Teens "+ teen_start + "-" + (young_start-1) +" Votes", R.drawable.ic_age_teen);
+        initializeAgeItem(youngStatItem, "Young Men "+ young_start + "-" + (man_start-1) +" Votes", R.drawable.ic_age_young);
+        initializeAgeItem(manStatItem, "Men "+ man_start + "-" + (old_start-1) +" Votes", R.drawable.ic_age_man);
+        initializeAgeItem(oldStatItem, "Elderly "+ old_start +"+ Votes",R.drawable.ic_age_old);
     }
 
     private void initializeAgeItem(View view, String headline, int drawable) {
@@ -54,7 +51,7 @@ public class AgeFragment {
 
 
 
-    public void refreshAgeFragment(PostStatistics postStatistics) {
+    void refreshAgeFragment(PostStatistics postStatistics) {
         this.postStatistics = postStatistics;
         updateAgeBarData(kid_start, teen_start-1, kidStatItem);
         updateAgeBarData(teen_start, young_start-1, teenStatItem);
@@ -65,41 +62,11 @@ public class AgeFragment {
 
 
     private void updateAgeBarData(int ageStart, int ageEnd, View view) {
-        TextView vote1 = (TextView) view.findViewById(R.id.vote1);
-        TextView vote2 = (TextView) view.findViewById(R.id.vote2);
-
-        int color1 = ContextCompat.getColor(view.getContext(),R.color.bar1);
-        int color2 = ContextCompat.getColor(view.getContext(),R.color.bar2);
-        vote1.setTextColor(color1);
-        vote2.setTextColor(color2);
-
-        HorizontalBarChart chart = (HorizontalBarChart) view.findViewById(R.id.barChart);
-
         int data1 = getAgeRangeVotes(1, ageStart, ageEnd);
         int data2 = getAgeRangeVotes(2, ageStart, ageEnd);
-
         if (data1+data2 != 0)
             view.setVisibility(View.VISIBLE);
-
-        ArrayList<BarEntry> vals = new ArrayList<>();
-        vals.add(new BarEntry(0, new float[]{data1, data2}));
-
-        BarDataSet set = new BarDataSet(vals, "");
-        ArrayList<IBarDataSet> dataSet = new ArrayList<>();
-        set.setColors(new int[]{color1, color2});
-        set.setBarBorderWidth(2);
-        set.setBarBorderColor(Color.BLACK);
-        dataSet.add(set);
-        BarData data = new BarData(dataSet);
-        data.setDrawValues(false);
-
-        chart.setData(data);
-        chart.notifyDataSetChanged();
-        chart.invalidate();
-
-        vote1.setText(String.valueOf(data1));
-        vote2.setText(String.valueOf(data2));
-
+        StatisticsChartSetup.updateBarData(view, data1, data2);
     }
 
 
