@@ -27,6 +27,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/postTitleEditText"
             android:layout_gravity="right"
+            android:maxLength="40"
             android:textColor="#cacaca" />
 
     </LinearLayout>
@@ -60,7 +61,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/description1EditText"
             android:layout_weight="0.48"
-            android:text="Option 1..."
+            android:text="Option 1"
+            android:maxLength="50"
             android:textColor="#cacaca" />
     </LinearLayout>
 
@@ -95,7 +97,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/description2EditText"
             android:layout_weight="1"
-            android:text="Option2..."
+            android:text="Option 2"
+            android:maxLength="50"
             android:textColor="#cacaca" />
     </LinearLayout>
 
