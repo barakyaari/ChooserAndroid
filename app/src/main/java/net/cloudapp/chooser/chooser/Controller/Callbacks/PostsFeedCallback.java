@@ -24,24 +24,27 @@ public class PostsFeedCallback implements Callback<List<Post>> {
     @Override
     public void success(List<Post> postList, Response response) {
         int code = response.getStatus();
+        int prevSize = PostRepository.postsFeed.size();
         if (code == 200) {
             Log.d("Chooser", "get posts result code is OK.");
-
             if (postList.size() > 0) {
-                Log.d("Chooser", "Number of posts received: " + postList.size());
                 PostRepository.postsFeed.addAll(postList);
+                Log.d("Chooser", "Number of posts received: " + postList.size());
+                Log.d("Chooser", "Number of posts in queue: " + PostRepository.postsFeed.size());
+                if (prevSize == 0)
+                    mFeed.feedCallbackWork();
             }
             else {
                 Log.d("Chooser", "Got 0 posts.");
+                Log.d("Chooser", "Number of posts in queue: " + PostRepository.postsFeed.size());
             }
-            mFeed.loadNextPost();
 
-        } else {
-            Log.e("Chooser", "all posts - bad response code.");
         }
+        else Log.e("Chooser", "all posts - bad response code.");
 
+        if (prevSize == 0)
+            LoadingDialogs.hide("feed");
         Log.d("Chooser", "Adding " + postList.size() + " Posts to repository");
-        LoadingDialogs.hide("feed");
     }
 
     @Override

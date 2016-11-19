@@ -40,7 +40,9 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
     TextSwitcher textSwitcher1, textSwitcher2;
     LinearLayout feedLayout, noPostsLayout;
     String mCurrentPostId;
-    Boolean feedIsOn;
+    private final String DIALOG_NAME = "feed";
+    private final int LOW_QUEUE_SIZE = 2;
+
     public  boolean animating1, animating2;
     Post post;
     int votes1, votes2;
@@ -56,9 +58,16 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
         initializeOnClickListeners();
         initializeOnLongClickListeners();
         initializeControls();
-        shutdownFeed();
         setTextAnimations();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshFeedRepository();
+        getTokens();
+    }
+
 
     private void initializeControls() {
         imageSwitcher1.setFactory(new ImageSwitchFactory(this));
@@ -76,7 +85,10 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
     }
 
     private void refreshFeedRepository() {
-        LoadingDialogs.show("feed");
+        if (postQueueHasEnough())
+            return;
+        if (postQueueIsEmpty())
+            LoadingDialogs.show(DIALOG_NAME);
         PostsFetchController postsFetchController = new PostsFetchController(this);
         postsFetchController.getPosts();
     }
@@ -109,16 +121,6 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
         imageSwitcher2 = (ImageSwitcher) findViewById(R.id.imageSwitcher2);
         textSwitcher1 = (TextSwitcher) findViewById(R.id.percentage1);
         textSwitcher2 = (TextSwitcher) findViewById(R.id.percentage2);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if (!feedIsOn)
-            refreshFeedRepository();
-
-        getTokens();
     }
 
     @Override
@@ -187,29 +189,26 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
             votes1++;
         else if (selected == 2)
             votes2++;
-        loadNextPost();
+        loadNextPost(true);
     }
 
     private void reportPost() {
         Log.d("Chooser", "Report post requested");
-        feedIsOn = false;
         ReportController reportController = new ReportController();
         reportController.report(mCurrentPostId);
-        loadNextPost();
+        loadNextPost(false);
     }
 
     private void shutdownFeed() {
         feedLayout.setVisibility(View.INVISIBLE);
         flagButton.setVisibility(View.INVISIBLE);
         noPostsLayout.setVisibility(View.VISIBLE);
-        feedIsOn = false;
     }
 
     private void turnOnFeed() {
         noPostsLayout.setVisibility(View.INVISIBLE);
         feedLayout.setVisibility(View.VISIBLE);
         flagButton.setVisibility(View.VISIBLE);
-        feedIsOn = true;
     }
 
     @Override
@@ -240,11 +239,9 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
         }
     }
 
-
-    public void loadNextPost() {
+    private void loadNextPost(boolean showResults) {
         post = PostRepository.postsFeed.poll();
-
-        if (feedIsOn) {
+        if (showResults) {
             textSwitcher1.setVisibility(View.VISIBLE);
             textSwitcher2.setVisibility(View.VISIBLE);
             textSwitcher1.setText(String.valueOf(votes1));
@@ -252,12 +249,10 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
             return;
         }
         if (post == null) {
-            //runs only when using 'refresh' and there are no posts or when logging in and there are no posts.
             Log.d("Chooser", "Posts empty...");
+            shutdownFeed();
             return;
         }
-
-        turnOnFeed();
         extractGeneralData();
         extractPostData1();
         extractPostData2();
@@ -274,8 +269,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
         if (post == null) {
             //runs only when there are no more posts to show
             Log.d("Chooser", "Posts empty...");
-            if (feedIsOn)
-                shutdownFeed();
+            shutdownFeed();
             return;
         }
         extractGeneralData();
@@ -286,7 +280,6 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
         textSwitcher2.setVisibility(View.GONE);
         if (post == null)
             return;
-
         extractPostData2();
     }
 
@@ -296,6 +289,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
         mCurrentPostId = post._id;
         titleTextView.setText(post.title);
         updateTokens();
+        refreshFeedRepository();
     }
 
     private void extractPostData1 () {
@@ -325,6 +319,19 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
         imageSwitcher2.showNext();
     }
 
+    public void feedCallbackWork() {
+        // Being called from PostsFeedCallback when num of posts was 0 and now > 0.
+        loadNextPost(false);
+        turnOnFeed();
+    }
+
+    private boolean postQueueHasEnough() {
+        return PostRepository.postsFeed.size() > LOW_QUEUE_SIZE;
+    }
+
+    private boolean postQueueIsEmpty() {
+        return PostRepository.postsFeed.isEmpty();
+    }
 
     @Override
     public void onBackPressed() {
