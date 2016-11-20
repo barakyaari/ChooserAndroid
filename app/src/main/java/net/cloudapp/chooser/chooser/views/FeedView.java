@@ -41,7 +41,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
     LinearLayout feedLayout, noPostsLayout;
     String mCurrentPostId;
     private final String DIALOG_NAME = "feed";
-    private final int LOW_QUEUE_SIZE = 2;
+    private final int LOW_QUEUE_SIZE = 0;
 
     public  boolean animating1, animating2;
     Post post;
@@ -84,11 +84,12 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
         SessionDetails.getInstance().numOfTokens++;
     }
 
-    private void refreshFeedRepository() {
+    public void refreshFeedRepository() {
         if (postQueueHasEnough())
             return;
         if (postQueueIsEmpty())
             LoadingDialogs.show(DIALOG_NAME);
+        Log.i("Chooser", "Checking for new posts");
         PostsFetchController postsFetchController = new PostsFetchController(this);
         postsFetchController.getPosts();
     }
@@ -127,7 +128,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
     public void onClick(View v) {
         if (animating1 || animating2)
             return;
-        Log.i("ChooserApp", "FeedView OnclickListener: " + v.getId());
+        Log.i("Chooser", "FeedView OnclickListener: " + v.getId());
         switch (v.getId()) {
 
             case R.id.imageSwitcher1:
@@ -152,7 +153,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
     public boolean onLongClick(View v) {
         if (animating1 || animating2)
             return false;
-        Log.i("ChooserApp", "FeedView OnLongClickListener: " + v.getId());
+        Log.i("Chooser", "FeedView OnLongClickListener: " + v.getId());
         switch (v.getId()) {
             case R.id.imageSwitcher1:
                 showFullScreen(1);
@@ -182,7 +183,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
 
     private void vote(int selected) {
         Log.d("Chooser", "Vote selection: " + selected);
-        VoteController voteController = new VoteController();
+        VoteController voteController = new VoteController(this);
         voteController.vote(mCurrentPostId, selected);
         addToken();
         if (selected == 1)
@@ -194,7 +195,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
 
     private void reportPost() {
         Log.d("Chooser", "Report post requested");
-        ReportController reportController = new ReportController();
+        ReportController reportController = new ReportController(this);
         reportController.report(mCurrentPostId);
         loadNextPost(false);
     }
@@ -241,6 +242,8 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
 
     private void loadNextPost(boolean showResults) {
         post = PostRepository.postsFeed.poll();
+        Log.i("Chooser", "Polled from queue. Queue size: " + PostRepository.postsFeed.size());
+
         if (showResults) {
             textSwitcher1.setVisibility(View.VISIBLE);
             textSwitcher2.setVisibility(View.VISIBLE);
@@ -285,11 +288,10 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
 
 
     private void extractGeneralData() {
-        Log.i("ChooserApp", "Loading post " + post.title);
+        Log.i("Chooser", "Loading post " + post.title);
         mCurrentPostId = post._id;
         titleTextView.setText(post.title);
         updateTokens();
-        refreshFeedRepository();
     }
 
     private void extractPostData1 () {
@@ -326,6 +328,7 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
     }
 
     private boolean postQueueHasEnough() {
+        Log.i("Chooser", "Queue size: " + PostRepository.postsFeed.size());
         return PostRepository.postsFeed.size() > LOW_QUEUE_SIZE;
     }
 

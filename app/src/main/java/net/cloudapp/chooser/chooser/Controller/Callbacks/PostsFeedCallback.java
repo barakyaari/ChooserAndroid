@@ -44,7 +44,7 @@ public class PostsFeedCallback implements Callback<List<Post>> {
 
         if (prevSize == 0)
             LoadingDialogs.hide("feed");
-        Log.d("Chooser", "Adding " + postList.size() + " Posts to repository");
+        Log.d("Chooser", "Added " + postList.size() + " Posts to repository");
     }
 
     @Override

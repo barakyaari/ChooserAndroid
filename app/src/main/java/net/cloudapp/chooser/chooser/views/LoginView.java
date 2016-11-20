@@ -46,6 +46,7 @@ import retrofit.client.Response;
 public class LoginView extends Activity {
     LoginButton fbLoginButton;
     CallbackManager callbackManager;
+    boolean processLoginUsed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +57,9 @@ public class LoginView extends Activity {
         Log.d("Chooser", "Login loaded");
     }
 
-    public void processLoginIfTokenExists() {
-        if (AccessToken.getCurrentAccessToken() != null){
+    public synchronized void processLoginIfTokenExists() {
+        if (AccessToken.getCurrentAccessToken() != null && !processLoginUsed){
+            processLoginUsed = true;
             LoadingDialogs.show("login");
             LoginCallback callback = new LoginCallback(this);
             LoginController loginController = new LoginController(callback);
@@ -72,6 +74,7 @@ public class LoginView extends Activity {
         new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
+                Log.d("Chooser", "Loading from AccessToken Changed");
                 processLoginIfTokenExists();
             }
         };
@@ -106,6 +109,7 @@ public class LoginView extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        processLoginIfTokenExists();
     }
 
     private void RegisterFacebookLogin() {
