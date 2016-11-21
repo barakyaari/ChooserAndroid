@@ -308,30 +308,27 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
     }
 
     private void extractPostData1 () {
-        String url1 = CloudinaryClient.bigImageUrl(post.image1,true);
-        Glide
-                .with(getApplicationContext())
-                .load(url1)
-                .animate(R.anim.slide_in_right)
-                .into((ImageView) imageSwitcher1.getNextView());
-
-        imageSwitcher1.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out_left));
+        loadImage(imageSwitcher1, post.image1);
         description1TextView.setText(post.description1);
         votes1 = post.votes1;
         imageSwitcher1.showNext();
     }
 
     private void extractPostData2 () {
-        String url2 = CloudinaryClient.bigImageUrl(post.image2,true);
-        Glide
-                .with(getApplicationContext())
-                .load(url2)
-                .animate(R.anim.slide_in_right)
-                .into((ImageView) imageSwitcher2.getNextView());
-        imageSwitcher2.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out_left));
+        loadImage(imageSwitcher2, post.image2);
         description2TextView.setText(post.description2);
         votes2 = post.votes2;
         imageSwitcher2.showNext();
+    }
+
+    private void loadImage(ImageSwitcher switcher, String image) {
+        String url = CloudinaryClient.bigImageUrl(image,true);
+        Glide
+                .with(getApplicationContext())
+                .load(url)
+                .animate(R.anim.slide_in_right)
+                .into((ImageView) switcher.getNextView());
+        switcher.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out_left));
     }
 
 

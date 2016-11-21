@@ -41,14 +41,15 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/delete_post_button_label"
-                android:id="@+id/deletePost" />
+                android:text="@string/promote_button_label"
+                android:id="@+id/promotePostButton" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/promote_button_label"
-                android:id="@+id/promotePostButton" />
+                android:text="@string/delete_post_button_label"
+                android:id="@+id/deletePost" />
+
         </LinearLayout>
 
     </LinearLayout>

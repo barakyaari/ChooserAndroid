@@ -1,13 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="1">
+    android:weightSum="1"
+    android:paddingTop="5dp"
+    android:elevation="1dp">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_weight="0.4"
+        android:layout_height="0dp"
+        android:paddingLeft="10dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:srcCompat="@color/appBackground"
+            android:id="@+id/image1" />
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/description1"
+            android:textColor="@color/bar1"
+            android:textSize="18sp"
+            android:textAlignment="textStart"
+            android:gravity="center_vertical"
+            android:paddingLeft="5dp" />
+    </LinearLayout>
 
     <com.github.mikephil.charting.charts.HorizontalBarChart
         android:id="@+id/chart"
         android:layout_width="match_parent"
-        android:layout_height="95dp" />
+        android:layout_weight="0.15"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_weight="0.4"
+        android:layout_height="0dp"
+        android:paddingLeft="10dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:srcCompat="@color/appBackground"
+            android:id="@+id/image2" />
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/description2"
+            android:textColor="@color/bar2"
+            android:textSize="18sp"
+            android:gravity="center_vertical"
+            android:paddingLeft="5dp" />
+    </LinearLayout>
 
     <LinearLayout
         android:orientation="vertical"
@@ -28,8 +82,7 @@
                 android:text="Total Votes:"
                 android:id="@+id/totalVotes"
                 android:layout_gravity="left|bottom"
-                android:textColor="#cacaca"
-                android:layout_marginBottom="10dp" />
+                android:textColor="#cacaca" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -39,13 +92,6 @@
                 android:id="@+id/postDate"
                 android:textColor="#cacaca" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Promotion status"
-                android:id="@+id/promotion"
-                android:textColor="#cacaca" />
         </LinearLayout>
 
     </LinearLayout>

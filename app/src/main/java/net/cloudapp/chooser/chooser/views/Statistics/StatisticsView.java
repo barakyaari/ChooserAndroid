@@ -101,24 +101,10 @@ public class StatisticsView extends AppCompatActivity implements View.OnClickLis
             case R.id.deletePost:
                 deletePost();
                 break;
-            case R.id.imageView1:
-                showFullScreen(1);
-                break;
-            case R.id.imageView2:
-                showFullScreen(2);
-                break;
         }
     }
 
-    private void showFullScreen(int selection) {
-        Intent i;
-        i = new Intent("net.cloudapp.chooser.chooser.ImageFullscreen");
-        if (selection == 1)
-            i.putExtra("image",post.image1);
-        else
-            i.putExtra("image",post.image2);
-        startActivity(i);
-    }
+
 
     private void promotePost() {
         PromotePostDialog ppDialog = new PromotePostDialog(post._id, this);

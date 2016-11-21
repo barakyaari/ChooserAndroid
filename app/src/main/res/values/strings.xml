@@ -6,6 +6,6 @@
     <string name="fb_login_protocol_scheme">fb1768515096768793</string>
 
     <string name="promote_button_label">Promote</string>
-    <string name="delete_post_button_label">Delete Post</string>
+    <string name="delete_post_button_label">Delete</string>
 
 </resources>
