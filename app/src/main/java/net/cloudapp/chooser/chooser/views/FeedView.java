@@ -20,17 +20,17 @@ import com.facebook.login.LoginManager;
 import net.cloudapp.chooser.chooser.Common.LoadingDialogs;
 import net.cloudapp.chooser.chooser.Common.PostRepository;
 import net.cloudapp.chooser.chooser.Common.SessionDetails;
-import net.cloudapp.chooser.chooser.Controller.Callbacks.GetTokensCallback;
 import net.cloudapp.chooser.chooser.Controller.GetTokensController;
 import net.cloudapp.chooser.chooser.Controller.PostsFetchController;
 import net.cloudapp.chooser.chooser.Controller.ReportController;
-import net.cloudapp.chooser.chooser.Controller.PromotionController;
 import net.cloudapp.chooser.chooser.Controller.VoteController;
 import net.cloudapp.chooser.chooser.Images.CloudinaryClient;
 import net.cloudapp.chooser.chooser.Animations.ImageSwitchFactory;
 import net.cloudapp.chooser.chooser.Animations.TextSwitchFactory;
 import net.cloudapp.chooser.chooser.R;
 import net.cloudapp.chooser.chooser.model.Post;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FeedView extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
     Button refreshButton;
@@ -41,9 +41,9 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
     LinearLayout feedLayout, noPostsLayout;
     String mCurrentPostId;
     private final String DIALOG_NAME = "feed";
-    private final int LOW_QUEUE_SIZE = 0;
 
     public  boolean animating1, animating2;
+    public AtomicBoolean showLoadingAfterAnimation = new AtomicBoolean(false);
     Post post;
     int votes1, votes2;
 
@@ -85,10 +85,15 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
     }
 
     public void refreshFeedRepository() {
-        if (postQueueHasEnough())
+        if (!isFeedEmpty())
             return;
-        if (postQueueIsEmpty())
+
+        if (animating1 || animating2)
+            showLoadingAfterAnimation.set(true);
+        else
             LoadingDialogs.show(DIALOG_NAME);
+
+
         Log.i("Chooser", "Checking for new posts");
         PostsFetchController postsFetchController = new PostsFetchController(this);
         postsFetchController.getPosts();
@@ -183,21 +188,21 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
 
     private void vote(int selected) {
         Log.d("Chooser", "Vote selection: " + selected);
-        VoteController voteController = new VoteController(this);
-        voteController.vote(mCurrentPostId, selected);
         addToken();
         if (selected == 1)
             votes1++;
         else if (selected == 2)
             votes2++;
         loadNextPost(true);
+        VoteController voteController = new VoteController(this);
+        voteController.vote(mCurrentPostId, selected);
     }
 
     private void reportPost() {
         Log.d("Chooser", "Report post requested");
+        loadNextPost(false);
         ReportController reportController = new ReportController(this);
         reportController.report(mCurrentPostId);
-        loadNextPost(false);
     }
 
     private void shutdownFeed() {
@@ -242,7 +247,10 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
 
     private void loadNextPost(boolean showResults) {
         post = PostRepository.postsFeed.poll();
-        Log.i("Chooser", "Polled from queue. Queue size: " + PostRepository.postsFeed.size());
+        if (post != null)
+            Log.i("Chooser", "Polled from queue. Queue size: " + PostRepository.postsFeed.size());
+        else
+            Log.i("Chooser", "Polled null from queue");
 
         if (showResults) {
             textSwitcher1.setVisibility(View.VISIBLE);
@@ -277,6 +285,11 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
         }
         extractGeneralData();
         extractPostData1();
+        if (showLoadingAfterAnimation.get()) {
+            Log.i("Chooser", "Loading screen at end of animation initiated");
+            showLoadingAfterAnimation.set(false);
+            LoadingDialogs.show(DIALOG_NAME);
+        }
     }
 
     public void onAnimationEnd2() {
@@ -321,20 +334,27 @@ public class FeedView extends AppCompatActivity implements View.OnClickListener,
         imageSwitcher2.showNext();
     }
 
+
     public void feedCallbackWork() {
-        // Being called from PostsFeedCallback when num of posts was 0 and now > 0.
-        loadNextPost(false);
+        if (animating1 || animating2)
+            post = PostRepository.postsFeed.poll();
+        else {
+            clearImageSwitchers();
+            loadNextPost(false);
+        }
         turnOnFeed();
     }
 
-    private boolean postQueueHasEnough() {
-        Log.i("Chooser", "Queue size: " + PostRepository.postsFeed.size());
-        return PostRepository.postsFeed.size() > LOW_QUEUE_SIZE;
+    public void clearImageSwitchers() {
+        imageSwitcher1.showNext();
+        imageSwitcher2.showNext();
     }
 
-    private boolean postQueueIsEmpty() {
-        return PostRepository.postsFeed.isEmpty();
+
+    public boolean isFeedEmpty() {
+        return post == null;
     }
+
 
     @Override
     public void onBackPressed() {
