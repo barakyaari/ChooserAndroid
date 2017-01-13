@@ -46,7 +46,7 @@ import retrofit.client.Response;
 public class LoginView extends Activity {
     LoginButton fbLoginButton;
     CallbackManager callbackManager;
-    boolean processLoginUsed = false;
+    public boolean processLoginUsed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

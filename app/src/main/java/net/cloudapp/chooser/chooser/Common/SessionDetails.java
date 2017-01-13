@@ -21,7 +21,7 @@ public class SessionDetails extends Application {
         numOfTokens = 0;
     }
 
-    public final String serverAddress = "http://chooserserver.herokuapp.com";
+    public final String serverAddress = "http://chooserserver.herokuapp1.com";
 
     public static final SessionDetails sessionDetailsInstance = new SessionDetails();
     public static SessionDetails getInstance() {

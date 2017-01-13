@@ -31,6 +31,7 @@ public class LoginCallback implements Callback<Void> {
         ServerIsDownDialog downDialog = new ServerIsDownDialog() {
             @Override
             public void onRetry() {
+                loginView.processLoginUsed = false;
                 loginView.processLoginIfTokenExists();
             }
         };
