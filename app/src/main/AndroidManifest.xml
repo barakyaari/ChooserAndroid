@@ -34,10 +34,10 @@
             android:exported="true" />
 
         <activity
-            android:name=".views.ServerAddressView"
+            android:name=".views.LoginView"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" >
+            android:theme="@style/ChooserMainTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -51,17 +51,6 @@
             android:theme="@style/ChooserMainTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.FeedView" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".views.LoginView"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:theme="@style/ChooserMainTheme" >
-            <intent-filter>
-                <action android:name="android.intent.action.LoginView" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
