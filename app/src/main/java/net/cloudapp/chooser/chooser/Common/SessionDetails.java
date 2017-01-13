@@ -15,17 +15,10 @@ public class SessionDetails extends Application {
     public String userId;
     public int numOfTokens;
     private AccessToken accessToken;
-    public boolean usePercentage;
-    public boolean skipResults;
 
     public SessionDetails(){
         userId = "";
         numOfTokens = 0;
-    }
-
-    public void updateSharedPrefs (SharedPreferences sharedPrefs) {
-        usePercentage = sharedPrefs.getBoolean("prefUnitSwitch",usePercentage);
-        skipResults = sharedPrefs.getBoolean("prefSkipResSwitch",skipResults);
     }
 
     public final String serverAddress = "http://chooserserver.herokuapp.com";

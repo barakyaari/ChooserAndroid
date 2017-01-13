@@ -6,14 +6,11 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.Gravity;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageSwitcher;
 import android.widget.ViewSwitcher;
 
-import net.cloudapp.chooser.chooser.Animations.VotesAnimationListeners.Vote1AnimationListener;
-import net.cloudapp.chooser.chooser.Animations.VotesAnimationListeners.Vote2AnimationListener;
 import net.cloudapp.chooser.chooser.views.FeedView;
 
 public class TextSwitchFactory implements ViewSwitcher.ViewFactory {
@@ -41,9 +38,9 @@ public class TextSwitchFactory implements ViewSwitcher.ViewFactory {
         Animation inAnimation = AnimationUtils.loadAnimation(feed, android.R.anim.fade_in);
         inAnimation.setDuration(1000);
         if (postNum == 1)
-            inAnimation.setAnimationListener(new Vote1AnimationListener(feed));
+            inAnimation.setAnimationListener(new VoteAnimationListener(feed, true));
         else
-            inAnimation.setAnimationListener(new Vote2AnimationListener(feed));
+            inAnimation.setAnimationListener(new VoteAnimationListener(feed, false));
         return inAnimation;
     }
 }
