@@ -11,7 +11,7 @@
             <group>
                 <item
                     android:id="@+id/add_poll"
-                    android:title="Add Poll"
+                    android:title="Add Post"
                     android:icon="@drawable/ic_add_circle_outline_black_24dp"
                     app:showAsAction="always" />
 
