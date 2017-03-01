@@ -8,3 +8,4 @@ For example: iOS or Android? Walking Dead or Game of Thrones?, Playstation or Xb
 Chooser uses your facebook account in order to log-in.<br>
 Chooser also provides statistics about the votes to get a better understanding of their post's results.<br>
 
+![Map](http://img.photobucket.com/albums/v385/ben_v/feed_zpskqo2qhhr.png)
