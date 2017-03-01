@@ -1,4 +1,10 @@
 # Chooser - Android application
+* Course: [Project Course](https://www.cs.bgu.ac.il/~proj161/Main)
+* Lecturer: Prof. Moshe Sipper
+* Year: 2016 Sems.A
+* Ben-Gurion university of the negev
+
+# Description:
 Chooser's main goal is to serve as a decision helper for the user.<br>
 The methodology is to use the other users’ opinions in order to help the decision maker, or, in other words, help people make daily choices using the wisdom of crowds.<br>
 The app was designed to help someone who needs to make a decision and choose between two choices.<br>
