@@ -44,7 +44,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Option 1:"
             android:id="@+id/textView2"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/bar1"
             android:textStyle="bold"
             android:layout_marginLeft="10dp" />
 
@@ -55,7 +55,7 @@
             android:layout_weight="0.48"
             android:text="Option 1"
             android:maxLength="50"
-            android:textColor="#cacaca" />
+            android:textColor="@color/bar1" />
     </LinearLayout>
 
 
@@ -79,7 +79,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Option 2:"
             android:id="@+id/textView3"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/bar2"
             android:textStyle="bold"
             android:layout_marginLeft="10dp"
             android:textIsSelectable="true" />
@@ -91,7 +91,7 @@
             android:layout_weight="1"
             android:text="Option 2"
             android:maxLength="50"
-            android:textColor="#cacaca" />
+            android:textColor="@color/bar2" />
 
     </LinearLayout>
 

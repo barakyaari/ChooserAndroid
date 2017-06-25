@@ -57,6 +57,13 @@ public class LoginView extends Activity {
         Log.d("Chooser", "Login loaded");
     }
 
+    @Override
+    protected void onPause() {
+        super.onStart();
+        processLoginUsed = false;
+    }
+
+
     public synchronized void processLoginIfTokenExists() {
         if (AccessToken.getCurrentAccessToken() != null && !processLoginUsed){
             processLoginUsed = true;

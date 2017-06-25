@@ -26,7 +26,7 @@ public class LoadingDialog extends ProgressDialog {
     public void hide() {
         if (!isShown)
             return;
-        super.hide();
+        super.dismiss();
         isShown = false;
     }
 }
