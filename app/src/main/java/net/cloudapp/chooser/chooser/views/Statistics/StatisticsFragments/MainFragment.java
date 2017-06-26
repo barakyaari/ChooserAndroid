@@ -74,7 +74,7 @@ public class MainFragment implements View.OnClickListener {
             i.putExtra("image",post.image1);
         else
             i.putExtra("image",post.image2);
-        getApplicationContext().startActivity(i);
+        view.getContext().startActivity(i);
     }
 
 
